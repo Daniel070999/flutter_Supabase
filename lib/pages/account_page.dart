@@ -12,6 +12,7 @@ class AccountPage extends StatefulWidget {
 class _AccountPageState extends State<AccountPage> {
   final _usernameController = TextEditingController();
   final _websiteController = TextEditingController();
+  final _lastnameController = TextEditingController();
   String? _avatarUrl;
   var _loading = false;
 
@@ -30,11 +31,12 @@ class _AccountPageState extends State<AccountPage> {
           .single() as Map;
       _usernameController.text = (data['username'] ?? '') as String;
       _websiteController.text = (data['website'] ?? '') as String;
+      _lastnameController.text = (data['lastname'] ?? '') as String;
       _avatarUrl = (data['avatar_url'] ?? '') as String;
     } on PostgrestException catch (error) {
-      context.showErrorSnackBar(message: error.message);
+      context.showSnackBar(message: error.message, backgroundColor: Colors.red);
     } catch (error) {
-      context.showErrorSnackBar(message: 'Unexpected exception occured');
+      context.showSnackBar(message: 'Unexpected exception occured', backgroundColor: Colors.red);
     }
 
     setState(() {
@@ -49,22 +51,24 @@ class _AccountPageState extends State<AccountPage> {
     });
     final userName = _usernameController.text;
     final website = _websiteController.text;
+    final lastname = _lastnameController.text;
     final user = supabase.auth.currentUser;
     final updates = {
       'id': user!.id,
       'username': userName,
       'website': website,
+      'lastname': lastname,
       'updated_at': DateTime.now().toIso8601String(),
     };
     try {
       await supabase.from('profiles').upsert(updates);
       if (mounted) {
-        context.showSnackBar(message: 'Successfully updated profile!');
+        context.showSnackBar(message: 'Successfully updated profile!', backgroundColor: Colors.red);
       }
     } on PostgrestException catch (error) {
-      context.showErrorSnackBar(message: error.message);
+      context.showSnackBar(message: error.message, backgroundColor: Colors.red);
     } catch (error) {
-      context.showErrorSnackBar(message: 'Unexpeted error occured');
+      context.showSnackBar(message: 'Unexpeted error occured', backgroundColor: Colors.red);
     }
     setState(() {
       _loading = false;
@@ -75,9 +79,9 @@ class _AccountPageState extends State<AccountPage> {
     try {
       await supabase.auth.signOut();
     } on AuthException catch (error) {
-      context.showErrorSnackBar(message: error.message);
+      context.showSnackBar(message: error.message, backgroundColor: Colors.red);
     } catch (error) {
-      context.showErrorSnackBar(message: 'Unexpected error occured');
+      context.showSnackBar(message: 'Unexpected error occured', backgroundColor: Colors.red);
     }
     if (mounted) {
       Navigator.of(context).pushReplacementNamed('/');
@@ -112,6 +116,11 @@ class _AccountPageState extends State<AccountPage> {
           TextFormField(
             controller: _websiteController,
             decoration: const InputDecoration(labelText: 'Website'),
+          ),
+          const SizedBox(height: 18),
+          TextFormField(
+            controller: _lastnameController,
+            decoration: const InputDecoration(labelText: 'lastname'),
           ),
           const SizedBox(height: 18),
           ElevatedButton(
