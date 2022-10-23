@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
+import 'package:fluttersupabase/forms/stepper_widget.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AccountPage extends StatefulWidget {
@@ -62,7 +63,7 @@ class _AccountPageState extends State<AccountPage> {
       'updated_at': DateTime.now().toIso8601String(),
     };
     try {
-      await supabase.from('profiles').upsert(updates);
+      await supabase.from('profiles').update(updates);
       if (mounted) {
         context.showSnackBar(
             message: 'Successfully updated profile!',
@@ -109,32 +110,12 @@ class _AccountPageState extends State<AccountPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
-        children: [
-          TextFormField(
-            controller: _usernameController,
-            decoration: const InputDecoration(labelText: 'Nombre'),
-          ),
-          const SizedBox(height: 18),
-          TextFormField(
-            controller: _lastnameController,
-            decoration: const InputDecoration(labelText: 'Apellido'),
-          ),
-          const SizedBox(height: 18),
-          TextFormField(
-            controller: _secretWordController,
-            decoration: const InputDecoration(labelText: 'Cree una clave'),
-          ),
-          ElevatedButton(
-            onPressed: _updateProfile,
-            child: Text(_loading ? 'Saving...' : 'Update'),
-          ),
-          const SizedBox(height: 18),
-          TextButton(onPressed: _signOut, child: const Text('Sign Out')),
-        ],
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(title: const Text('Registro de datos')),
+        body: const Center(
+          child: stepper_widget(),
+        ),
       ),
     );
   }
