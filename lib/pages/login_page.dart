@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:fluttersupabase/constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -17,6 +16,7 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   bool _isLoading = false;
+  bool _isLoadingLogin = false;
   bool _redirecting = false;
   late final TextEditingController _emailController;
   late final StreamSubscription<AuthState> _authStateSubscription;
@@ -47,6 +47,17 @@ class _LoginPageState extends State<LoginPage> {
 
     setState(() {
       _isLoading = false;
+    });
+  }
+
+  Future<void> _signInAgain() async {
+    setState(() {
+      _isLoadingLogin = true;
+    });
+    context.showSnackBar(
+        message: "Proximamente", backgroundColor: Colors.yellow);
+    setState(() {
+      _isLoadingLogin = false;
     });
   }
 
@@ -83,7 +94,7 @@ class _LoginPageState extends State<LoginPage> {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [
-                Colors.lightBlue,
+                Colors.lightGreen,
                 Colors.lightBlue,
               ],
               begin: Alignment.topLeft,
@@ -98,16 +109,16 @@ class _LoginPageState extends State<LoginPage> {
                 flex: 2,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
-                      vertical: 36.0, horizontal: 24.0),
+                      vertical: 30.0, horizontal: 24.0),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: const [
                       Text(
-                        "Login",
+                        "Inicio de Sesion",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 46,
+                          fontSize: 42,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
@@ -115,11 +126,11 @@ class _LoginPageState extends State<LoginPage> {
                         height: 10.0,
                       ),
                       Text(
-                        "Texto",
+                        "Bienvenido",
                         style: TextStyle(
                           color: Colors.white,
-                          fontSize: 32,
-                          fontWeight: FontWeight.w200,
+                          fontSize: 28,
+                          fontWeight: FontWeight.w400,
                         ),
                       )
                     ],
@@ -127,74 +138,115 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               Expanded(
-                flex: 5,
-                child: Container(
-                  width: double.infinity,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40),
-                      topRight: Radius.circular(40),
+                flex: 6,
+                child: Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Container(
+                    width: double.infinity,
+                    decoration: const BoxDecoration(
+                      image: DecorationImage(
+                          image: AssetImage('images/login.png'),
+                          scale: 1.0,
+                          alignment: Alignment.topCenter),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.all(Radius.circular(25)),
                     ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(24.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        TextFormField(
-                          style: const TextStyle(color: Colors.lightBlue),
-                          controller: _emailController,
-                          decoration: InputDecoration(
-                            labelText: "Correo electrónico",
-                            labelStyle:
-                                const TextStyle(color: Colors.lightBlue),
-                            prefixIcon: const Icon(
-                              Icons.email_outlined,
-                              color: Colors.lightBlue,
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(25.0),
-                              borderSide: const BorderSide(
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 250,
+                        left: 30,
+                        right: 30,
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          TextFormField(
+                            style: const TextStyle(color: Colors.lightBlue),
+                            controller: _emailController,
+                            decoration: InputDecoration(
+                              labelText: "Correo electrónico",
+                              labelStyle:
+                                  const TextStyle(color: Colors.lightBlue),
+                              prefixIcon: const Icon(
+                                Icons.email_outlined,
                                 color: Colors.lightBlue,
-                                width: 1.5,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(25.0),
+                                borderSide: const BorderSide(
+                                  color: Colors.lightBlue,
+                                  width: 1.5,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    color: Colors.lightBlue, width: 2.0),
+                                borderRadius: BorderRadius.circular(25.0),
                               ),
                             ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.lightBlue, width: 2.0),
-                              borderRadius: BorderRadius.circular(25.0),
-                            ),
                           ),
-                        ),
-                        (_isLoading == false)
-                            ? OutlinedButton(
-                                style: ButtonStyle(
-                                  overlayColor: MaterialStateProperty.all(
-                                      Colors.lightBlue),
-                                  foregroundColor: MaterialStateProperty.all(
-                                      Colors.lightBlue),
-                                  backgroundColor:
-                                      MaterialStateProperty.all(Colors.white),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(25)),
+                          const SizedBox(
+                            height: 20.0,
+                          ),
+                          (_isLoading == false)
+                              ? OutlinedButton(
+                                  style: ButtonStyle(
+                                    overlayColor: MaterialStateProperty.all(
+                                        Colors.lightBlue),
+                                    foregroundColor: MaterialStateProperty.all(
+                                        Colors.lightBlue),
+                                    backgroundColor:
+                                        MaterialStateProperty.all(Colors.white),
+                                    shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(25)),
+                                    ),
+                                    side: MaterialStateProperty.all(
+                                        const BorderSide(
+                                            color: Colors.lightBlue)),
                                   ),
-                                  side: MaterialStateProperty.all(
-                                      const BorderSide(
-                                          color: Colors.lightBlue)),
-                                ),
-                                onPressed: _isLoading ? null : _signIn,
-                                child: const Text('Obtener enlace de registro'),
-                              )
-                            : Platform.isAndroid
-                                ? const Center(
-                                    child: CircularProgressIndicator())
-                                : const Center(
-                                    child: CupertinoActivityIndicator())
-                      ],
+                                  onPressed: _isLoading ? null : _signIn,
+                                  child:
+                                      const Text('Obtener enlace de registro'),
+                                )
+                              : Platform.isAndroid
+                                  ? const Center(
+                                      child: CircularProgressIndicator())
+                                  : const Center(
+                                      child: CupertinoActivityIndicator()),
+                          const SizedBox(
+                            height: 10.0,
+                          ),
+                          (_isLoadingLogin == false)
+                              ? OutlinedButton(
+                                  style: ButtonStyle(
+                                    overlayColor: MaterialStateProperty.all(
+                                        Colors.lightBlue),
+                                    foregroundColor: MaterialStateProperty.all(
+                                        Colors.lightBlue),
+                                    backgroundColor:
+                                        MaterialStateProperty.all(Colors.white),
+                                    shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(25)),
+                                    ),
+                                    side: MaterialStateProperty.all(
+                                        const BorderSide(
+                                            color: Colors.lightBlue)),
+                                  ),
+                                  onPressed: _isLoadingLogin ? null : _signInAgain,
+                                  child: const Text('Iniciar Sesion'),
+                                )
+                              : Platform.isAndroid
+                                  ? const Center(
+                                      child: CircularProgressIndicator())
+                                  : const Center(
+                                      child: CupertinoActivityIndicator())
+                        ],
+                      ),
                     ),
                   ),
                 ),

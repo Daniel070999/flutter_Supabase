@@ -11,7 +11,7 @@ class AccountPage extends StatefulWidget {
 
 class _AccountPageState extends State<AccountPage> {
   final _usernameController = TextEditingController();
-  final _websiteController = TextEditingController();
+  final _secretWordController = TextEditingController();
   final _lastnameController = TextEditingController();
   String? _avatarUrl;
   var _loading = false;
@@ -30,13 +30,14 @@ class _AccountPageState extends State<AccountPage> {
           .eq('id', userId)
           .single() as Map;
       _usernameController.text = (data['username'] ?? '') as String;
-      _websiteController.text = (data['website'] ?? '') as String;
+      _secretWordController.text = (data['secretWord'] ?? '') as String;
       _lastnameController.text = (data['lastname'] ?? '') as String;
       _avatarUrl = (data['avatar_url'] ?? '') as String;
     } on PostgrestException catch (error) {
       context.showSnackBar(message: error.message, backgroundColor: Colors.red);
     } catch (error) {
-      context.showSnackBar(message: 'Unexpected exception occured', backgroundColor: Colors.red);
+      context.showSnackBar(
+          message: 'Unexpected exception occured', backgroundColor: Colors.red);
     }
 
     setState(() {
@@ -50,25 +51,28 @@ class _AccountPageState extends State<AccountPage> {
       _loading = true;
     });
     final userName = _usernameController.text;
-    final website = _websiteController.text;
+    final secretWord = _secretWordController.text;
     final lastname = _lastnameController.text;
     final user = supabase.auth.currentUser;
     final updates = {
       'id': user!.id,
       'username': userName,
-      'website': website,
+      'secretWord': secretWord,
       'lastname': lastname,
       'updated_at': DateTime.now().toIso8601String(),
     };
     try {
       await supabase.from('profiles').upsert(updates);
       if (mounted) {
-        context.showSnackBar(message: 'Successfully updated profile!', backgroundColor: Colors.red);
+        context.showSnackBar(
+            message: 'Successfully updated profile!',
+            backgroundColor: Colors.red);
       }
     } on PostgrestException catch (error) {
       context.showSnackBar(message: error.message, backgroundColor: Colors.red);
     } catch (error) {
-      context.showSnackBar(message: 'Unexpeted error occured', backgroundColor: Colors.red);
+      context.showSnackBar(
+          message: 'Unexpeted error occured', backgroundColor: Colors.red);
     }
     setState(() {
       _loading = false;
@@ -81,7 +85,8 @@ class _AccountPageState extends State<AccountPage> {
     } on AuthException catch (error) {
       context.showSnackBar(message: error.message, backgroundColor: Colors.red);
     } catch (error) {
-      context.showSnackBar(message: 'Unexpected error occured', backgroundColor: Colors.red);
+      context.showSnackBar(
+          message: 'Unexpected error occured', backgroundColor: Colors.red);
     }
     if (mounted) {
       Navigator.of(context).pushReplacementNamed('/');
@@ -97,7 +102,8 @@ class _AccountPageState extends State<AccountPage> {
   @override
   void dispose() {
     _usernameController.dispose();
-    _websiteController.dispose();
+    _lastnameController.dispose();
+    _secretWordController.dispose();
     super.dispose();
   }
 
@@ -110,19 +116,18 @@ class _AccountPageState extends State<AccountPage> {
         children: [
           TextFormField(
             controller: _usernameController,
-            decoration: const InputDecoration(labelText: 'User Name'),
-          ),
-          const SizedBox(height: 18),
-          TextFormField(
-            controller: _websiteController,
-            decoration: const InputDecoration(labelText: 'Website'),
+            decoration: const InputDecoration(labelText: 'Nombre'),
           ),
           const SizedBox(height: 18),
           TextFormField(
             controller: _lastnameController,
-            decoration: const InputDecoration(labelText: 'lastname'),
+            decoration: const InputDecoration(labelText: 'Apellido'),
           ),
           const SizedBox(height: 18),
+          TextFormField(
+            controller: _secretWordController,
+            decoration: const InputDecoration(labelText: 'Cree una clave'),
+          ),
           ElevatedButton(
             onPressed: _updateProfile,
             child: Text(_loading ? 'Saving...' : 'Update'),
