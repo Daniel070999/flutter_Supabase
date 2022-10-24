@@ -35,20 +35,20 @@ class _LoginPageState extends State<LoginPage> {
       if (mounted) {
         context.showSnackBar(
             message: 'Revisa tu correo para ingresar',
-            backgroundColor: Colors.green);
+            backgroundColor: Colors.lightGreen);
         _emailController.clear();
         Navigator.of(context).pop();
       }
     } on AuthException catch (error) {
-      var text_in = error.toString();
-      if (text_in.endsWith("422)")) {
+      var text_input = error.toString();
+      if (text_input.endsWith("422)")) {
         context.showSnackBar(
             message: 'Correo no valido', backgroundColor: Colors.red);
-      } else if (text_in.endsWith("429)")) {
+      } else if (text_input.endsWith("429)")) {
         context.showSnackBar(
             message: 'Vuelva a enviar luego de 60 segundos',
             backgroundColor: Colors.red);
-      } else if (text_in.endsWith("400)")) {
+      } else if (text_input.endsWith("400)")) {
         context.showSnackBar(
             message: 'Ingrese un correo electrónico',
             backgroundColor: Colors.red);
