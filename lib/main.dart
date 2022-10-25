@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersupabase/pages/account_page.dart';
-import 'package:fluttersupabase/pages/login_page.dart';
-import 'package:fluttersupabase/pages/splash_page.dart';
+import 'package:fluttersupabase/pages_auth/account_page.dart';
+import 'package:fluttersupabase/pages_auth/login_page.dart';
+import 'package:fluttersupabase/pages_auth/splash_page.dart';
+import 'package:fluttersupabase/pages_user_main/user_main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   await Supabase.initialize(
-    // TODO: Replace credentials with your own
     url: 'https://ergjvwwsxxowhfbktrnj.supabase.co',
-    anonKey:  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyZ2p2d3dzeHhvd2hmYmt0cm5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjYzNjc2NDIsImV4cCI6MTk4MTk0MzY0Mn0.xcCludLuJeTCkH3rsrGy3YvHp1_a6L3zNKRjkToFd1Q',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyZ2p2d3dzeHhvd2hmYmt0cm5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjYzNjc2NDIsImV4cCI6MTk4MTk0MzY0Mn0.xcCludLuJeTCkH3rsrGy3YvHp1_a6L3zNKRjkToFd1Q',
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'minimizado',
-      theme: ThemeData.dark().copyWith(
+      theme: ThemeData.light().copyWith(
         primaryColor: Colors.green,
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
@@ -36,7 +39,8 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/': (_) => const SplashPage(),
         '/login': (_) => const LoginPage(),
-        '/account': (_) => const AccountPage(),
+        '/account': (_) =>  const AccountPage(),
+        '/userMain': (_) => const UserMain(),
       },
     );
   }
