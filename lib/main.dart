@@ -1,24 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersupabase/pages/account_page.dart';
-import 'package:fluttersupabase/pages/login_page.dart';
-import 'package:fluttersupabase/pages/splash_page.dart';
+import 'package:fluttersupabase/pages_auth/account_page.dart';
+import 'package:fluttersupabase/pages_auth/login_page.dart';
+import 'package:fluttersupabase/pages_auth/splash_page.dart';
+import 'package:fluttersupabase/pages_user_main/user_main.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   await Supabase.initialize(
-    // TODO: Replace credentials with your own
     url: 'https://YOUR_PROJECT_REF.supabase.co',
-    anonKey:  'YOUR_SUPABASE_ANON_KEY',
+    anonKey:
+        'YOUR_SUPABASE_ANON_KEY',
   );
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'minimizado',
-      theme: ThemeData.dark().copyWith(
+      theme: ThemeData.light().copyWith(
         primaryColor: Colors.green,
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
@@ -36,7 +39,8 @@ class MyApp extends StatelessWidget {
       routes: <String, WidgetBuilder>{
         '/': (_) => const SplashPage(),
         '/login': (_) => const LoginPage(),
-        '/account': (_) => const AccountPage(),
+        '/account': (_) =>  const AccountPage(),
+        '/userMain': (_) => const UserMain(),
       },
     );
   }

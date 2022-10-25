@@ -52,7 +52,7 @@ class _LoginPageState extends State<LoginPage> {
         context.showSnackBar(
             message: 'Ingrese un correo electrónico',
             backgroundColor: Colors.red);
-      }else {
+      } else {
         context.showSnackBar(
             message: 'Error al enviar el correo', backgroundColor: Colors.red);
       }
@@ -88,6 +88,7 @@ class _LoginPageState extends State<LoginPage> {
           email: _emailController.text,
           password: _passwordController.text,
         );
+
         final Session? session = res.session;
         final User? user = res.user;
       } catch (e) {
@@ -104,6 +105,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
+    
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _authStateSubscription = supabase.auth.onAuthStateChange.listen((data) {
@@ -111,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
       final session = data.session;
       if (session != null) {
         _redirecting = true;
-        Navigator.of(context).pushReplacementNamed('/account');
+        Navigator.of(context).pushReplacementNamed('/');
       }
     });
     super.initState();
@@ -292,7 +294,7 @@ class _LoginPageState extends State<LoginPage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
-                              OutlinedButton(
+                              TextButton(
                                 onPressed: () {
                                   showDialog(
                                     barrierDismissible: false,
@@ -307,7 +309,7 @@ class _LoginPageState extends State<LoginPage> {
                                           const EdgeInsets.all(20.0),
                                       children: [
                                         const Text(
-                                          "Ingrese su correo electrónico y luego eliga una opción",
+                                          "Ingrese su correo electrónico y luego seleccione una opción",
                                           style: TextStyle(color: Colors.black),
                                         ),
                                         const SizedBox(
