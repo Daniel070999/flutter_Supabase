@@ -21,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
   late final StreamSubscription<AuthState> _authStateSubscription;
+  final _validatedForm = GlobalKey<FormState>();
 
   Future<void> _signInEmail() async {
     setState(() {
@@ -67,11 +68,27 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       _isLoading = true;
     });
-    context.showSnackBar(message: 'Próximamente', backgroundColor: Colors.grey);
-    _emailController.clear();
+    try {
+      await supabase.auth.resetPasswordForEmail(
+        _emailController.text,
+        redirectTo: kIsWeb ? null : 'io.supabase.flutter://reset-callback/',
+      );
+      if (mounted) {
+        context.showSnackBar(
+            message: 'Revisa tu correo para ingresar',
+            backgroundColor: Colors.lightGreen);
+        _emailController.clear();
+        Navigator.of(context).pop();
+      }
+    } on AuthException catch (error) {
+      context.showSnackBar(
+            message: 'Intenta luego de 60 segundos',
+            backgroundColor: Colors.red);
+    }
     setState(() {
       _isLoading = false;
     });
+
   }
 
   Future<void> _signInAgain() async {
@@ -105,7 +122,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _authStateSubscription = supabase.auth.onAuthStateChange.listen((data) {
@@ -130,329 +146,382 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
-        child: Container(
-          constraints: BoxConstraints(
-            maxHeight: MediaQuery.of(context).size.height,
-            maxWidth: MediaQuery.of(context).size.width,
-          ),
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.lightGreen,
-                Colors.lightBlue,
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.centerRight,
+        child: Form(
+          key: _validatedForm,
+          child: Container(
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height,
+              maxWidth: MediaQuery.of(context).size.width,
             ),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                flex: 2,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                      vertical: 30.0, horizontal: 24.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        "Inicio de Sesion",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 42,
-                          fontWeight: FontWeight.w800,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Colors.lightGreen,
+                  Colors.lightBlue,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.centerRight,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 30.0, horizontal: 24.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          "Inicio de Sesion",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 42,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 10.0,
-                      ),
-                      Text(
-                        "Bienvenido",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 28,
-                          fontWeight: FontWeight.w400,
+                        SizedBox(
+                          height: 10.0,
                         ),
-                      )
-                    ],
+                        Text(
+                          "Bienvenido",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 28,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              Expanded(
-                flex: 6,
-                child: Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Container(
-                    width: double.infinity,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                          image: AssetImage('images/login.png'),
-                          scale: 1.0,
-                          alignment: Alignment.topCenter),
-                      color: Colors.white,
-                      borderRadius: BorderRadius.all(Radius.circular(25)),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                        top: 250,
-                        left: 30,
-                        right: 30,
+                Expanded(
+                  flex: 6,
+                  child: Padding(
+                    padding: const EdgeInsets.all(30.0),
+                    child: Container(
+                      width: double.infinity,
+                      decoration: const BoxDecoration(
+                        image: DecorationImage(
+                            image: AssetImage('images/login.png'),
+                            scale: 1.0,
+                            alignment: Alignment.topCenter),
+                        color: Colors.white,
+                        borderRadius: BorderRadius.all(Radius.circular(25)),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          TextFormField(
-                            style: const TextStyle(color: Colors.lightBlue),
-                            controller: _emailController,
-                            decoration: InputDecoration(
-                              labelText: "Correo electrónico",
-                              labelStyle:
-                                  const TextStyle(color: Colors.lightBlue),
-                              prefixIcon: const Icon(
-                                Icons.email_outlined,
-                                color: Colors.lightBlue,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25.0),
-                                borderSide: const BorderSide(
+                      child: Padding(
+                        padding: const EdgeInsets.only(
+                          top: 250,
+                          left: 30,
+                          right: 30,
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            TextFormField(
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (value) {
+                                if (value.toString().isEmpty) {
+                                  return 'Ingrese un correo electrónico';
+                                } else if (!value.toString().contains('@') ||
+                                    !value.toString().contains('.')) {
+                                  return 'Ingrese un correo válido';
+                                }
+                                return null;
+                              },
+                              style: const TextStyle(color: Colors.lightBlue),
+                              controller: _emailController,
+                              decoration: InputDecoration(
+                                labelText: "Correo electrónico",
+                                labelStyle:
+                                    const TextStyle(color: Colors.lightBlue),
+                                prefixIcon: const Icon(
+                                  Icons.email_outlined,
                                   color: Colors.lightBlue,
-                                  width: 1.5,
                                 ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    color: Colors.lightBlue, width: 2.0),
-                                borderRadius: BorderRadius.circular(25.0),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10.0,
-                          ),
-                          TextFormField(
-                            obscureText: true,
-                            style: const TextStyle(color: Colors.lightBlue),
-                            controller: _passwordController,
-                            decoration: InputDecoration(
-                              labelText: "Clave",
-                              labelStyle:
-                                  const TextStyle(color: Colors.lightBlue),
-                              prefixIcon: const Icon(
-                                Icons.lock,
-                                color: Colors.lightBlue,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.lightBlue,
-                                  width: 1.5,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    color: Colors.lightBlue, width: 2.0),
-                                borderRadius: BorderRadius.circular(25.0),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 10.0,
-                          ),
-                          (_isLoadingLogin == false)
-                              ? OutlinedButton(
-                                  style: ButtonStyle(
-                                    fixedSize: MaterialStateProperty.all(
-                                        const Size.fromWidth(200)),
-                                    overlayColor: MaterialStateProperty.all(
-                                        Colors.lightBlue),
-                                    foregroundColor:
-                                        MaterialStateProperty.all(Colors.white),
-                                    backgroundColor: MaterialStateProperty.all(
-                                        Colors.lightGreen),
-                                    shape: MaterialStateProperty.all(
-                                      RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(25)),
-                                    ),
-                                    side: MaterialStateProperty.all(
-                                        const BorderSide(
-                                            color: Colors.lightGreen)),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.lightBlue,
+                                    width: 1.5,
                                   ),
-                                  onPressed:
-                                      _isLoadingLogin ? null : _signInAgain,
-                                  child: const Text('Iniciar Sesion'),
-                                )
-                              : Platform.isAndroid
-                                  ? const Center(
-                                      child: CircularProgressIndicator())
-                                  : const Center(
-                                      child: CupertinoActivityIndicator()),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              TextButton(
-                                onPressed: () {
-                                  showDialog(
-                                    barrierDismissible: false,
-                                    barrierColor: Colors.black54,
-                                    context: context,
-                                    builder: (context) => SimpleDialog(
-                                      backgroundColor: Colors.white,
-                                      shape: RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(20.0)),
-                                      contentPadding:
-                                          const EdgeInsets.all(20.0),
-                                      children: [
-                                        const Text(
-                                          "Ingrese su correo electrónico y luego seleccione una opción",
-                                          style: TextStyle(color: Colors.black),
-                                        ),
-                                        const SizedBox(
-                                          height: 10.0,
-                                        ),
-                                        TextFormField(
-                                          style: const TextStyle(
-                                              color: Colors.lightBlue),
-                                          controller: _emailController,
-                                          decoration: InputDecoration(
-                                            labelText: "Correo electrónico",
-                                            labelStyle: const TextStyle(
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.lightBlue, width: 2.0),
+                                  borderRadius: BorderRadius.circular(25.0),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                            TextFormField(
+                              validator: (value) {
+                                if (value.toString().isEmpty) {
+                                  return 'Ingrese la contraseña';
+                                }
+                                return null;
+                              },
+                              obscureText: true,
+                              style: const TextStyle(color: Colors.lightBlue),
+                              controller: _passwordController,
+                              decoration: InputDecoration(
+                                labelText: "Clave",
+                                labelStyle:
+                                    const TextStyle(color: Colors.lightBlue),
+                                prefixIcon: const Icon(
+                                  Icons.lock,
+                                  color: Colors.lightBlue,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.lightBlue,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.lightBlue, width: 2.0),
+                                  borderRadius: BorderRadius.circular(25.0),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 10.0,
+                            ),
+                            (_isLoadingLogin == false)
+                                ? OutlinedButton(
+                                    style: ButtonStyle(
+                                      fixedSize: MaterialStateProperty.all(
+                                          const Size.fromWidth(200)),
+                                      overlayColor: MaterialStateProperty.all(
+                                          Colors.lightBlue),
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.white),
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.lightGreen),
+                                      shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(25)),
+                                      ),
+                                      side: MaterialStateProperty.all(
+                                          const BorderSide(
+                                              color: Colors.lightGreen)),
+                                    ),
+                                    onPressed: () {
+                                      if (_validatedForm.currentState!
+                                          .validate()) {
+                                        _emailController.text =
+                                            _emailController.text.trim();
+                                        _passwordController.text =
+                                            _passwordController.text.trim();
+                                        _signInAgain();
+                                      }
+                                    },
+                                    child: const Text('Iniciar Sesion'),
+                                  )
+                                : Platform.isAndroid
+                                    ? const Center(
+                                        child: CircularProgressIndicator())
+                                    : const Center(
+                                        child: CupertinoActivityIndicator()),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton(
+                                  onPressed: () {
+                                    showDialog(
+                                      barrierDismissible: false,
+                                      barrierColor: Colors.black54,
+                                      context: context,
+                                      builder: (context) => SimpleDialog(
+                                        backgroundColor: Colors.white,
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(20.0)),
+                                        contentPadding:
+                                            const EdgeInsets.all(20.0),
+                                        children: [
+                                          const Text(
+                                            "Ingrese su correo electrónico y luego seleccione una opción",
+                                            style:
+                                                TextStyle(color: Colors.black),
+                                          ),
+                                          const SizedBox(
+                                            height: 10.0,
+                                          ),
+                                          TextFormField(
+                                            keyboardType:
+                                                TextInputType.emailAddress,
+                                            validator: (value) {
+                                              if (value.toString().isEmpty) {
+                                                return 'Ingrese un correo electrónico';
+                                              } else if (!value
+                                                      .toString()
+                                                      .contains('@') ||
+                                                  !value
+                                                      .toString()
+                                                      .contains('.')) {
+                                                return 'Ingrese un correo válido';
+                                              }
+                                              return null;
+                                            },
+                                            style: const TextStyle(
                                                 color: Colors.lightBlue),
-                                            prefixIcon: const Icon(
-                                              Icons.email_outlined,
-                                              color: Colors.lightBlue,
-                                            ),
-                                            enabledBorder: OutlineInputBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(25.0),
-                                              borderSide: const BorderSide(
+                                            controller: _emailController,
+                                            decoration: InputDecoration(
+                                              labelText: "Correo electrónico",
+                                              labelStyle: const TextStyle(
+                                                  color: Colors.lightBlue),
+                                              prefixIcon: const Icon(
+                                                Icons.email_outlined,
                                                 color: Colors.lightBlue,
-                                                width: 1.5,
+                                              ),
+                                              enabledBorder: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(25.0),
+                                                borderSide: const BorderSide(
+                                                  color: Colors.lightBlue,
+                                                  width: 1.5,
+                                                ),
+                                              ),
+                                              focusedBorder: OutlineInputBorder(
+                                                borderSide: const BorderSide(
+                                                    color: Colors.lightBlue,
+                                                    width: 2.0),
+                                                borderRadius:
+                                                    BorderRadius.circular(25.0),
                                               ),
                                             ),
-                                            focusedBorder: OutlineInputBorder(
-                                              borderSide: const BorderSide(
-                                                  color: Colors.lightBlue,
-                                                  width: 2.0),
-                                              borderRadius:
-                                                  BorderRadius.circular(25.0),
-                                            ),
                                           ),
-                                        ),
-                                        const SizedBox(height: 10.0),
-                                        OutlinedButton(
-                                          style: ButtonStyle(
-                                            fixedSize:
-                                                MaterialStateProperty.all(
-                                                    const Size.fromWidth(200)),
-                                            overlayColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.lightBlue),
-                                            foregroundColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.white),
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.lightGreen),
-                                            shape: MaterialStateProperty.all(
-                                              RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          25)),
+                                          const SizedBox(height: 10.0),
+                                          OutlinedButton(
+                                            style: ButtonStyle(
+                                              fixedSize:
+                                                  MaterialStateProperty.all(
+                                                      const Size.fromWidth(
+                                                          200)),
+                                              overlayColor:
+                                                  MaterialStateProperty.all(
+                                                      Colors.lightBlue),
+                                              foregroundColor:
+                                                  MaterialStateProperty.all(
+                                                      Colors.white),
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
+                                                      Colors.lightGreen),
+                                              shape: MaterialStateProperty.all(
+                                                RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            25)),
+                                              ),
+                                              side: MaterialStateProperty.all(
+                                                  const BorderSide(
+                                                      color:
+                                                          Colors.lightGreen)),
                                             ),
-                                            side: MaterialStateProperty.all(
-                                                const BorderSide(
-                                                    color: Colors.lightGreen)),
+                                            onPressed: () {
+                                              _emailController.text =
+                                                  _emailController.text.trim();
+                                              _signInEmail();
+                                            },
+                                            child: Text(_isLoading
+                                                ? 'enviando'
+                                                : 'Obtener enlace de registro'),
                                           ),
-                                          onPressed: _signInEmail,
-                                          child: Text(_isLoading
-                                              ? 'enviando'
-                                              : 'Obtener enlace de registro'),
-                                        ),
-                                        OutlinedButton(
-                                          style: ButtonStyle(
-                                            fixedSize:
-                                                MaterialStateProperty.all(
-                                                    const Size.fromWidth(200)),
-                                            overlayColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.lightBlue),
-                                            foregroundColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.white),
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.orange),
-                                            shape: MaterialStateProperty.all(
-                                              RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          25)),
+                                          OutlinedButton(
+                                            style: ButtonStyle(
+                                              fixedSize:
+                                                  MaterialStateProperty.all(
+                                                      const Size.fromWidth(
+                                                          200)),
+                                              overlayColor:
+                                                  MaterialStateProperty.all(
+                                                      Colors.lightBlue),
+                                              foregroundColor:
+                                                  MaterialStateProperty.all(
+                                                      Colors.white),
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
+                                                      Colors.orange),
+                                              shape: MaterialStateProperty.all(
+                                                RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            25)),
+                                              ),
+                                              side: MaterialStateProperty.all(
+                                                  const BorderSide(
+                                                      color: Colors.orange)),
                                             ),
-                                            side: MaterialStateProperty.all(
-                                                const BorderSide(
-                                                    color: Colors.orange)),
+                                            onPressed: _resetPassword,
+                                            child: Text(_isLoading
+                                                ? 'enviando'
+                                                : 'Olvide mi contraseña'),
                                           ),
-                                          onPressed: _resetPassword,
-                                          child: Text(_isLoading
-                                              ? 'enviando'
-                                              : 'Olvide mi contraseña'),
-                                        ),
-                                        OutlinedButton(
-                                          style: ButtonStyle(
-                                            fixedSize:
-                                                MaterialStateProperty.all(
-                                                    const Size.fromWidth(200)),
-                                            overlayColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.lightBlue),
-                                            foregroundColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.white),
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.grey),
-                                            shape: MaterialStateProperty.all(
-                                              RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          25)),
+                                          OutlinedButton(
+                                            style: ButtonStyle(
+                                              fixedSize:
+                                                  MaterialStateProperty.all(
+                                                      const Size.fromWidth(
+                                                          200)),
+                                              overlayColor:
+                                                  MaterialStateProperty.all(
+                                                      Colors.lightBlue),
+                                              foregroundColor:
+                                                  MaterialStateProperty.all(
+                                                      Colors.white),
+                                              backgroundColor:
+                                                  MaterialStateProperty.all(
+                                                      Colors.grey),
+                                              shape: MaterialStateProperty.all(
+                                                RoundedRectangleBorder(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            25)),
+                                              ),
+                                              side: MaterialStateProperty.all(
+                                                  const BorderSide(
+                                                      color: Colors.grey)),
                                             ),
-                                            side: MaterialStateProperty.all(
-                                                const BorderSide(
-                                                    color: Colors.grey)),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                            child: const Text('Cancelar'),
                                           ),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
-                                          child: const Text('Cancelar'),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                },
-                                child: const Text(
-                                  "Más opciones",
-                                  style: TextStyle(
-                                      color: Colors.black54,
-                                      fontSize: 12,
-                                      fontStyle: FontStyle.italic),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                  child: const Text(
+                                    "Más opciones",
+                                    style: TextStyle(
+                                        color: Colors.black54,
+                                        fontSize: 12,
+                                        fontStyle: FontStyle.italic),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
