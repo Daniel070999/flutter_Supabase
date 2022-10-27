@@ -28,14 +28,11 @@ class _SplashPageState extends State<SplashPage> {
       final AuthChangeEvent event = data.event;
       if (event == AuthChangeEvent.passwordRecovery) {
         // handle signIn
-        print('cambie la clabe');
         _stateAuth = 'resetPass';
       } else {
-        print('inicio normal');
         _stateAuth = 'SingIn';
       }
     });
-    print('valor actual ----' + _stateAuth);
   }
 
   Future<void> _createUserName() async {
@@ -84,9 +81,7 @@ class _SplashPageState extends State<SplashPage> {
               arguments: _stateAuth);
         }
       } catch (e) {
-        print(e);
         if (e.toString().endsWith('null)')) {
-          print('vacio');
           _createUserName();
           if (mounted) {
             Navigator.of(context).pushReplacementNamed('/account');
@@ -94,11 +89,7 @@ class _SplashPageState extends State<SplashPage> {
         } else {
           Navigator.of(context)
               .pushReplacementNamed('/userMain', arguments: _stateAuth);
-          print('si hay');
         }
-        //
-        //   print(e);
-        //
       }
     } else {
       Navigator.of(context).pushReplacementNamed('/login');

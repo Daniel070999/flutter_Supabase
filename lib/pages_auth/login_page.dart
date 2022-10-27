@@ -22,6 +22,7 @@ class _LoginPageState extends State<LoginPage> {
   late final TextEditingController _passwordController;
   late final StreamSubscription<AuthState> _authStateSubscription;
   final _validatedForm = GlobalKey<FormState>();
+  final _validatedFormSheet = GlobalKey<FormState>();
 
   Future<void> _signInEmail() async {
     setState(() {
@@ -82,13 +83,11 @@ class _LoginPageState extends State<LoginPage> {
       }
     } on AuthException catch (error) {
       context.showSnackBar(
-            message: 'Intenta luego de 60 segundos',
-            backgroundColor: Colors.red);
+          message: 'Intenta luego de 60 segundos', backgroundColor: Colors.red);
     }
     setState(() {
       _isLoading = false;
     });
-
   }
 
   Future<void> _signInAgain() async {
@@ -340,168 +339,232 @@ class _LoginPageState extends State<LoginPage> {
                               children: [
                                 TextButton(
                                   onPressed: () {
-                                    showDialog(
-                                      barrierDismissible: false,
-                                      barrierColor: Colors.black54,
+                                    _passwordController.clear();
+                                    showModalBottomSheet(
+                                      isScrollControlled: true,
+                                      backgroundColor: Colors.transparent,
                                       context: context,
-                                      builder: (context) => SimpleDialog(
-                                        backgroundColor: Colors.white,
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20.0)),
-                                        contentPadding:
-                                            const EdgeInsets.all(20.0),
-                                        children: [
-                                          const Text(
-                                            "Ingrese su correo electrónico y luego seleccione una opción",
-                                            style:
-                                                TextStyle(color: Colors.black),
-                                          ),
-                                          const SizedBox(
-                                            height: 10.0,
-                                          ),
-                                          TextFormField(
-                                            keyboardType:
-                                                TextInputType.emailAddress,
-                                            validator: (value) {
-                                              if (value.toString().isEmpty) {
-                                                return 'Ingrese un correo electrónico';
-                                              } else if (!value
-                                                      .toString()
-                                                      .contains('@') ||
-                                                  !value
-                                                      .toString()
-                                                      .contains('.')) {
-                                                return 'Ingrese un correo válido';
-                                              }
-                                              return null;
-                                            },
-                                            style: const TextStyle(
-                                                color: Colors.lightBlue),
-                                            controller: _emailController,
-                                            decoration: InputDecoration(
-                                              labelText: "Correo electrónico",
-                                              labelStyle: const TextStyle(
-                                                  color: Colors.lightBlue),
-                                              prefixIcon: const Icon(
-                                                Icons.email_outlined,
-                                                color: Colors.lightBlue,
-                                              ),
-                                              enabledBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(25.0),
-                                                borderSide: const BorderSide(
-                                                  color: Colors.lightBlue,
-                                                  width: 1.5,
-                                                ),
-                                              ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                    color: Colors.lightBlue,
-                                                    width: 2.0),
-                                                borderRadius:
-                                                    BorderRadius.circular(25.0),
+                                      builder: (BuildContext context) {
+                                        return Container(
+                                          padding: const EdgeInsets.all(40.0),
+                                          decoration: const BoxDecoration(
+                                              gradient: LinearGradient(
+                                                  begin: Alignment.topLeft,
+                                                  end: Alignment.bottomRight,
+                                                  colors: [
+                                                    Colors.indigo,
+                                                    Colors.teal,
+                                                    Colors.white,
+                                                  ]),
+                                              borderRadius: BorderRadius.only(
+                                                topLeft: Radius.circular(30.0),
+                                                topRight: Radius.circular(30.0),
+                                              )),
+                                          height: 600,
+                                          child: Form(
+                                            key: _validatedFormSheet,
+                                            child: Center(
+                                              child: Column(
+                                                children: [
+                                                  const SizedBox(
+                                                    height: 10.0,
+                                                  ),
+                                                  TextFormField(
+                                                    cursorColor: Colors.white,
+                                                    keyboardType: TextInputType
+                                                        .emailAddress,
+                                                    validator: (value) {
+                                                      if (value
+                                                          .toString()
+                                                          .isEmpty) {
+                                                        return 'Ingrese un correo electrónico';
+                                                      } else if (!value
+                                                              .toString()
+                                                              .contains('@') ||
+                                                          !value
+                                                              .toString()
+                                                              .contains('.')) {
+                                                        return 'Ingrese un correo válido';
+                                                      }
+                                                      return null;
+                                                    },
+                                                    style: const TextStyle(
+                                                        color: Colors.white),
+                                                    controller:
+                                                        _emailController,
+                                                    decoration: InputDecoration(
+                                                      labelText:
+                                                          "Correo electrónico",
+                                                      labelStyle:
+                                                          const TextStyle(
+                                                              color:
+                                                                  Colors.white),
+                                                      prefixIcon: const Icon(
+                                                        Icons.email_outlined,
+                                                        color: Colors.white,
+                                                      ),
+                                                      enabledBorder:
+                                                          OutlineInputBorder(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(25.0),
+                                                        borderSide:
+                                                            const BorderSide(
+                                                          color: Colors.white,
+                                                          width: 1.5,
+                                                        ),
+                                                      ),
+                                                      focusedBorder:
+                                                          OutlineInputBorder(
+                                                        borderSide:
+                                                            const BorderSide(
+                                                                color: Colors
+                                                                    .white,
+                                                                width: 2.0),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(25.0),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 10.0),
+                                                  OutlinedButton(
+                                                    style: ButtonStyle(
+                                                      fixedSize:
+                                                          MaterialStateProperty
+                                                              .all(const Size
+                                                                      .fromWidth(
+                                                                  300)),
+                                                      overlayColor:
+                                                          MaterialStateProperty
+                                                              .all(Colors
+                                                                  .lightBlue),
+                                                      foregroundColor:
+                                                          MaterialStateProperty
+                                                              .all(
+                                                                  Colors.white),
+                                                      backgroundColor:
+                                                          MaterialStateProperty
+                                                              .all(Colors
+                                                                  .lightGreen),
+                                                      shape:
+                                                          MaterialStateProperty
+                                                              .all(
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        25)),
+                                                      ),
+                                                      side: MaterialStateProperty
+                                                          .all(const BorderSide(
+                                                              color: Colors
+                                                                  .lightGreen)),
+                                                    ),
+                                                    onPressed: () {
+                                                      if (_validatedFormSheet
+                                                          .currentState!
+                                                          .validate()) {
+                                                        _emailController.text =
+                                                            _emailController
+                                                                .text
+                                                                .trim();
+                                                        _signInEmail();
+                                                      }
+                                                    },
+                                                    child: Text(_isLoading
+                                                        ? 'enviando'
+                                                        : 'Obtener enlace de registro'),
+                                                  ),
+                                                  OutlinedButton(
+                                                    style: ButtonStyle(
+                                                      fixedSize:
+                                                          MaterialStateProperty
+                                                              .all(const Size
+                                                                      .fromWidth(
+                                                                  300)),
+                                                      overlayColor:
+                                                          MaterialStateProperty
+                                                              .all(Colors
+                                                                  .lightBlue),
+                                                      foregroundColor:
+                                                          MaterialStateProperty
+                                                              .all(
+                                                                  Colors.white),
+                                                      backgroundColor:
+                                                          MaterialStateProperty
+                                                              .all(Colors
+                                                                  .orange),
+                                                      shape:
+                                                          MaterialStateProperty
+                                                              .all(
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        25)),
+                                                      ),
+                                                      side: MaterialStateProperty
+                                                          .all(const BorderSide(
+                                                              color: Colors
+                                                                  .orange)),
+                                                    ),
+                                                    onPressed: () {
+                                                      if (_validatedFormSheet
+                                                          .currentState!
+                                                          .validate()) {
+                                                        _resetPassword();
+                                                      }
+                                                    },
+                                                    child: Text(_isLoading
+                                                        ? 'enviando'
+                                                        : 'Olvide mi contraseña'),
+                                                  ),
+                                                  OutlinedButton(
+                                                    style: ButtonStyle(
+                                                      fixedSize:
+                                                          MaterialStateProperty
+                                                              .all(const Size
+                                                                      .fromWidth(
+                                                                  300)),
+                                                      overlayColor:
+                                                          MaterialStateProperty
+                                                              .all(Colors
+                                                                  .lightBlue),
+                                                      foregroundColor:
+                                                          MaterialStateProperty
+                                                              .all(
+                                                                  Colors.white),
+                                                      backgroundColor:
+                                                          MaterialStateProperty
+                                                              .all(Colors.grey),
+                                                      shape:
+                                                          MaterialStateProperty
+                                                              .all(
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        25)),
+                                                      ),
+                                                      side: MaterialStateProperty
+                                                          .all(const BorderSide(
+                                                              color:
+                                                                  Colors.grey)),
+                                                    ),
+                                                    onPressed: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child:
+                                                        const Text('Cancelar'),
+                                                  )
+                                                ],
                                               ),
                                             ),
                                           ),
-                                          const SizedBox(height: 10.0),
-                                          OutlinedButton(
-                                            style: ButtonStyle(
-                                              fixedSize:
-                                                  MaterialStateProperty.all(
-                                                      const Size.fromWidth(
-                                                          200)),
-                                              overlayColor:
-                                                  MaterialStateProperty.all(
-                                                      Colors.lightBlue),
-                                              foregroundColor:
-                                                  MaterialStateProperty.all(
-                                                      Colors.white),
-                                              backgroundColor:
-                                                  MaterialStateProperty.all(
-                                                      Colors.lightGreen),
-                                              shape: MaterialStateProperty.all(
-                                                RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25)),
-                                              ),
-                                              side: MaterialStateProperty.all(
-                                                  const BorderSide(
-                                                      color:
-                                                          Colors.lightGreen)),
-                                            ),
-                                            onPressed: () {
-                                              _emailController.text =
-                                                  _emailController.text.trim();
-                                              _signInEmail();
-                                            },
-                                            child: Text(_isLoading
-                                                ? 'enviando'
-                                                : 'Obtener enlace de registro'),
-                                          ),
-                                          OutlinedButton(
-                                            style: ButtonStyle(
-                                              fixedSize:
-                                                  MaterialStateProperty.all(
-                                                      const Size.fromWidth(
-                                                          200)),
-                                              overlayColor:
-                                                  MaterialStateProperty.all(
-                                                      Colors.lightBlue),
-                                              foregroundColor:
-                                                  MaterialStateProperty.all(
-                                                      Colors.white),
-                                              backgroundColor:
-                                                  MaterialStateProperty.all(
-                                                      Colors.orange),
-                                              shape: MaterialStateProperty.all(
-                                                RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25)),
-                                              ),
-                                              side: MaterialStateProperty.all(
-                                                  const BorderSide(
-                                                      color: Colors.orange)),
-                                            ),
-                                            onPressed: _resetPassword,
-                                            child: Text(_isLoading
-                                                ? 'enviando'
-                                                : 'Olvide mi contraseña'),
-                                          ),
-                                          OutlinedButton(
-                                            style: ButtonStyle(
-                                              fixedSize:
-                                                  MaterialStateProperty.all(
-                                                      const Size.fromWidth(
-                                                          200)),
-                                              overlayColor:
-                                                  MaterialStateProperty.all(
-                                                      Colors.lightBlue),
-                                              foregroundColor:
-                                                  MaterialStateProperty.all(
-                                                      Colors.white),
-                                              backgroundColor:
-                                                  MaterialStateProperty.all(
-                                                      Colors.grey),
-                                              shape: MaterialStateProperty.all(
-                                                RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            25)),
-                                              ),
-                                              side: MaterialStateProperty.all(
-                                                  const BorderSide(
-                                                      color: Colors.grey)),
-                                            ),
-                                            onPressed: () {
-                                              Navigator.of(context).pop();
-                                            },
-                                            child: const Text('Cancelar'),
-                                          ),
-                                        ],
-                                      ),
+                                        );
+                                      },
                                     );
                                   },
                                   child: const Text(

@@ -23,14 +23,21 @@ class _UserMainState extends State<UserMain> {
   @override
   Widget build(BuildContext context) {
     Object? parametros = ModalRoute.of(context)!.settings.arguments;
-    print(parametros.toString()+"-------llegando");
     if (parametros == 'resetPass') {
       _resetPass(context);
     }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('que mas'),
+        title: const Text('User Main'),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.center,
+                end: Alignment.centerRight,
+                colors: <Color>[Colors.red, Colors.black87]),
+          ),
+        ),
       ),
       body: Container(
         child: OutlinedButton(

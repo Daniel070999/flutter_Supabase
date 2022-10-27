@@ -16,17 +16,17 @@ class _ResetPasswordState extends State<ResetPassword> {
   var _loading = false;
 
   /// Called once a user id is received within `onAuthenticated()`
-  
 
   /// Called when user taps `Update` button
-  
+
   Future<void> _signOut() async {
     try {
       await supabase.auth.signOut();
     } on AuthException catch (error) {
-      context.showSnackBar(message: error.message,backgroundColor:  Colors.red);
+      context.showSnackBar(message: error.message, backgroundColor: Colors.red);
     } catch (error) {
-      context.showSnackBar(message: 'Unexpected error occured',backgroundColor:  Colors.red);
+      context.showSnackBar(
+          message: 'Unexpected error occured', backgroundColor: Colors.red);
     }
     if (mounted) {
       Navigator.of(context).pushReplacementNamed('/');
@@ -48,7 +48,17 @@ class _ResetPasswordState extends State<ResetPassword> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(
+        title: const Text('Restauración de contraseña'),
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+                begin: Alignment.center,
+                end: Alignment.centerRight,
+                colors: <Color>[Color.fromARGB(255, 255, 86, 86), Colors.black87]),
+          ),
+        ),
+      ),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
         children: [
