@@ -45,10 +45,13 @@ class _AccountPageState extends State<AccountPage> {
         ),
       );
       if (mounted) {
-        context.showSnackBar(
+        context.showSnackBarWithButtion(
             message: 'Dato actualizados correctamente',
-            backgroundColor: Colors.lightGreen);
-        Navigator.of(context).pushReplacementNamed('/userMain');
+            backgroundColor: Colors.lightGreen,
+            messageButton: 'Continuar',
+            Function: () {
+              Navigator.of(context).pushReplacementNamed('/userMain');
+            });
       }
     } on PostgrestException catch (error) {
       context.showSnackBar(message: error.message, backgroundColor: Colors.red);
@@ -66,7 +69,6 @@ class _AccountPageState extends State<AccountPage> {
     super.initState();
   }
 
-
   @override
   void dispose() {
     _usernameController.dispose();
@@ -75,11 +77,21 @@ class _AccountPageState extends State<AccountPage> {
     _passwordConfirmController.dispose();
     super.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Registro de datos'),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient:
+                LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
+              Colors.green,
+              Colors.blue.shade300,
+            ]),
+          ),
+        ),
         backgroundColor: Colors.lightBlue,
       ),
       body: Container(
