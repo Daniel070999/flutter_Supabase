@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttersupabase/pages_user_main/user_new_note.dart';
 
 class ContainerUserMain extends StatefulWidget {
   const ContainerUserMain({super.key});
@@ -8,6 +9,14 @@ class ContainerUserMain extends StatefulWidget {
 }
 
 class _ContainerUserMainState extends State<ContainerUserMain> {
+  Future<void> _newNote(BuildContext context) async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const NewNote(),
+        ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,8 +50,30 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
                 child: Container(
-                  height: 200,
-                  color: Colors.lightBlue,
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                    alignment: Alignment.centerLeft,
+                    image: AssetImage("images/notes.png"),
+                  )),
+                  height: 100,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: OutlinedButton(
+                      onPressed: () {
+                        _newNote(context);
+                      },
+                      child: const Padding(
+                        padding: const EdgeInsets.only(left: 50),
+                        child: Text(
+                          'Agregar nota',
+                          style: TextStyle(
+                              fontSize: 28,
+                              letterSpacing: 2,
+                              color: Colors.black),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -53,8 +84,29 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
                 child: Container(
-                  height: 200,
-                  color: Colors.lightBlue,
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        opacity: 0.5,
+                    alignment: Alignment.centerLeft,
+                    image: AssetImage("images/interrogation.png"),
+                  )),
+                  height: 100,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      child: const Padding(
+                        padding: const EdgeInsets.only(left: 50),
+                        child: Text(
+                          'Trabajando...',
+                          style: TextStyle(
+                              fontSize: 28,
+                              letterSpacing: 2,
+                              color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -65,8 +117,29 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
                 child: Container(
-                  height: 200,
-                  color: Colors.lightBlue,
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        opacity: 0.5,
+                    alignment: Alignment.centerLeft,
+                    image: AssetImage("images/interrogation.png"),
+                  )),
+                  height: 100,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      child: const Padding(
+                        padding: const EdgeInsets.only(left: 50),
+                        child: Text(
+                          'Trabajando...',
+                          style: TextStyle(
+                              fontSize: 28,
+                              letterSpacing: 2,
+                              color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -77,8 +150,29 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(20.0),
                 child: Container(
-                  height: 200,
-                  color: Colors.lightBlue,
+                  decoration: const BoxDecoration(
+                      image: DecorationImage(
+                        opacity: 0.5,
+                    alignment: Alignment.centerLeft,
+                    image: AssetImage("images/interrogation.png"),
+                  )),
+                  height: 100,
+                  child: Padding(
+                    padding: const EdgeInsets.all(4.0),
+                    child: OutlinedButton(
+                      onPressed: () {},
+                      child: const Padding(
+                        padding: const EdgeInsets.only(left: 50),
+                        child: Text(
+                          'Trabajando...',
+                          style: TextStyle(
+                              fontSize: 28,
+                              letterSpacing: 2,
+                              color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
             ),

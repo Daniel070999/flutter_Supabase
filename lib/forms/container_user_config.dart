@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
+import 'package:fluttersupabase/pages_user_main/user_profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ContainerUserConfig extends StatefulWidget {
@@ -21,6 +22,19 @@ class _ContainerUserConfigState extends State<ContainerUserConfig> {
     }
     if (mounted) {
       Navigator.of(context).pushReplacementNamed('/');
+    }
+  }
+
+  Future<void> _userProfile(BuildContext context) async {
+    try {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const UserProfileUpdate(),
+          ));
+    } catch (error) {
+      context.showSnackBar(
+          message: 'Unexpected error occured', backgroundColor: Colors.red);
     }
   }
 
@@ -49,6 +63,39 @@ class _ContainerUserConfigState extends State<ContainerUserConfig> {
                 ),
               )),
               title: const Text('Configuraciones'),
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: ClipRRect(
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: OutlinedButton(
+                  style: ButtonStyle(
+                    overlayColor:
+                        MaterialStateProperty.all(Colors.lightBlue.shade200),
+                    foregroundColor: MaterialStateProperty.all(Colors.white),
+                    shape: MaterialStateProperty.all(
+                      RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25)),
+                    ),
+                    side: MaterialStateProperty.all(
+                        const BorderSide(color: Colors.grey)),
+                  ),
+                  onPressed: () {
+                    _userProfile(context);
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: const [
+                      Center(
+                          child: Text(
+                        'Actualizar datos',
+                        style: TextStyle(color: Colors.grey),
+                      )),
+                    ],
+                  ),
+                ),
+              ),
             ),
           ),
           SliverToBoxAdapter(
