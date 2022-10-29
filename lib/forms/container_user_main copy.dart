@@ -86,7 +86,7 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                 child: Container(
                   decoration: const BoxDecoration(
                       image: DecorationImage(
-                        opacity: 0.5,
+                    opacity: 0.5,
                     alignment: Alignment.centerLeft,
                     image: AssetImage("images/interrogation.png"),
                   )),
@@ -119,7 +119,7 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                 child: Container(
                   decoration: const BoxDecoration(
                       image: DecorationImage(
-                        opacity: 0.5,
+                    opacity: 0.5,
                     alignment: Alignment.centerLeft,
                     image: AssetImage("images/interrogation.png"),
                   )),
@@ -152,7 +152,7 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                 child: Container(
                   decoration: const BoxDecoration(
                       image: DecorationImage(
-                        opacity: 0.5,
+                    opacity: 0.5,
                     alignment: Alignment.centerLeft,
                     image: AssetImage("images/interrogation.png"),
                   )),
