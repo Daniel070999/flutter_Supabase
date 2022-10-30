@@ -60,7 +60,7 @@ class _NewNoteState extends State<NewNote> {
       final idUser = supabase.auth.currentUser!.id;
       data = await supabase
           .from('notes')
-          .select('title , description')
+          .select('title , description, id')
           .eq('id_notes_user', idUser);
     } catch (e) {
       print(e);
@@ -68,6 +68,7 @@ class _NewNoteState extends State<NewNote> {
     setState(() {
       _loadingNotes = false;
     });
+    print(data);
     return data;
   }
 
@@ -97,18 +98,15 @@ class _NewNoteState extends State<NewNote> {
         padding: const EdgeInsets.all(8.0),
         child: (_loadingNotes == false)
             ? ListNotes(
-                items: List<ListItem>.generate(
-                  data.length,
-                  (i) => (i == -1)
-                      ? HeadingItem('ads')
-                      : DataNotes(
-                          '${data[i]['title']}', ' ${data[i]['description']}'),
-                ),
+                items: List<ListItem>.generate(data.length, (i) {
+                  return DataNotes('${data[i]['title']}',
+                      ' ${data[i]['description']}', ' ${data[i]['id']}');
+                }),
               )
             : Platform.isAndroid
                 ? Center(
                     child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: const [
                       Text('Cargando notas ;)'),
                       SizedBox(
@@ -133,9 +131,20 @@ class _NewNoteState extends State<NewNote> {
               backgroundColor: Colors.transparent,
               builder: (BuildContext context) {
                 return Container(
+                  decoration:  BoxDecoration(
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.indigo.withOpacity(1),
+                            Colors.teal.withOpacity(0.5),
+                            Colors.transparent,
+                          ]),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(50.0),
+                        topRight: Radius.circular(50.0),
+                      )),
                   padding: const EdgeInsets.all(30.0),
-                  decoration:
-                      BoxDecoration(borderRadius: BorderRadius.circular(50)),
                   height: 700,
                   child: Form(
                     key: _validateTitle,

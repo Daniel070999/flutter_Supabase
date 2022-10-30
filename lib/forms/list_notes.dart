@@ -1,9 +1,16 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttersupabase/constants.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ListNotes extends StatelessWidget {
   final List<ListItem> items;
 
-  const ListNotes({super.key, required this.items});
+  ListNotes({super.key, required this.items});
 
   @override
   Widget build(BuildContext context) {
@@ -11,12 +18,17 @@ class ListNotes extends StatelessWidget {
       itemCount: items.length,
       itemBuilder: (context, index) {
         final item = items[index];
-
-        return ListTile(
-          minVerticalPadding: 10,
-          onTap: () {},
-          title: item.buildTitle(context),
-          subtitle: item.buildSubtitle(context),
+        return Column(
+          children: [
+            ListTile(
+              minVerticalPadding: 10,
+              onTap: () {
+                context.showSnackBar(message: item.buildIdNote(context).data.toString(), backgroundColor: Colors.grey);
+              },
+              title: item.buildTitle(context),
+              subtitle: item.buildSubtitle(context),
+            ),
+          ],
         );
       },
     );
@@ -27,30 +39,15 @@ abstract class ListItem {
   Widget buildTitle(BuildContext context);
 
   Widget buildSubtitle(BuildContext context);
-}
-
-class HeadingItem implements ListItem {
-  final String heading;
-
-  HeadingItem(this.heading);
-
-  @override
-  Widget buildTitle(BuildContext context) {
-    return Text(
-      heading,
-      style: Theme.of(context).textTheme.headline5,
-    );
-  }
-
-  @override
-  Widget buildSubtitle(BuildContext context) => const SizedBox.shrink();
+  Text buildIdNote(BuildContext context);
 }
 
 class DataNotes implements ListItem {
   final String title;
   final String description;
+  final String idNote;
 
-  DataNotes(this.title, this.description);
+  DataNotes(this.title, this.description, this.idNote);
 
   @override
   Widget buildTitle(BuildContext context) =>
@@ -59,4 +56,7 @@ class DataNotes implements ListItem {
   @override
   Widget buildSubtitle(BuildContext context) =>
       Text(description, style: Theme.of(context).textTheme.caption);
+  @override
+  Text buildIdNote(BuildContext context) =>
+      Text(idNote, style: Theme.of(context).textTheme.caption);
 }
