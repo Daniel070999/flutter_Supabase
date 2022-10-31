@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:io';
 
 final supabase = Supabase.instance.client;
 
@@ -16,6 +18,31 @@ extension ShowSnackBar on BuildContext {
       margin: const EdgeInsets.all(50.0),
     ));
   }
+}
+
+showLoaderDialog(BuildContext context, String message) {
+  AlertDialog alert = AlertDialog(
+    backgroundColor: Colors.white,
+    content: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(message),
+        const SizedBox(
+          width: 20,
+        ),
+        Platform.isAndroid
+            ? const CircularProgressIndicator()
+            : const CupertinoActivityIndicator()
+      ],
+    ),
+  );
+  showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }
 
 extension ShowSnackBarWithButton on BuildContext {
@@ -40,4 +67,3 @@ extension ShowSnackBarWithButton on BuildContext {
     ));
   }
 }
-
