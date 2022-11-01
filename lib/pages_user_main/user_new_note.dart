@@ -21,6 +21,7 @@ class _NewNoteState extends State<NewNote> {
   final _validateNoteUpdate = GlobalKey<FormState>();
   String _newTitleUpdate = '';
   String _newDescriptionUpdate = '';
+  String _newIdNoteUpdate = '';
   bool _loadingNotes = false;
   bool _titleUpdate = false;
   bool _descriptionUpdate = false;
@@ -54,18 +55,20 @@ class _NewNoteState extends State<NewNote> {
     Navigator.pop(context);
   }
 
-  Future<void> _updateNote(BuildContext context, String idNote) async {
+  Future<void> _getNote(BuildContext context) async {}
+
+  Future<void> _updateNote(
+    BuildContext context,
+  ) async {
     showLoaderDialog(context, 'Actualizando nota');
     setState(() {});
     try {
-      final title = _newTitleUpdate;
-      final description = _newDescriptionUpdate;
       final createAt = DateTime.now().toIso8601String();
-      final id = idNote;
+      final id = _newIdNoteUpdate;
       final data = {
         'update_at': createAt,
-        'title': title,
-        'description': description
+        'title': _newTitleUpdate,
+        'description': _newDescriptionUpdate
       };
       await supabase.from('notes').update(data).eq('id', id);
       if (mounted) {
@@ -121,8 +124,7 @@ class _NewNoteState extends State<NewNote> {
     Navigator.pop(context);
   }
 
-  Future<void> _viewDeleteNote(
-      BuildContext context, String titleNote, String idNote) async {
+  Future<void> _viewDeleteNote(BuildContext context) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -149,7 +151,7 @@ class _NewNoteState extends State<NewNote> {
                   height: 10.0,
                 ),
                 Center(
-                  child: Text(titleNote),
+                  child: Text(_newTitleUpdate),
                 )
               ],
             ),
@@ -164,7 +166,7 @@ class _NewNoteState extends State<NewNote> {
                 style: TextStyle(color: Colors.white),
               ),
               onPressed: () {
-                _deleteNote(context, idNote);
+                _deleteNote(context, _newIdNoteUpdate);
               },
             ),
             const SizedBox(
@@ -238,8 +240,7 @@ class _NewNoteState extends State<NewNote> {
     );
   }
 
-  Future<void> _viewNote(BuildContext context, String titleNote,
-      String descriptionNote, String idNote) async {
+  Future<void> _viewNote(BuildContext context) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
@@ -254,17 +255,18 @@ class _NewNoteState extends State<NewNote> {
               child: Column(children: [
                 TextFormField(
                   onChanged: (value) {
-                    if (value != titleNote) {
+                    if (value != _newTitleUpdate) {
                       setState(() {
                         _titleUpdate = true;
                         _newTitleUpdate = value;
                       });
                     }
                   },
-                  initialValue: titleNote,
+                  initialValue: _newTitleUpdate,
                   maxLines: 1,
                   cursorColor: Colors.black,
                   validator: (value) {
+                    _newTitleUpdate = value.toString();
                     if (value.toString().isEmpty) {
                       return 'Este campo es obligatorio';
                     }
@@ -293,15 +295,17 @@ class _NewNoteState extends State<NewNote> {
                 ),
                 TextFormField(
                   onChanged: (value) {
-                    if (value != descriptionNote) {
+                    if (value != _newDescriptionUpdate) {
                       setState(() {
                         _descriptionUpdate = true;
-                        _newDescriptionUpdate = value;
                       });
                     }
                     return;
                   },
-                  initialValue: descriptionNote,
+                  validator: (value) {
+                    _newDescriptionUpdate = value.toString();
+                  },
+                  initialValue: _newDescriptionUpdate,
                   maxLines: 10,
                   cursorColor: Colors.black,
                   keyboardType: TextInputType.multiline,
@@ -337,7 +341,7 @@ class _NewNoteState extends State<NewNote> {
               ),
               onPressed: () {
                 if (_validateNoteUpdate.currentState!.validate()) {
-                  _updateNote(context, idNote);
+                  _updateNote(context);
                 }
               },
             ),
@@ -399,18 +403,18 @@ class _NewNoteState extends State<NewNote> {
             ? ListView.builder(
                 itemCount: data.length,
                 itemBuilder: (context, index) {
-                  String titleNote = data[index]['title'];
-                  String descriptionNote = data[index]['description'];
-                  String iDNote = data[index]['id'];
+                  _newTitleUpdate = data[index]['title'];
+                  _newDescriptionUpdate = data[index]['description'];
+                  _newIdNoteUpdate = data[index]['id'];
+
                   return Column(
                     children: [
                       ListTile(
                         onLongPress: () {
-                          _viewDeleteNote(context, titleNote, iDNote);
+                          _viewDeleteNote(context);
                         },
                         onTap: () {
-                          _viewNote(
-                              context, titleNote, descriptionNote, iDNote);
+                          _viewNote(context);
                         },
                         minVerticalPadding: 10,
                         title: Text('${data[index]['title']}'),
