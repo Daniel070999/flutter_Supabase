@@ -8,12 +8,17 @@ import 'package:fluttersupabase/pages_user_main/user_profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
-  await Supabase.initialize(
+  try {
+    await Supabase.initialize(
     url: 'https://YOUR_PROJECT_REF.supabase.co',
     anonKey:
         'YOUR_SUPABASE_ANON_KEY',
   );
   runApp(const MyApp());
+  } catch (e) {
+    print('no hay conexion');
+  }
+  
 }
 
 class MyApp extends StatelessWidget {
