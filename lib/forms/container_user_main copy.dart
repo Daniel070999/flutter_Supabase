@@ -63,9 +63,9 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                         _newNote(context);
                       },
                       child: const Padding(
-                        padding: const EdgeInsets.only(left: 50),
+                        padding: EdgeInsets.only(left: 50),
                         child: Text(
-                          'Agregar nota',
+                          'NOTAS',
                           style: TextStyle(
                               fontSize: 28,
                               letterSpacing: 2,

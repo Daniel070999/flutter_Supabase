@@ -128,7 +128,9 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
 
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
+      
       appBar: AppBar(
         title: const Text('Actualización de datos'),
         flexibleSpace: Container(

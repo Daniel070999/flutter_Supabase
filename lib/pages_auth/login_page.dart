@@ -108,9 +108,15 @@ class _LoginPageState extends State<LoginPage> {
         final Session? session = res.session;
         final User? user = res.user;
       } catch (e) {
-        context.showSnackBar(
-            message: "Los datos ingresados son incorrectos",
-            backgroundColor: Colors.red);
+        if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
+          context.showSnackBar(
+              message: "Revise su conexión a Internet",
+              backgroundColor: Colors.red);
+        } else {
+          context.showSnackBar(
+              message: "Los datos ingresados son incorrectos",
+              backgroundColor: Colors.red);
+        }
       }
     }
 

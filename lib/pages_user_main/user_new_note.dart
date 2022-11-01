@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
+import 'dart:math' as math;
 
 class NewNote extends StatefulWidget {
   const NewNote({super.key});
@@ -14,7 +14,7 @@ class NewNote extends StatefulWidget {
 
 List<dynamic> data = [];
 
-class _NewNoteState extends State<NewNote> {
+class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _validateTitle = GlobalKey<FormState>();
@@ -45,7 +45,12 @@ class _NewNoteState extends State<NewNote> {
         Navigator.pop(context);
       }
     } catch (e) {
-      context.showSnackBar(message: e.toString(), backgroundColor: Colors.red);
+      Navigator.pop(context);
+      if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
+        context.showSnackBar(
+            message: "Revise su conexión a Internet",
+            backgroundColor: Colors.red);
+      }
     }
     setState(() {
       _titleController.clear();
@@ -54,8 +59,6 @@ class _NewNoteState extends State<NewNote> {
     });
     Navigator.pop(context);
   }
-
-  Future<void> _getNote(BuildContext context) async {}
 
   Future<void> _updateNote(
     BuildContext context,
@@ -99,7 +102,11 @@ class _NewNoteState extends State<NewNote> {
           .select('title , description, id')
           .eq('id_notes_user', idUser);
     } catch (e) {
-      context.showSnackBar(message: e.toString(), backgroundColor: Colors.red);
+      if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
+        context.showSnackBar(
+            message: "Revise su conexión a Internet",
+            backgroundColor: Colors.red);
+      }
     }
     setState(() {
       _loadingNotes = false;
@@ -122,72 +129,6 @@ class _NewNoteState extends State<NewNote> {
       context.showSnackBar(message: e.toString(), backgroundColor: Colors.red);
     }
     Navigator.pop(context);
-  }
-
-  Future<void> _viewDeleteNote(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          icon: const Icon(
-            Icons.warning,
-            size: 50.0,
-          ),
-          iconColor: Colors.red,
-          actionsAlignment: MainAxisAlignment.center,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(32.0))),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                const Center(
-                  child: Text(
-                    '¿Desea eliminar la nota?',
-                    style: TextStyle(fontStyle: FontStyle.italic),
-                  ),
-                ),
-                const SizedBox(
-                  height: 10.0,
-                ),
-                Center(
-                  child: Text(_newTitleUpdate),
-                )
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            ElevatedButton(
-              style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(Colors.red),
-              ),
-              child: const Text(
-                'Eliminar',
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () {
-                _deleteNote(context, _newIdNoteUpdate);
-              },
-            ),
-            const SizedBox(
-              height: 20.0,
-            ),
-            ElevatedButton(
-              style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(Colors.grey),
-              ),
-              child: const Text(
-                'Cancelar',
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
   }
 
   Future<void> _confirmNoUpdate(BuildContext context) async {
@@ -240,144 +181,228 @@ class _NewNoteState extends State<NewNote> {
     );
   }
 
-  Future<void> _viewNote(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          actionsAlignment: MainAxisAlignment.center,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(32.0))),
-          content: SingleChildScrollView(
-            child: Form(
-              key: _validateNoteUpdate,
-              child: Column(children: [
-                TextFormField(
-                  onChanged: (value) {
-                    if (value != _newTitleUpdate) {
-                      setState(() {
-                        _titleUpdate = true;
-                        _newTitleUpdate = value;
-                      });
-                    }
-                  },
-                  initialValue: _newTitleUpdate,
-                  maxLines: 1,
-                  cursorColor: Colors.black,
-                  validator: (value) {
-                    _newTitleUpdate = value.toString();
-                    if (value.toString().isEmpty) {
-                      return 'Este campo es obligatorio';
-                    }
-                    return null;
-                  },
-                  style: const TextStyle(color: Colors.black),
-                  decoration: InputDecoration(
-                    labelText: "Título",
-                    labelStyle: const TextStyle(color: Colors.black),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
-                        width: 1.5,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.grey, width: 2.0),
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                  ),
-                ),
-                const SizedBox(
-                  height: 15.0,
-                ),
-                TextFormField(
-                  onChanged: (value) {
-                    if (value != _newDescriptionUpdate) {
-                      setState(() {
-                        _descriptionUpdate = true;
-                      });
-                    }
-                    return;
-                  },
-                  validator: (value) {
-                    _newDescriptionUpdate = value.toString();
-                  },
-                  initialValue: _newDescriptionUpdate,
-                  maxLines: 10,
-                  cursorColor: Colors.black,
-                  keyboardType: TextInputType.multiline,
-                  style: const TextStyle(color: Colors.black),
-                  decoration: InputDecoration(
-                    labelText: "Descripción",
-                    labelStyle: const TextStyle(color: Colors.black),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: const BorderSide(
-                        color: Colors.grey,
-                        width: 1.5,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.grey, width: 2.0),
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                  ),
-                ),
-              ]),
-            ),
-          ),
-          actions: <Widget>[
-            ElevatedButton(
-              style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(Colors.lightGreen),
-              ),
-              child: const Text(
-                'Guardar',
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () {
-                if (_validateNoteUpdate.currentState!.validate()) {
-                  _updateNote(context);
+  Widget _showAnimateNote(BuildContext context) {
+    return AlertDialog(
+      actionsAlignment: MainAxisAlignment.center,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(32.0))),
+      content: SingleChildScrollView(
+        child: Form(
+          key: _validateNoteUpdate,
+          child: Column(children: [
+            TextFormField(
+              onChanged: (value) {
+                if (value != _newTitleUpdate) {
+                  setState(() {
+                    _titleUpdate = true;
+                    _newTitleUpdate = value;
+                  });
                 }
               },
+              initialValue: _newTitleUpdate,
+              maxLines: 1,
+              cursorColor: Colors.black,
+              validator: (value) {
+                _newTitleUpdate = value.toString();
+                if (value.toString().isEmpty) {
+                  return 'Este campo es obligatorio';
+                }
+                return null;
+              },
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
+                labelText: "Título",
+                labelStyle: const TextStyle(color: Colors.black),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25.0),
+                  borderSide: const BorderSide(
+                    color: Colors.grey,
+                    width: 1.5,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.grey, width: 2.0),
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+              ),
             ),
             const SizedBox(
-              height: 20.0,
+              height: 15.0,
             ),
-            ElevatedButton(
-              style: const ButtonStyle(
-                backgroundColor: MaterialStatePropertyAll(Colors.red),
-              ),
-              child: const Text(
-                'Cancelar',
-                style: TextStyle(color: Colors.white),
-              ),
-              onPressed: () {
-                if (_titleUpdate != true) {
-                  if (_descriptionUpdate != true) {
-                    Navigator.of(context).pop();
-                  } else {
-                    _confirmNoUpdate(context);
-                  }
-                } else {
-                  _confirmNoUpdate(context);
+            TextFormField(
+              onChanged: (value) {
+                if (value != _newDescriptionUpdate) {
+                  setState(() {
+                    _descriptionUpdate = true;
+                  });
                 }
+                return;
               },
+              validator: (value) {
+                _newDescriptionUpdate = value.toString();
+              },
+              initialValue: _newDescriptionUpdate,
+              maxLines: 10,
+              cursorColor: Colors.black,
+              keyboardType: TextInputType.multiline,
+              style: const TextStyle(color: Colors.black),
+              decoration: InputDecoration(
+                labelText: "Descripción",
+                labelStyle: const TextStyle(color: Colors.black),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(25.0),
+                  borderSide: const BorderSide(
+                    color: Colors.grey,
+                    width: 1.5,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.grey, width: 2.0),
+                  borderRadius: BorderRadius.circular(25.0),
+                ),
+              ),
             ),
-          ],
+          ]),
+        ),
+      ),
+      actions: <Widget>[
+        ElevatedButton(
+          style: const ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(Colors.lightGreen),
+          ),
+          child: const Text(
+            'Guardar',
+            style: TextStyle(color: Colors.white),
+          ),
+          onPressed: () {
+            if (_validateNoteUpdate.currentState!.validate()) {
+              _updateNote(context);
+            }
+          },
+        ),
+        const SizedBox(
+          height: 20.0,
+        ),
+        ElevatedButton(
+          style: const ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(Colors.red),
+          ),
+          child: const Text(
+            'Cerrar',
+            style: TextStyle(color: Colors.white),
+          ),
+          onPressed: () {
+            if (_titleUpdate != true) {
+              if (_descriptionUpdate != true) {
+                Navigator.of(context).pop();
+              } else {
+                _confirmNoUpdate(context);
+              }
+            } else {
+              _confirmNoUpdate(context);
+            }
+          },
+        ),
+      ],
+    );
+  }
+
+  void _viewDeleteNote() {
+    showGeneralDialog(
+      context: context,
+      pageBuilder: (ctx, a1, a2) {
+        return Container();
+      },
+      transitionBuilder: (ctx, a1, a2, child) {
+        return Transform.rotate(
+          angle: math.exp(a1.value * 2.531),
+          child: _showAnimateDeleteNote(ctx),
         );
       },
+      transitionDuration: const Duration(milliseconds: 300),
+    );
+  }
+
+  Widget _showAnimateDeleteNote(BuildContext context) {
+    return AlertDialog(
+      icon: const Icon(
+        Icons.warning,
+        size: 50.0,
+      ),
+      iconColor: Colors.red,
+      actionsAlignment: MainAxisAlignment.center,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(32.0))),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: <Widget>[
+            const Center(
+              child: Text(
+                '¿Desea eliminar la nota?',
+                style: TextStyle(fontStyle: FontStyle.italic),
+              ),
+            ),
+            const SizedBox(
+              height: 10.0,
+            ),
+            Center(
+              child: Text(_newTitleUpdate),
+            )
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        ElevatedButton(
+          style: const ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(Colors.red),
+          ),
+          child: const Text(
+            'Eliminar',
+            style: TextStyle(color: Colors.white),
+          ),
+          onPressed: () {
+            _deleteNote(context, _newIdNoteUpdate);
+          },
+        ),
+        const SizedBox(
+          height: 20.0,
+        ),
+        ElevatedButton(
+          style: const ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(Colors.grey),
+          ),
+          child: const Text(
+            'Cancelar',
+            style: TextStyle(color: Colors.white),
+          ),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        ),
+      ],
+    );
+  }
+
+  Future<void> _viewNote(BuildContext context) async {
+    showGeneralDialog(
+      context: context,
+      pageBuilder: (ctx, a1, a2) {
+        return Container();
+      },
+      transitionBuilder: (ctx, a1, a2, child) {
+        var curve = Curves.easeInOut.transform(a1.value);
+        return Transform.scale(
+          scale: curve,
+          child: _showAnimateNote(ctx),
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 400),
     );
   }
 
   @override
   void initState() {
     _getNotes();
-
     super.initState();
   }
 
@@ -411,7 +436,7 @@ class _NewNoteState extends State<NewNote> {
                     children: [
                       ListTile(
                         onLongPress: () {
-                          _viewDeleteNote(context);
+                          _viewDeleteNote();
                         },
                         onTap: () {
                           _viewNote(context);
@@ -450,6 +475,8 @@ class _NewNoteState extends State<NewNote> {
               isScrollControlled: true,
               context: context,
               backgroundColor: Colors.transparent,
+              transitionAnimationController: AnimationController(
+                  vsync: this, duration: const Duration(milliseconds: 600)),
               builder: (BuildContext context) {
                 return Container(
                   decoration: BoxDecoration(
