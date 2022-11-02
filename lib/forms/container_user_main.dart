@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/pages_user_main/user_new_note.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class ContainerUserMain extends StatefulWidget {
   const ContainerUserMain({super.key});
@@ -41,14 +42,15 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                   end: Alignment.centerRight,
                 ),
               )),
-              title: const Text('Menu principal'),
+              title: const Text(
+                'Menu principal',
+              ),
             ),
           ),
           SliverToBoxAdapter(
             child: Padding(
               padding: const EdgeInsets.all(15.0),
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
                 child: Container(
                   decoration: const BoxDecoration(
                       image: DecorationImage(
@@ -59,6 +61,14 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                   child: Padding(
                     padding: const EdgeInsets.all(4.0),
                     child: OutlinedButton(
+                      style: ButtonStyle(
+                        shape: MaterialStateProperty.all(
+                          RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25)),
+                        ),
+                        side: MaterialStateProperty.all(
+                            const BorderSide(color: Colors.grey)),
+                      ),
                       onPressed: () {
                         _newNote(context);
                       },
@@ -66,10 +76,7 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                         padding: EdgeInsets.only(left: 50),
                         child: Text(
                           'NOTAS',
-                          style: TextStyle(
-                              fontSize: 28,
-                              letterSpacing: 2,
-                              color: Colors.black),
+                          style: TextStyle(fontSize: 28, color: Colors.black),
                         ),
                       ),
                     ),

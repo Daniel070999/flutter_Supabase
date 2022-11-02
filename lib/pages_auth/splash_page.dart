@@ -49,7 +49,9 @@ class _SplashPageState extends State<SplashPage> {
       await supabase.from('profiles').upsert(updates);
     } catch (error) {
       context.showSnackBar(
-          message: 'Unexpeted error occured', backgroundColor: Colors.red);
+          message: 'Unexpeted error occured',
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     }
   }
 

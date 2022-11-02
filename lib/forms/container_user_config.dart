@@ -15,10 +15,15 @@ class _ContainerUserConfigState extends State<ContainerUserConfig> {
     try {
       await supabase.auth.signOut();
     } on AuthException catch (error) {
-      context.showSnackBar(message: error.message, backgroundColor: Colors.red);
+      context.showSnackBar(
+          message: error.message,
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     } catch (error) {
       context.showSnackBar(
-          message: 'Unexpected error occured', backgroundColor: Colors.red);
+          message: 'Unexpected error occured',
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     }
     if (mounted) {
       Navigator.of(context).pushReplacementNamed('/');
@@ -34,7 +39,9 @@ class _ContainerUserConfigState extends State<ContainerUserConfig> {
           ));
     } catch (error) {
       context.showSnackBar(
-          message: 'Unexpected error occured', backgroundColor: Colors.red);
+          message: 'Unexpected error occured',
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     }
   }
 
@@ -68,7 +75,7 @@ class _ContainerUserConfigState extends State<ContainerUserConfig> {
           SliverToBoxAdapter(
             child: ClipRRect(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(left: 16.0,right: 16.0),
                 child: OutlinedButton(
                   style: ButtonStyle(
                     overlayColor:
@@ -101,7 +108,7 @@ class _ContainerUserConfigState extends State<ContainerUserConfig> {
           SliverToBoxAdapter(
             child: ClipRRect(
               child: Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.only(left: 16.0,right: 16.0),
                 child: OutlinedButton(
                   style: ButtonStyle(
                     overlayColor:

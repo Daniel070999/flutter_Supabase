@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/forms/container_user_config.dart';
-import 'package:fluttersupabase/forms/container_user_main%20copy.dart';
+import 'package:fluttersupabase/forms/container_user_main.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 
 class UserMain extends StatefulWidget {

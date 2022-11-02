@@ -26,10 +26,15 @@ class _ResetPasswordState extends State<ResetPassword> {
     try {
       await supabase.auth.signOut();
     } on AuthException catch (error) {
-      context.showSnackBar(message: error.message, backgroundColor: Colors.red);
+      context.showSnackBar(
+          message: error.message,
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     } catch (error) {
       context.showSnackBar(
-          message: 'Unexpected error occured', backgroundColor: Colors.red);
+          message: 'Unexpected error occured',
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     }
     if (mounted) {
       Navigator.of(context).pushReplacementNamed('/');
@@ -70,7 +75,9 @@ class _ResetPasswordState extends State<ResetPassword> {
       }
     } catch (e) {
       context.showSnackBar(
-          message: 'Algo salio mal', backgroundColor: Colors.red);
+          message: 'Algo salio mal',
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     }
     setState(() {
       _loading = false;
