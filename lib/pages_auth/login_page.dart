@@ -37,7 +37,8 @@ class _LoginPageState extends State<LoginPage> {
       if (mounted) {
         context.showSnackBar(
             message: 'Revisa tu correo para ingresar',
-            backgroundColor: Colors.lightGreen);
+            backgroundColor: Colors.lightGreen,
+            icon: Icons.check_circle_outline_outlined);
         _emailController.clear();
         Navigator.of(context).pop();
       }
@@ -45,18 +46,24 @@ class _LoginPageState extends State<LoginPage> {
       var text_input = error.toString();
       if (text_input.endsWith("422)")) {
         context.showSnackBar(
-            message: 'Correo no valido', backgroundColor: Colors.red);
+            message: 'Correo no valido',
+            backgroundColor: Colors.red,
+            icon: Icons.dangerous_outlined);
       } else if (text_input.endsWith("429)")) {
         context.showSnackBar(
             message: 'Vuelva a enviar luego de 60 segundos',
-            backgroundColor: Colors.red);
+            backgroundColor: Colors.red,
+            icon: Icons.dangerous_outlined);
       } else if (text_input.endsWith("400)")) {
         context.showSnackBar(
             message: 'Ingrese un correo electrónico',
-            backgroundColor: Colors.red);
+            backgroundColor: Colors.red,
+            icon: Icons.dangerous_outlined);
       } else {
         context.showSnackBar(
-            message: 'Error al enviar el correo', backgroundColor: Colors.red);
+            message: 'Error al enviar el correo',
+            backgroundColor: Colors.red,
+            icon: Icons.dangerous_outlined);
       }
       print(error.toString());
     }
@@ -77,13 +84,16 @@ class _LoginPageState extends State<LoginPage> {
       if (mounted) {
         context.showSnackBar(
             message: 'Revisa tu correo para ingresar',
-            backgroundColor: Colors.lightGreen);
+            backgroundColor: Colors.lightGreen,
+            icon: Icons.check_circle_outline_outlined);
         _emailController.clear();
         Navigator.of(context).pop();
       }
     } on AuthException catch (error) {
       context.showSnackBar(
-          message: 'Intenta luego de 60 segundos', backgroundColor: Colors.red);
+          message: 'Intenta luego de 60 segundos',
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     }
     setState(() {
       _isLoading = false;
@@ -97,7 +107,9 @@ class _LoginPageState extends State<LoginPage> {
 
     if (_emailController.text == "" || _passwordController.text == "") {
       context.showSnackBar(
-          message: "Ingrese los datos", backgroundColor: Colors.red);
+          message: "Ingrese los datos",
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     } else {
       try {
         final AuthResponse res = await supabase.auth.signInWithPassword(
@@ -111,11 +123,13 @@ class _LoginPageState extends State<LoginPage> {
         if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
           context.showSnackBar(
               message: "Revise su conexión a Internet",
-              backgroundColor: Colors.red);
+              backgroundColor: Colors.red,
+              icon: Icons.warning_amber_rounded);
         } else {
           context.showSnackBar(
               message: "Los datos ingresados son incorrectos",
-              backgroundColor: Colors.red);
+              backgroundColor: Colors.red,
+              icon: Icons.dangerous_outlined);
         }
       }
     }
@@ -199,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                             fontSize: 28,
                             fontWeight: FontWeight.w400,
                           ),
-                        )
+                        ),
                       ],
                     ),
                   ),

@@ -40,6 +40,8 @@ dependencies:
   cupertino_icons: ^1.0.2
 
   supabase_flutter: ^1.0.0
+  #TextStyle google fonts
+  google_fonts: ^3.0.1
 
 dev_dependencies:
   flutter_test:

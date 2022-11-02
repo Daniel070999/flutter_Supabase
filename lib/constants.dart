@@ -9,40 +9,36 @@ extension ShowSnackBar on BuildContext {
   void showSnackBar({
     required String message,
     required Color backgroundColor,
+    required IconData icon, 
   }) {
     ScaffoldMessenger.of(this).showSnackBar(SnackBar(
-      content: Text(message),
-      backgroundColor: backgroundColor,
+      content: Container(
+        height: 50,
+        decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.all(Radius.circular(20.0))),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+             Icon(icon,
+              size: 25,
+              color: Colors.white,
+            ),
+            const SizedBox(
+              width: 10,
+            ),
+            Text(
+              message,
+              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+      backgroundColor: Colors.transparent,
       behavior: SnackBarBehavior.floating,
-      elevation: 10,
-      margin: const EdgeInsets.all(50.0),
+      elevation: 0,
     ));
   }
-}
-
-showLoaderDialog(BuildContext context, String message) {
-  AlertDialog alert = AlertDialog(
-    backgroundColor: Colors.white,
-    content: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(message),
-        const SizedBox(
-          width: 20,
-        ),
-        Platform.isAndroid
-            ? const CircularProgressIndicator()
-            : const CupertinoActivityIndicator()
-      ],
-    ),
-  );
-  showDialog(
-    barrierDismissible: false,
-    context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
-  );
 }
 
 extension ShowSnackBarWithButton on BuildContext {
@@ -66,4 +62,30 @@ extension ShowSnackBarWithButton on BuildContext {
       duration: const Duration(minutes: 5),
     ));
   }
+}
+
+//dialogo que ocupa toda la ventana
+showLoaderDialog(BuildContext context, String message) {
+  AlertDialog alert = AlertDialog(
+    backgroundColor: Colors.white,
+    content: Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(message),
+        const SizedBox(
+          width: 20,
+        ),
+        Platform.isAndroid
+            ? const CircularProgressIndicator()
+            : const CupertinoActivityIndicator()
+      ],
+    ),
+  );
+  showDialog(
+    barrierDismissible: false,
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
 }

@@ -31,33 +31,36 @@ class _AccountPageState extends State<AccountPage> {
     final lastname = _lastnameController.text;
     final password = _passwordConfirmController.text;
     final user = supabase.auth.currentUser;
+    final id = user!.id;
     final updates = {
-      'id': user!.id,
       'username': userName,
       'lastname': lastname,
       'updated_at': DateTime.now().toIso8601String(),
     };
     try {
-      await supabase.from('profiles').upsert(updates);
+      await supabase.from('profiles').update(updates).eq('id', id);
       await supabase.auth.updateUser(
         UserAttributes(
           password: password,
         ),
       );
       if (mounted) {
-        context.showSnackBarWithButtion(
-            message: 'Dato actualizados correctamente',
-            backgroundColor: Colors.lightGreen,
-            messageButton: 'Continuar',
-            Function: () {
-              Navigator.of(context).pushReplacementNamed('/userMain');
-            });
+        context.showSnackBar(
+            message: 'Datos actualizados correctamente',
+            backgroundColor: Colors.lightGreen,icon: Icons.check_circle_outline_outlined);
+            Navigator.of(context).pushReplacementNamed('/userMain');
       }
     } on PostgrestException catch (error) {
-      context.showSnackBar(message: error.message, backgroundColor: Colors.red);
+      print(error);
+      context.showSnackBar(
+          message: error.toString(),
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     } catch (error) {
       context.showSnackBar(
-          message: 'Unexpeted error occured', backgroundColor: Colors.red);
+          message: 'Unexpeted error occured',
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     }
     setState(() {
       _loading = false;

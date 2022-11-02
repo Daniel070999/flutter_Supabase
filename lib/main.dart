@@ -5,20 +5,16 @@ import 'package:fluttersupabase/pages_auth/resetPassword_page.dart';
 import 'package:fluttersupabase/pages_auth/splash_page.dart';
 import 'package:fluttersupabase/pages_user_main/user_main.dart';
 import 'package:fluttersupabase/pages_user_main/user_profile.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
-  try {
-    await Supabase.initialize(
+  await Supabase.initialize(
     url: 'https://ergjvwwsxxowhfbktrnj.supabase.co',
     anonKey:
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVyZ2p2d3dzeHhvd2hmYmt0cm5qIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjYzNjc2NDIsImV4cCI6MTk4MTk0MzY0Mn0.xcCludLuJeTCkH3rsrGy3YvHp1_a6L3zNKRjkToFd1Q',
   );
   runApp(const MyApp());
-  } catch (e) {
-    print('no hay conexion');
-  }
-  
 }
 
 class MyApp extends StatelessWidget {
@@ -29,7 +25,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'minimizado',
-      theme: ThemeData.light().copyWith(
+      theme: ThemeData(
+        textTheme: GoogleFonts.ralewayTextTheme(),
         primaryColor: Colors.green,
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(

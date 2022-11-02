@@ -43,11 +43,15 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
       _usernameController.text = (data['username'] ?? '') as String;
       _lastnameController.text = (data['lastname'] ?? '') as String;
     } on PostgrestException catch (error) {
-      context.showSnackBar(message: error.message, backgroundColor: Colors.red);
+      context.showSnackBar(
+          message: error.message,
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     } catch (error) {
       context.showSnackBar(
           message: 'Unexpected exception occurred',
-          backgroundColor: Colors.red);
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     }
 
     setState(() {
@@ -62,25 +66,30 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
     final userName = _usernameController.text;
     final lastname = _lastnameController.text;
     final user = supabase.auth.currentUser;
+    final id = user!.id;
     final updates = {
-      'id': user!.id,
       'username': userName,
       'lastname': lastname,
       'updated_at': DateTime.now().toIso8601String(),
     };
     try {
-      await supabase.from('profiles').upsert(updates);
+      await supabase.from('profiles').update(updates).eq('id', id);
       if (mounted) {
         context.showSnackBar(
-          message: 'Dato actualizados correctamente',
-          backgroundColor: Colors.lightGreen,
-        );
+            message: 'Dato actualizados correctamente',
+            backgroundColor: Colors.lightGreen,
+            icon: Icons.check_circle_outline_outlined);
       }
     } on PostgrestException catch (error) {
-      context.showSnackBar(message: error.message, backgroundColor: Colors.red);
+      context.showSnackBar(
+          message: error.message,
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     } catch (error) {
       context.showSnackBar(
-          message: 'Unexpeted error occured', backgroundColor: Colors.red);
+          message: 'Unexpeted error occured',
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     }
     setState(() {
       _loading = false;
@@ -100,15 +109,20 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
       );
       if (mounted) {
         context.showSnackBar(
-          message: 'Contraseña actualizada',
-          backgroundColor: Colors.lightGreen,
-        );
+            message: 'Contraseña actualizada',
+            backgroundColor: Colors.lightGreen,
+            icon: Icons.check_circle_outline_outlined);
       }
     } on PostgrestException catch (error) {
-      context.showSnackBar(message: error.message, backgroundColor: Colors.red);
+      context.showSnackBar(
+          message: error.message,
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     } catch (error) {
       context.showSnackBar(
-          message: 'Unexpeted error occured', backgroundColor: Colors.red);
+          message: 'Unexpeted error occured',
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     }
     setState(() {
       _loadingPass = false;
@@ -128,9 +142,7 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
-      
       appBar: AppBar(
         title: const Text('Actualización de datos'),
         flexibleSpace: Container(

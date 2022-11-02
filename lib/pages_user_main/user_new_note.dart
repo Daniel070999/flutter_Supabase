@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
 import 'dart:math' as math;
 
+import 'package:google_fonts/google_fonts.dart';
+
 class NewNote extends StatefulWidget {
   const NewNote({super.key});
 
@@ -49,7 +51,8 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
         context.showSnackBar(
             message: "Revise su conexión a Internet",
-            backgroundColor: Colors.red);
+            backgroundColor: Colors.red,
+            icon: Icons.dangerous_outlined);
       }
     }
     setState(() {
@@ -57,21 +60,26 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       _descriptionController.clear();
       _getNotes();
     });
-    Navigator.pop(context);
+    if (mounted) {
+      Navigator.pop(context);
+      context.showSnackBar(
+          message: 'Nota creada',
+          backgroundColor: Colors.lightGreen,
+          icon: Icons.check_circle_outline_outlined);
+    }
   }
 
-  Future<void> _updateNote(
-    BuildContext context,
-  ) async {
+  Future<void> _updateNote(BuildContext context, String titleUpdate,
+      String descriptionUpdate, String idUpdate) async {
     showLoaderDialog(context, 'Actualizando nota');
     setState(() {});
     try {
       final createAt = DateTime.now().toIso8601String();
-      final id = _newIdNoteUpdate;
+      final id = idUpdate;
       final data = {
         'update_at': createAt,
-        'title': _newTitleUpdate,
-        'description': _newDescriptionUpdate
+        'title': titleUpdate,
+        'description': descriptionUpdate
       };
       await supabase.from('notes').update(data).eq('id', id);
       if (mounted) {
@@ -81,14 +89,23 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       }
     } catch (e) {
       print(e);
-      context.showSnackBar(message: e.toString(), backgroundColor: Colors.red);
+      context.showSnackBar(
+          message: e.toString(),
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     }
     setState(() {
       _titleController.clear();
       _descriptionController.clear();
       _getNotes();
     });
-    Navigator.pop(context);
+    if (mounted) {
+      Navigator.pop(context);
+      context.showSnackBar(
+          message: 'Nota actualizada',
+          backgroundColor: Colors.lightGreen,
+          icon: Icons.check_circle_outline_outlined);
+    }
   }
 
   Future<List> _getNotes() async {
@@ -105,7 +122,8 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
         context.showSnackBar(
             message: "Revise su conexión a Internet",
-            backgroundColor: Colors.red);
+            backgroundColor: Colors.red,
+            icon: Icons.dangerous_outlined);
       }
     }
     setState(() {
@@ -114,10 +132,10 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
     return data;
   }
 
-  Future<void> _deleteNote(BuildContext context, String idNote) async {
+  Future<void> _deleteNote(BuildContext context, String idUpdate) async {
     showLoaderDialog(context, 'Eliminando nota');
     try {
-      String id = idNote.trim();
+      String id = idUpdate.trim();
       await supabase.from('notes').delete().eq('id', id);
       if (mounted) {
         Navigator.pop(context);
@@ -126,9 +144,18 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
         });
       }
     } catch (e) {
-      context.showSnackBar(message: e.toString(), backgroundColor: Colors.red);
+      context.showSnackBar(
+          message: e.toString(),
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
     }
-    Navigator.pop(context);
+    if (mounted) {
+      Navigator.pop(context);
+      context.showSnackBar(
+          message: 'Nota eliminada',
+          backgroundColor: Colors.lightGreen,
+          icon: Icons.check_circle_outline_outlined);
+    }
   }
 
   Future<void> _confirmNoUpdate(BuildContext context) async {
@@ -181,7 +208,8 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
     );
   }
 
-  Widget _showAnimateNote(BuildContext context) {
+  Widget _showAnimateNote(BuildContext context, String titleUpdate,
+      String descriptionUpdate, String idUpdate) {
     return AlertDialog(
       actionsAlignment: MainAxisAlignment.center,
       shape: const RoundedRectangleBorder(
@@ -192,18 +220,18 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
           child: Column(children: [
             TextFormField(
               onChanged: (value) {
-                if (value != _newTitleUpdate) {
+                if (value != titleUpdate) {
                   setState(() {
                     _titleUpdate = true;
-                    _newTitleUpdate = value;
+                    titleUpdate = value;
                   });
                 }
               },
-              initialValue: _newTitleUpdate,
+              initialValue: titleUpdate,
               maxLines: 1,
               cursorColor: Colors.black,
               validator: (value) {
-                _newTitleUpdate = value.toString();
+                titleUpdate = value.toString();
                 if (value.toString().isEmpty) {
                   return 'Este campo es obligatorio';
                 }
@@ -231,7 +259,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
             ),
             TextFormField(
               onChanged: (value) {
-                if (value != _newDescriptionUpdate) {
+                if (value != descriptionUpdate) {
                   setState(() {
                     _descriptionUpdate = true;
                   });
@@ -239,9 +267,9 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
                 return;
               },
               validator: (value) {
-                _newDescriptionUpdate = value.toString();
+                descriptionUpdate = value.toString();
               },
-              initialValue: _newDescriptionUpdate,
+              initialValue: descriptionUpdate,
               maxLines: 10,
               cursorColor: Colors.black,
               keyboardType: TextInputType.multiline,
@@ -276,7 +304,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
           ),
           onPressed: () {
             if (_validateNoteUpdate.currentState!.validate()) {
-              _updateNote(context);
+              _updateNote(context, titleUpdate, descriptionUpdate, idUpdate);
             }
           },
         ),
@@ -307,7 +335,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
     );
   }
 
-  void _viewDeleteNote() {
+  void _viewDeleteNote(String titleUpdate, String idUpdate) {
     showGeneralDialog(
       context: context,
       pageBuilder: (ctx, a1, a2) {
@@ -316,14 +344,15 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       transitionBuilder: (ctx, a1, a2, child) {
         return Transform.rotate(
           angle: math.exp(a1.value * 2.531),
-          child: _showAnimateDeleteNote(ctx),
+          child: _showAnimateDeleteNote(ctx, titleUpdate, idUpdate),
         );
       },
       transitionDuration: const Duration(milliseconds: 300),
     );
   }
 
-  Widget _showAnimateDeleteNote(BuildContext context) {
+  Widget _showAnimateDeleteNote(
+      BuildContext context, String titleUpdate, String idUpdate) {
     return AlertDialog(
       icon: const Icon(
         Icons.warning,
@@ -346,7 +375,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
               height: 10.0,
             ),
             Center(
-              child: Text(_newTitleUpdate),
+              child: Text(titleUpdate),
             )
           ],
         ),
@@ -361,7 +390,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
             style: TextStyle(color: Colors.white),
           ),
           onPressed: () {
-            _deleteNote(context, _newIdNoteUpdate);
+            _deleteNote(context, idUpdate);
           },
         ),
         const SizedBox(
@@ -383,7 +412,9 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
     );
   }
 
-  Future<void> _viewNote(BuildContext context) async {
+  Future<void> _viewNote(BuildContext context, String titleUpdate,
+      String descriptionUpdate, String idUpdate) async {
+    print(titleUpdate);
     showGeneralDialog(
       context: context,
       pageBuilder: (ctx, a1, a2) {
@@ -393,7 +424,8 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
         var curve = Curves.easeInOut.transform(a1.value);
         return Transform.scale(
           scale: curve,
-          child: _showAnimateNote(ctx),
+          child:
+              _showAnimateNote(ctx, titleUpdate, descriptionUpdate, idUpdate),
         );
       },
       transitionDuration: const Duration(milliseconds: 400),
@@ -410,7 +442,9 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notas'),
+        title: const Text(
+          'Notas',
+        ),
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient:
@@ -428,21 +462,27 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
             ? ListView.builder(
                 itemCount: data.length,
                 itemBuilder: (context, index) {
-                  _newTitleUpdate = data[index]['title'];
-                  _newDescriptionUpdate = data[index]['description'];
-                  _newIdNoteUpdate = data[index]['id'];
-
                   return Column(
                     children: [
                       ListTile(
                         onLongPress: () {
-                          _viewDeleteNote();
+                          _newTitleUpdate = data[index]['title'];
+                          _newIdNoteUpdate = data[index]['id'];
+                          _viewDeleteNote(_newTitleUpdate, _newIdNoteUpdate);
                         },
                         onTap: () {
-                          _viewNote(context);
+                          _newTitleUpdate = data[index]['title'];
+                          _newDescriptionUpdate = data[index]['description'];
+                          _newIdNoteUpdate = data[index]['id'];
+                          _viewNote(context, _newTitleUpdate,
+                              _newDescriptionUpdate, _newIdNoteUpdate);
                         },
                         minVerticalPadding: 10,
-                        title: Text('${data[index]['title']}'),
+                        title: Text(
+                          '${data[index]['title']}',
+                          style: const TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 18),
+                        ),
                         subtitle: Text('${data[index]['description']}'),
                       ),
                     ],
