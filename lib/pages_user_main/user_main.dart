@@ -27,7 +27,9 @@ class _UserMainState extends State<UserMain> {
     }
 
     return Scaffold(
-        body: (statePage == 0) ? ContainerUserMain() : ContainerUserConfig(),
+        body: (statePage == 0)
+            ? const ContainerUserMain()
+            : const ContainerUserConfig(),
         bottomNavigationBar: Container(
           color: Colors.black,
           child: Padding(

@@ -21,62 +21,67 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            backgroundColor: Colors.lightBlue,
-            expandedHeight: 80,
-            floating: true,
-            pinned: true,
-            flexibleSpace: FlexibleSpaceBar(
-              titlePadding: const EdgeInsets.all(15.0),
-              centerTitle: true,
-              background: Container(
-                  decoration: const BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.lightGreen,
-                    Colors.lightBlue,
-                  ],
-                  begin: Alignment.topLeft,
-                  end: Alignment.centerRight,
+      body: Container(
+        color: Colors.grey.withOpacity(0.2),
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              backgroundColor: Colors.lightBlue,
+              expandedHeight: 80,
+              floating: true,
+              pinned: true,
+              flexibleSpace: FlexibleSpaceBar(
+                titlePadding: const EdgeInsets.all(15.0),
+                centerTitle: true,
+                background: Container(
+                    decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.lightGreen,
+                      Colors.lightBlue,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.centerRight,
+                  ),
+                )),
+                title: const Text(
+                  'Menu principal',
                 ),
-              )),
-              title: const Text(
-                'Menu principal',
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: ClipRRect(
-                child: Container(
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                    alignment: Alignment.centerLeft,
-                    image: AssetImage("images/notes.png"),
-                  )),
-                  height: 100,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: OutlinedButton(
-                      style: ButtonStyle(
-                        shape: MaterialStateProperty.all(
-                          RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25)),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: ClipRRect(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25.0),
+                        image: const DecorationImage(
+                          alignment: Alignment.centerLeft,
+                          image: AssetImage("images/notes.png"),
+                        )),
+                    height: 100,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: OutlinedButton(
+                        style: ButtonStyle(
+                          shape: MaterialStateProperty.all(
+                            RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25)),
+                          ),
+                          side: MaterialStateProperty.all(
+                              const BorderSide(color: Colors.transparent)),
                         ),
-                        side: MaterialStateProperty.all(
-                            const BorderSide(color: Colors.grey)),
-                      ),
-                      onPressed: () {
-                        _newNote(context);
-                      },
-                      child: const Padding(
-                        padding: EdgeInsets.only(left: 50),
-                        child: Text(
-                          'NOTAS',
-                          style: TextStyle(fontSize: 28, color: Colors.black),
+                        onPressed: () {
+                          _newNote(context);
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.only(left: 50),
+                          child: Text(
+                            'NOTAS',
+                            style: TextStyle(fontSize: 28, color: Colors.black),
+                          ),
                         ),
                       ),
                     ),
@@ -84,32 +89,32 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                 ),
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Container(
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                    opacity: 0.5,
-                    alignment: Alignment.centerLeft,
-                    image: AssetImage("images/interrogation.png"),
-                  )),
-                  height: 100,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: OutlinedButton(
-                      onPressed: () {},
-                      child: const Padding(
-                        padding: const EdgeInsets.only(left: 50),
-                        child: Text(
-                          'Trabajando...',
-                          style: TextStyle(
-                              fontSize: 28,
-                              letterSpacing: 2,
-                              color: Colors.grey),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                      opacity: 0.5,
+                      alignment: Alignment.centerLeft,
+                      image: AssetImage("images/interrogation.png"),
+                    )),
+                    height: 100,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: OutlinedButton(
+                        onPressed: () {},
+                        child: const Padding(
+                          padding: const EdgeInsets.only(left: 50),
+                          child: Text(
+                            'Trabajando...',
+                            style: TextStyle(
+                                fontSize: 28,
+                                letterSpacing: 2,
+                                color: Colors.grey),
+                          ),
                         ),
                       ),
                     ),
@@ -117,32 +122,32 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                 ),
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Container(
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                    opacity: 0.5,
-                    alignment: Alignment.centerLeft,
-                    image: AssetImage("images/interrogation.png"),
-                  )),
-                  height: 100,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: OutlinedButton(
-                      onPressed: () {},
-                      child: const Padding(
-                        padding: const EdgeInsets.only(left: 50),
-                        child: Text(
-                          'Trabajando...',
-                          style: TextStyle(
-                              fontSize: 28,
-                              letterSpacing: 2,
-                              color: Colors.grey),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                      opacity: 0.5,
+                      alignment: Alignment.centerLeft,
+                      image: AssetImage("images/interrogation.png"),
+                    )),
+                    height: 100,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: OutlinedButton(
+                        onPressed: () {},
+                        child: const Padding(
+                          padding: const EdgeInsets.only(left: 50),
+                          child: Text(
+                            'Trabajando...',
+                            style: TextStyle(
+                                fontSize: 28,
+                                letterSpacing: 2,
+                                color: Colors.grey),
+                          ),
                         ),
                       ),
                     ),
@@ -150,32 +155,32 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                 ),
               ),
             ),
-          ),
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: Container(
-                  decoration: const BoxDecoration(
-                      image: DecorationImage(
-                    opacity: 0.5,
-                    alignment: Alignment.centerLeft,
-                    image: AssetImage("images/interrogation.png"),
-                  )),
-                  height: 100,
-                  child: Padding(
-                    padding: const EdgeInsets.all(4.0),
-                    child: OutlinedButton(
-                      onPressed: () {},
-                      child: const Padding(
-                        padding: const EdgeInsets.only(left: 50),
-                        child: Text(
-                          'Trabajando...',
-                          style: TextStyle(
-                              fontSize: 28,
-                              letterSpacing: 2,
-                              color: Colors.grey),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: Container(
+                    decoration: const BoxDecoration(
+                        image: DecorationImage(
+                      opacity: 0.5,
+                      alignment: Alignment.centerLeft,
+                      image: AssetImage("images/interrogation.png"),
+                    )),
+                    height: 100,
+                    child: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: OutlinedButton(
+                        onPressed: () {},
+                        child: const Padding(
+                          padding: const EdgeInsets.only(left: 50),
+                          child: Text(
+                            'Trabajando...',
+                            style: TextStyle(
+                                fontSize: 28,
+                                letterSpacing: 2,
+                                color: Colors.grey),
+                          ),
                         ),
                       ),
                     ),
@@ -183,8 +188,8 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'dart:math' as math;
 
-import 'package:google_fonts/google_fonts.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:shimmer/shimmer.dart';
 
 class NewNote extends StatefulWidget {
   const NewNote({super.key});
@@ -45,6 +47,10 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       await supabase.from('notes').insert(data);
       if (mounted) {
         Navigator.pop(context);
+        context.showSnackBar(
+            message: 'Nota creada',
+            backgroundColor: Colors.lightGreen,
+            icon: Icons.check_circle_outline_outlined);
       }
     } catch (e) {
       Navigator.pop(context);
@@ -62,10 +68,6 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
     });
     if (mounted) {
       Navigator.pop(context);
-      context.showSnackBar(
-          message: 'Nota creada',
-          backgroundColor: Colors.lightGreen,
-          icon: Icons.check_circle_outline_outlined);
     }
   }
 
@@ -86,6 +88,11 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
         Navigator.pop(context);
         _titleUpdate = false;
         _descriptionUpdate = false;
+        Navigator.pop(context);
+        context.showSnackBar(
+            message: 'Nota actualizada',
+            backgroundColor: Colors.lightGreen,
+            icon: Icons.check_circle_outline_outlined);
       }
     } catch (e) {
       print(e);
@@ -99,13 +106,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       _descriptionController.clear();
       _getNotes();
     });
-    if (mounted) {
-      Navigator.pop(context);
-      context.showSnackBar(
-          message: 'Nota actualizada',
-          backgroundColor: Colors.lightGreen,
-          icon: Icons.check_circle_outline_outlined);
-    }
+    if (mounted) {}
   }
 
   Future<List> _getNotes() async {
@@ -117,7 +118,8 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       data = await supabase
           .from('notes')
           .select('title , description, id')
-          .eq('id_notes_user', idUser);
+          .eq('id_notes_user', idUser)
+          .order('create_at', ascending: false);
     } catch (e) {
       if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
         context.showSnackBar(
@@ -142,19 +144,21 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
         setState(() {
           _getNotes();
         });
+        context.showSnackBar(
+            message: 'Nota eliminada',
+            backgroundColor: Colors.lightGreen,
+            icon: Icons.delete);
       }
     } catch (e) {
-      context.showSnackBar(
-          message: e.toString(),
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
+        context.showSnackBar(
+            message: "Revise su conexión a Internet",
+            backgroundColor: Colors.red,
+            icon: Icons.dangerous_outlined);
+      }
     }
     if (mounted) {
       Navigator.pop(context);
-      context.showSnackBar(
-          message: 'Nota eliminada',
-          backgroundColor: Colors.lightGreen,
-          icon: Icons.check_circle_outline_outlined);
     }
   }
 
@@ -214,83 +218,88 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       actionsAlignment: MainAxisAlignment.center,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32.0))),
-      content: SingleChildScrollView(
-        child: Form(
-          key: _validateNoteUpdate,
-          child: Column(children: [
-            TextFormField(
-              onChanged: (value) {
-                if (value != titleUpdate) {
-                  setState(() {
-                    _titleUpdate = true;
-                    titleUpdate = value;
-                  });
-                }
-              },
-              initialValue: titleUpdate,
-              maxLines: 1,
-              cursorColor: Colors.black,
-              validator: (value) {
-                titleUpdate = value.toString();
-                if (value.toString().isEmpty) {
-                  return 'Este campo es obligatorio';
-                }
-                return null;
-              },
-              style: const TextStyle(color: Colors.black),
-              decoration: InputDecoration(
-                labelText: "Título",
-                labelStyle: const TextStyle(color: Colors.black),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25.0),
-                  borderSide: const BorderSide(
-                    color: Colors.grey,
-                    width: 1.5,
+      content: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        child: SingleChildScrollView(
+          child: Form(
+            key: _validateNoteUpdate,
+            child: Column(children: [
+              TextFormField(
+                onChanged: (value) {
+                  if (value != titleUpdate) {
+                    setState(() {
+                      _titleUpdate = true;
+                      titleUpdate = value;
+                    });
+                  }
+                },
+                initialValue: titleUpdate,
+                maxLines: 1,
+                cursorColor: Colors.black,
+                validator: (value) {
+                  titleUpdate = value.toString();
+                  if (value.toString().isEmpty) {
+                    return 'Este campo es obligatorio';
+                  }
+                  return null;
+                },
+                style: const TextStyle(color: Colors.black),
+                decoration: InputDecoration(
+                  labelText: "Título",
+                  labelStyle: const TextStyle(color: Colors.black),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                    borderSide: const BorderSide(
+                      color: Colors.grey,
+                      width: 1.5,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Colors.grey, width: 2.0),
+                    borderRadius: BorderRadius.circular(25.0),
                   ),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey, width: 2.0),
-                  borderRadius: BorderRadius.circular(25.0),
-                ),
               ),
-            ),
-            const SizedBox(
-              height: 15.0,
-            ),
-            TextFormField(
-              onChanged: (value) {
-                if (value != descriptionUpdate) {
-                  setState(() {
-                    _descriptionUpdate = true;
-                  });
-                }
-                return;
-              },
-              validator: (value) {
-                descriptionUpdate = value.toString();
-              },
-              initialValue: descriptionUpdate,
-              maxLines: 10,
-              cursorColor: Colors.black,
-              keyboardType: TextInputType.multiline,
-              style: const TextStyle(color: Colors.black),
-              decoration: InputDecoration(
-                labelText: "Descripción",
-                labelStyle: const TextStyle(color: Colors.black),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(25.0),
-                  borderSide: const BorderSide(
-                    color: Colors.grey,
-                    width: 1.5,
+              const SizedBox(
+                height: 15.0,
+              ),
+              TextFormField(
+                onChanged: (value) {
+                  if (value != descriptionUpdate) {
+                    setState(() {
+                      _descriptionUpdate = true;
+                    });
+                  }
+                  return;
+                },
+                validator: (value) {
+                  descriptionUpdate = value.toString();
+                },
+                initialValue: descriptionUpdate,
+                maxLines: 10,
+                cursorColor: Colors.black,
+                keyboardType: TextInputType.multiline,
+                style: const TextStyle(color: Colors.black),
+                decoration: InputDecoration(
+                  labelText: "Descripción",
+                  labelStyle: const TextStyle(color: Colors.black),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(25.0),
+                    borderSide: const BorderSide(
+                      color: Colors.grey,
+                      width: 1.5,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide:
+                        const BorderSide(color: Colors.grey, width: 2.0),
+                    borderRadius: BorderRadius.circular(25.0),
                   ),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.grey, width: 2.0),
-                  borderRadius: BorderRadius.circular(25.0),
-                ),
               ),
-            ),
-          ]),
+            ]),
+          ),
         ),
       ),
       actions: <Widget>[
@@ -342,12 +351,13 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
         return Container();
       },
       transitionBuilder: (ctx, a1, a2, child) {
-        return Transform.rotate(
-          angle: math.exp(a1.value * 2.531),
+        var curve = Curves.fastOutSlowIn.transform(a1.value);
+        return Transform.scale(
+          scale: curve,
           child: _showAnimateDeleteNote(ctx, titleUpdate, idUpdate),
         );
       },
-      transitionDuration: const Duration(milliseconds: 300),
+      transitionDuration: const Duration(milliseconds: 400),
     );
   }
 
@@ -355,7 +365,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       BuildContext context, String titleUpdate, String idUpdate) {
     return AlertDialog(
       icon: const Icon(
-        Icons.warning,
+        Icons.warning_rounded,
         size: 50.0,
       ),
       iconColor: Colors.red,
@@ -414,14 +424,13 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
 
   Future<void> _viewNote(BuildContext context, String titleUpdate,
       String descriptionUpdate, String idUpdate) async {
-    print(titleUpdate);
     showGeneralDialog(
       context: context,
       pageBuilder: (ctx, a1, a2) {
         return Container();
       },
       transitionBuilder: (ctx, a1, a2, child) {
-        var curve = Curves.easeInOut.transform(a1.value);
+        var curve = Curves.fastOutSlowIn.transform(a1.value);
         return Transform.scale(
           scale: curve,
           child:
@@ -456,58 +465,110 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
         ),
         backgroundColor: Colors.lightBlue,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(5.0),
+      body: Container(
+        color: Colors.grey.withOpacity(0.2),
         child: (_loadingNotes == false)
             ? ListView.builder(
                 itemCount: data.length,
                 itemBuilder: (context, index) {
                   return Column(
                     children: [
-                      ListTile(
-                        onLongPress: () {
-                          _newTitleUpdate = data[index]['title'];
-                          _newIdNoteUpdate = data[index]['id'];
-                          _viewDeleteNote(_newTitleUpdate, _newIdNoteUpdate);
-                        },
-                        onTap: () {
-                          _newTitleUpdate = data[index]['title'];
-                          _newDescriptionUpdate = data[index]['description'];
-                          _newIdNoteUpdate = data[index]['id'];
-                          _viewNote(context, _newTitleUpdate,
-                              _newDescriptionUpdate, _newIdNoteUpdate);
-                        },
-                        minVerticalPadding: 10,
-                        title: Text(
-                          '${data[index]['title']}',
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 18),
-                        ),
-                        subtitle: Text('${data[index]['description']}'),
+                      const SizedBox(
+                        height: 5.0,
                       ),
+                      Slidable(
+                        key: const ValueKey(0),
+                        startActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          children: [
+                            SlidableAction(
+                              onPressed: (context) {
+                                _newTitleUpdate = data[index]['title'];
+                                _newIdNoteUpdate = data[index]['id'];
+                                _viewDeleteNote(
+                                    _newTitleUpdate, _newIdNoteUpdate);
+                              },
+                              backgroundColor: Colors.red,
+                              foregroundColor: Colors.white,
+                              icon: Icons.delete,
+                              label: 'Eliminar',
+                            ),
+                            SlidableAction(
+                              onPressed: (context) {
+                                // ignore: prefer_interpolation_to_compose_strings
+                                Share.share('*' +
+                                    data[index]['title'] +
+                                    '*' +
+                                    '\n' +
+                                    data[index]['description']);
+                              },
+                              backgroundColor: Colors.lightBlue,
+                              foregroundColor: Colors.white,
+                              icon: Icons.share,
+                              label: 'Compartir',
+                            ),
+                          ],
+                        ),
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.only(
+                                bottomRight: Radius.circular(50),
+                                topRight: Radius.circular(50)),
+                          ),
+                          child: ListTile(
+                            leading: const Icon(Icons.navigate_next_rounded),
+                            onLongPress: () {
+                              //agregar para ver la fecha de creacion de nota
+                            },
+                            onTap: () {
+                              _newTitleUpdate = data[index]['title'];
+                              _newDescriptionUpdate =
+                                  data[index]['description'];
+                              _newIdNoteUpdate = data[index]['id'];
+                              _viewNote(context, _newTitleUpdate,
+                                  _newDescriptionUpdate, _newIdNoteUpdate);
+                            },
+                            minVerticalPadding: 10,
+                            title: Text(
+                              '${data[index]['title']}',
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 18),
+                            ),
+                            subtitle: Text('${data[index]['description']}'),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        height: 5.0,
+                      )
                     ],
                   );
                 },
               )
-            : Platform.isAndroid
-                ? Center(
-                    child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Text('Cargando notas'),
-                      SizedBox(
-                        height: 20.0,
+            : ListView(
+                padding: const EdgeInsets.all(8.0),
+                children: [
+                  const SizedBox(
+                    height: 8,
+                  ),
+                  Shimmer.fromColors(
+                    period: const Duration(milliseconds: 1000),
+                    baseColor: Colors.grey.shade400,
+                    highlightColor: Colors.white,
+                    child: ListView.separated(
+                      shrinkWrap: true,
+                      physics: const ClampingScrollPhysics(),
+                      itemCount: 8,
+                      itemBuilder: (_, __) => Padding(
+                        padding: const EdgeInsets.only(bottom: 20),
+                        child: placeHolderRow(),
                       ),
-                      CircularProgressIndicator()
-                    ],
-                  ))
-                : Center(
-                    child: Column(
-                    children: const [
-                      Text('Cargando notas'),
-                      CupertinoActivityIndicator()
-                    ],
-                  )),
+                      separatorBuilder: (_, __) => const SizedBox(height: 2),
+                    ),
+                  ),
+                ],
+              ),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -516,7 +577,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
               context: context,
               backgroundColor: Colors.transparent,
               transitionAnimationController: AnimationController(
-                  vsync: this, duration: const Duration(milliseconds: 600)),
+                  vsync: this, duration: const Duration(milliseconds: 400)),
               builder: (BuildContext context) {
                 return Container(
                   decoration: BoxDecoration(

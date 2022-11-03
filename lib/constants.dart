@@ -9,7 +9,7 @@ extension ShowSnackBar on BuildContext {
   void showSnackBar({
     required String message,
     required Color backgroundColor,
-    required IconData icon, 
+    required IconData icon,
   }) {
     ScaffoldMessenger.of(this).showSnackBar(SnackBar(
       content: Container(
@@ -20,7 +20,8 @@ extension ShowSnackBar on BuildContext {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-             Icon(icon,
+            Icon(
+              icon,
               size: 25,
               color: Colors.white,
             ),
@@ -89,3 +90,41 @@ showLoaderDialog(BuildContext context, String message) {
     },
   );
 }
+
+Widget placeHolderRow() => Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(20.0),
+          child: Icon(Icons.keyboard_arrow_right),
+        ),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                width: double.infinity,
+                height: 8.0,
+                color: Colors.white,
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 5.0),
+              ),
+              Container(
+                width: 200,
+                height: 8.0,
+                color: Colors.white,
+              ),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 5.0),
+              ),
+              Container(
+                width: 40.0,
+                height: 8.0,
+                color: Colors.white,
+              ),
+            ],
+          ),
+        )
+      ],
+    );
