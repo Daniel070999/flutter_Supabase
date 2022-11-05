@@ -1,3 +1,4 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -13,12 +14,12 @@ String _stateAuth = 'defect';
 
 class _SplashPageState extends State<SplashPage> {
   bool _redicrectCalled = false;
+
   final _usernameProfile = TextEditingController();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-
     _updateStateAuth();
     _redirect();
   }
@@ -60,41 +61,53 @@ class _SplashPageState extends State<SplashPage> {
       return;
     }
 
-    await Future.delayed(Duration.zero);
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if ((connectivityResult == ConnectivityResult.wifi) ||
+        (connectivityResult == ConnectivityResult.ethernet)) {
+      await Future.delayed(Duration.zero);
 
-    _redicrectCalled = true;
-    final session = supabase.auth.currentSession;
-    if (session != null) {
-      try {
-        final getIdUserAuth = supabase.auth.currentUser?.id;
+      _redicrectCalled = true;
+      final session = supabase.auth.currentSession;
+      if (session != null) {
+        try {
+          final getIdUserAuth = supabase.auth.currentUser?.id;
 
-        final getName = await supabase
-            .from('profiles')
-            .select('username')
-            .eq('id', getIdUserAuth)
-            .single() as Map;
+          final getName = await supabase
+              .from('profiles')
+              .select('username')
+              .eq('id', getIdUserAuth)
+              .single() as Map;
 
-        _usernameProfile.text = getName['username'];
+          _usernameProfile.text = getName['username'];
 
-        if (_usernameProfile.text.contains('empty')) {
-          Navigator.of(context).pushReplacementNamed('/account');
-        } else {
-          Navigator.pushReplacementNamed(context, '/userMain',
-              arguments: _stateAuth);
-        }
-      } catch (e) {
-        if (e.toString().endsWith('null)')) {
-          _createUserName();
-          if (mounted) {
-            Navigator.of(context).pushReplacementNamed('/account');
+          if (_usernameProfile.text.contains('empty')) {
+            if (mounted) {
+              Navigator.of(context).pushReplacementNamed('/account');
+            }
+          } else {
+            if (mounted) {
+              Navigator.pushReplacementNamed(context, '/userMain',
+                  arguments: _stateAuth);
+            }
           }
-        } else {
-          Navigator.of(context)
-              .pushReplacementNamed('/userMain', arguments: _stateAuth);
+        } catch (e) {
+          if (e.toString().endsWith('null)')) {
+            _createUserName();
+            if (mounted) {
+              Navigator.of(context).pushReplacementNamed('/account');
+            }
+          } else {
+            if (mounted) {
+              Navigator.of(context)
+                  .pushReplacementNamed('/userMain', arguments: _stateAuth);
+            }
+          }
         }
+      } else {
+        Navigator.of(context).pushReplacementNamed('/login');
       }
     } else {
-      Navigator.of(context).pushReplacementNamed('/login');
+      Navigator.of(context).pushReplacementNamed('/noInternet');
     }
   }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:fluttersupabase/constants.dart';
 import 'package:fluttersupabase/pages_user_main/user_new_note.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:fluttersupabase/pages_user_main/user_read_qr.dart';
 
 class ContainerUserMain extends StatefulWidget {
   const ContainerUserMain({super.key});
@@ -15,6 +16,14 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
         context,
         MaterialPageRoute(
           builder: (context) => const NewNote(),
+        ));
+  }
+
+  Future<void> _readQR(BuildContext context) async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ReadQR(),
         ));
   }
 
@@ -53,36 +62,28 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: ClipRRect(
-                  child: Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(25.0),
-                        image: const DecorationImage(
-                          alignment: Alignment.centerLeft,
-                          image: AssetImage("images/notes.png"),
-                        )),
-                    height: 100,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: OutlinedButton(
-                        style: ButtonStyle(
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
+                  child: GestureDetector(
+                    onTap: () {
+                      _newNote(context);
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25.0),
+                          color: Colors.white),
+                      height: 100,
+                      child: Row(
+                        children: const [
+                          Image(
+                            image: AssetImage('images/notes.png'),
                           ),
-                          side: MaterialStateProperty.all(
-                              const BorderSide(color: Colors.transparent)),
-                        ),
-                        onPressed: () {
-                          _newNote(context);
-                        },
-                        child: const Padding(
-                          padding: EdgeInsets.only(left: 50),
-                          child: Text(
-                            'NOTAS',
-                            style: TextStyle(fontSize: 28, color: Colors.black),
+                          SizedBox(
+                            width: 20,
                           ),
-                        ),
+                          Text(
+                            'LISTA DE NOTAS',
+                            style: TextStyle(fontSize: 22),
+                          )
+                        ],
                       ),
                     ),
                   ),
@@ -93,29 +94,23 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20.0),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        image: DecorationImage(
-                      opacity: 0.5,
-                      alignment: Alignment.centerLeft,
-                      image: AssetImage("images/interrogation.png"),
-                    )),
-                    height: 100,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        child: const Padding(
-                          padding: const EdgeInsets.only(left: 50),
-                          child: Text(
-                            'Trabajando...',
-                            style: TextStyle(
-                                fontSize: 28,
-                                letterSpacing: 2,
-                                color: Colors.grey),
+                  child: GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25.0),
+                          color: Colors.white),
+                      height: 100,
+                      child: Row(
+                        children: const [
+                          Image(
+                            image: AssetImage('images/qr.png'),
                           ),
-                        ),
+                          Text(
+                            'LECTOR DE CÓDIGO QR \n Y CÓDIGO DE BARRAS',
+                            style: TextStyle(fontSize: 22),
+                          )
+                        ],
                       ),
                     ),
                   ),
@@ -126,29 +121,26 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20.0),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        image: DecorationImage(
-                      opacity: 0.5,
-                      alignment: Alignment.centerLeft,
-                      image: AssetImage("images/interrogation.png"),
-                    )),
-                    height: 100,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        child: const Padding(
-                          padding: const EdgeInsets.only(left: 50),
-                          child: Text(
-                            'Trabajando...',
-                            style: TextStyle(
-                                fontSize: 28,
-                                letterSpacing: 2,
-                                color: Colors.grey),
+                  child: GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25.0),
+                          color: Colors.white),
+                      height: 100,
+                      child: Row(
+                        children: const [
+                          Image(
+                            image: AssetImage('images/translate.png'),
                           ),
-                        ),
+                          SizedBox(
+                            width: 10,
+                          ),
+                          Text(
+                            'TRADUCTOR DE TEXTO',
+                            style: TextStyle(fontSize: 22),
+                          )
+                        ],
                       ),
                     ),
                   ),
@@ -159,29 +151,26 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
                 child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20.0),
-                  child: Container(
-                    decoration: const BoxDecoration(
-                        image: DecorationImage(
-                      opacity: 0.5,
-                      alignment: Alignment.centerLeft,
-                      image: AssetImage("images/interrogation.png"),
-                    )),
-                    height: 100,
-                    child: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: OutlinedButton(
-                        onPressed: () {},
-                        child: const Padding(
-                          padding: const EdgeInsets.only(left: 50),
-                          child: Text(
-                            'Trabajando...',
-                            style: TextStyle(
-                                fontSize: 28,
-                                letterSpacing: 2,
-                                color: Colors.grey),
+                  child: GestureDetector(
+                    onTap: () {},
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25.0),
+                          color: Colors.white),
+                      height: 100,
+                      child: Row(
+                        children: const [
+                          Image(
+                            image: AssetImage('images/capturetext.png'),
                           ),
-                        ),
+                          SizedBox(
+                            width: 20,
+                          ),
+                          Text(
+                            'TEXTO EN IMAGEN',
+                            style: TextStyle(fontSize: 22),
+                          )
+                        ],
                       ),
                     ),
                   ),
