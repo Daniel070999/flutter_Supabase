@@ -482,6 +482,9 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
                           motion: const ScrollMotion(),
                           children: [
                             SlidableAction(
+                              borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(50),
+                                  bottomLeft: Radius.circular(50)),
                               onPressed: (context) {
                                 _newTitleUpdate = data[index]['title'];
                                 _newIdNoteUpdate = data[index]['id'];

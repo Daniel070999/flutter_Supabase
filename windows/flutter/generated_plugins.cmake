@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links_windows
+  connectivity_plus
   url_launcher_windows
 )
 

@@ -1,10 +1,11 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/pages_auth/account_page.dart';
 import 'package:fluttersupabase/pages_auth/login_page.dart';
+import 'package:fluttersupabase/pages_auth/no_internet.dart';
 import 'package:fluttersupabase/pages_auth/resetPassword_page.dart';
 import 'package:fluttersupabase/pages_auth/splash_page.dart';
 import 'package:fluttersupabase/pages_user_main/user_main.dart';
-import 'package:fluttersupabase/pages_user_main/user_profile.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       color: Colors.black,
       debugShowCheckedModeBanner: false,
-      title: 'minimizado',
+      title: 'Herramientas de texto',
       theme: ThemeData(
         textTheme: GoogleFonts.ralewayTextTheme(),
         primaryColor: Colors.green,
@@ -48,6 +49,7 @@ class MyApp extends StatelessWidget {
         '/account': (_) => const AccountPage(),
         '/reset': (_) => const ResetPassword(),
         '/userMain': (_) => UserMain(),
+        '/noInternet': (_) => const NoInternet(),
       },
     );
   }

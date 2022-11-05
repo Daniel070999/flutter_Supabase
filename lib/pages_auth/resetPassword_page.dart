@@ -64,15 +64,7 @@ class _ResetPasswordState extends State<ResetPassword> {
         ),
       );
       final User? updatedUser = res.user;
-      if (mounted) {
-        context.showSnackBarWithButtion(
-            message: 'Contraseña actualizada correctamente',
-            backgroundColor: Colors.lightGreen,
-            messageButton: 'Continuar',
-            Function: () {
-              _signOut();
-            });
-      }
+      _passwordUpdate();
     } catch (e) {
       context.showSnackBar(
           message: 'Algo salio mal',
@@ -139,6 +131,49 @@ class _ResetPasswordState extends State<ResetPassword> {
       ],
     );
   }
+  Widget _showAnimatepasswordUpdate(BuildContext context) {
+    return AlertDialog(
+      icon: const Icon(
+        Icons.check_circle_outline_outlined,
+        size: 60.0,
+      ),
+      iconColor: Colors.lightGreen,
+      actionsAlignment: MainAxisAlignment.center,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(32.0))),
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: const <Widget>[
+            Center(
+              child: Text(
+                'Su contraseña ha sido actualizada correctamente.',
+              ),
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
+          ],
+        ),
+      ),
+      actions: <Widget>[
+        ElevatedButton(
+          style: const ButtonStyle(
+            backgroundColor: MaterialStatePropertyAll(Colors.lightGreen),
+          ),
+          child: const Text(
+            'Aceptar',
+            style: TextStyle(color: Colors.white),
+          ),
+          onPressed: () {
+            _signOut();
+          },
+        ),
+        const SizedBox(
+          height: 20.0,
+        ),
+      ],
+    );
+  }
 
   void _onBackPress() {
     showGeneralDialog(
@@ -147,12 +182,30 @@ class _ResetPasswordState extends State<ResetPassword> {
         return Container();
       },
       transitionBuilder: (ctx, a1, a2, child) {
-        return Transform.rotate(
-          angle: math.exp(a1.value * 2.531),
+        var curve = Curves.fastOutSlowIn.transform(a1.value);
+        return Transform.scale(
+          scale: curve,
           child: _showAnimateOnBackPress(ctx),
         );
       },
-      transitionDuration: const Duration(milliseconds: 300),
+      transitionDuration: const Duration(milliseconds: 400),
+    );
+  }
+
+void _passwordUpdate() {
+    showGeneralDialog(
+      context: context,
+      pageBuilder: (ctx, a1, a2) {
+        return Container();
+      },
+      transitionBuilder: (ctx, a1, a2, child) {
+        var curve = Curves.fastOutSlowIn.transform(a1.value);
+        return Transform.scale(
+          scale: curve,
+          child: _showAnimatepasswordUpdate(ctx),
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 400),
     );
   }
 
