@@ -1,7 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:fluttersupabase/constants.dart';
 import 'package:fluttersupabase/pages_user_main/user_new_note.dart';
-import 'package:fluttersupabase/pages_user_main/user_read_qr.dart';
+import 'package:fluttersupabase/pages_user_main/user_read_qr_android.dart';
+import 'package:fluttersupabase/pages_user_main/user_read_qr_ios.dart';
 
 class ContainerUserMain extends StatefulWidget {
   const ContainerUserMain({super.key});
@@ -19,11 +21,19 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
         ));
   }
 
-  Future<void> _readQR(BuildContext context) async {
+  Future<void> _scannerQRIOS(BuildContext context) async {
     Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => const ReadQR(),
+          builder: (context) => const ReadQRIOS(),
+        ));
+  }
+
+  Future<void> _scannerQRANDROID(BuildContext context) async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ReadQRANDROID(),
         ));
   }
 
@@ -95,7 +105,13 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                 padding: const EdgeInsets.all(15.0),
                 child: ClipRRect(
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      if (Platform.isAndroid) {
+                        _scannerQRANDROID(context);
+                      } else {
+                        _scannerQRIOS(context);
+                      }
+                    },
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25.0),
@@ -107,7 +123,7 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                             image: AssetImage('images/qr.png'),
                           ),
                           Text(
-                            'LECTOR DE CÓDIGO QR \n Y CÓDIGO DE BARRAS',
+                            'LECTOR DE CÓDIGO QR\nY CÓDIGO DE BARRAS',
                             style: TextStyle(fontSize: 22),
                           )
                         ],

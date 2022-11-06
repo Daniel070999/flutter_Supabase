@@ -51,7 +51,17 @@ dependencies:
   shimmer: ^2.0.0
   #comprobar conexion a internet
   connectivity_plus: ^3.0.2
-
+  #escaner qr IOS
+  flutter_qr_bar_scanner: ^3.0.2
+  #escaner qr ANDROID
+  qrscan: ^0.3.3
+  #para guardar en galeria
+  image_gallery_saver: '^1.7.1'
+  #image picker
+  image_picker: ^0.8.6
+  #permisos
+  permission_handler: ^9.2.0
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
