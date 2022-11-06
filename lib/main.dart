@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
       color: Colors.black,
       debugShowCheckedModeBanner: false,
       title: 'Herramientas de texto',
-      theme: ThemeData(
+      theme: ThemeData.light().copyWith(
         textTheme: GoogleFonts.ralewayTextTheme(),
         primaryColor: Colors.green,
         textButtonTheme: TextButtonThemeData(
