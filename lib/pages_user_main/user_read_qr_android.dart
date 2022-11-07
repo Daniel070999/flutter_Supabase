@@ -1,8 +1,7 @@
 import 'dart:async';
 import 'dart:typed_data';
-import 'dart:ui';
 
-import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttersupabase/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
@@ -58,163 +57,239 @@ class _ReadQRANDROIDState extends State<ReadQRANDROID>
                   children: <Widget>[
                     Padding(
                       padding: const EdgeInsets.only(
-                          right: 50.0, left: 50.0, top: 50),
+                          right: 50.0, left: 50.0, top: 25.0),
                       child: _buttonGroupUp(),
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
-                        children: [
-                          TextFormField(
-                            maxLines: 3,
-                            cursorColor: Colors.blue,
-                            keyboardType: TextInputType.multiline,
-                            style: const TextStyle(color: Colors.black),
-                            controller: _outputController,
-                            decoration: InputDecoration(
-                              labelText: "Texto escaneado",
-                              labelStyle: const TextStyle(color: Colors.blue),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.blue,
-                                  width: 1.5,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    color: Colors.blue, width: 2.0),
-                                borderRadius: BorderRadius.circular(25.0),
-                              ),
-                            ),
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25.0),
+                            color: Colors.white),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
                             children: [
-                              OutlinedButton(
-                                style: ButtonStyle(
-                                  fixedSize: MaterialStateProperty.all(
-                                      const Size.fromWidth(100)),
-                                  backgroundColor: MaterialStateProperty.all(
-                                      Colors.transparent),
-                                  foregroundColor: MaterialStateProperty.all(
-                                      Colors.lightBlue),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(25)),
+                              TextFormField(
+                                maxLines: 3,
+                                cursorColor: Colors.blue,
+                                keyboardType: TextInputType.multiline,
+                                style: const TextStyle(color: Colors.black),
+                                controller: _outputController,
+                                decoration: InputDecoration(
+                                  labelText: "Texto escaneado",
+                                  labelStyle:
+                                      const TextStyle(color: Colors.blue),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25.0),
+                                    borderSide: const BorderSide(
+                                      color: Colors.blue,
+                                      width: 1.5,
+                                    ),
                                   ),
-                                  side: MaterialStateProperty.all(
-                                      const BorderSide(
-                                          color: Colors.lightBlue)),
-                                ),
-                                onPressed: () {
-                                  _outputController.clear();
-                                },
-                                child: const Center(
-                                    child: Text(
-                                  'Limpiar',
-                                  style: TextStyle(color: Colors.lightBlue),
-                                )),
-                              ),
-                              const SizedBox(
-                                width: 20,
-                              ),
-                              OutlinedButton(
-                                style: ButtonStyle(
-                                  fixedSize: MaterialStateProperty.all(
-                                      const Size.fromWidth(100)),
-                                  backgroundColor: MaterialStateProperty.all(
-                                      Colors.transparent),
-                                  foregroundColor: MaterialStateProperty.all(
-                                      Colors.lightBlue),
-                                  shape: MaterialStateProperty.all(
-                                    RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(25)),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        color: Colors.blue, width: 2.0),
+                                    borderRadius: BorderRadius.circular(25.0),
                                   ),
-                                  side: MaterialStateProperty.all(
-                                      const BorderSide(
-                                          color: Colors.lightBlue)),
                                 ),
-                                onPressed: () {
-                                  if (_outputController.text.isEmpty) {
-                                    context.showSnackBar(
-                                        message:
-                                            'No hay información para compartir',
-                                        backgroundColor: Colors.amber,
-                                        icon: Icons.warning_amber_rounded);
-                                  } else {
-                                    Share.share(_outputController.text);
-                                  }
-                                },
-                                child: const Center(
-                                    child: Text(
-                                  'Compartir',
-                                  style: TextStyle(color: Colors.lightBlue),
-                                )),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  OutlinedButton(
+                                    style: ButtonStyle(
+                                      fixedSize: MaterialStateProperty.all(
+                                          const Size.fromWidth(100)),
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.transparent),
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.lightBlue),
+                                      shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(25)),
+                                      ),
+                                      side: MaterialStateProperty.all(
+                                          const BorderSide(
+                                              color: Colors.lightBlue)),
+                                    ),
+                                    onPressed: () {
+                                      _outputController.clear();
+                                    },
+                                    child: const Center(
+                                        child: Text(
+                                      'Limpiar',
+                                      style: TextStyle(color: Colors.lightBlue),
+                                    )),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  OutlinedButton(
+                                    style: ButtonStyle(
+                                      fixedSize: MaterialStateProperty.all(
+                                          const Size.fromWidth(100)),
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.transparent),
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.lightBlue),
+                                      shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(25)),
+                                      ),
+                                      side: MaterialStateProperty.all(
+                                          const BorderSide(
+                                              color: Colors.lightBlue)),
+                                    ),
+                                    onPressed: () {
+                                      if (_outputController.text.isEmpty) {
+                                        context.showSnackBar(
+                                            message:
+                                                'No hay información para copiar',
+                                            backgroundColor: Colors.amber,
+                                            icon: Icons.warning_amber_rounded);
+                                      } else {
+                                        Clipboard.setData(ClipboardData(
+                                            text: _outputController.text));
+                                        context.showSnackBar(
+                                            message: 'Texto copiado',
+                                            backgroundColor: Colors.lightGreen,
+                                            icon: Icons
+                                                .check_circle_outline_rounded);
+                                      }
+                                    },
+                                    child: const Center(
+                                      child: Text(
+                                        'Copiar',
+                                        style:
+                                            TextStyle(color: Colors.lightBlue),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  OutlinedButton(
+                                    style: ButtonStyle(
+                                      fixedSize: MaterialStateProperty.all(
+                                          const Size.fromWidth(100)),
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.transparent),
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.lightBlue),
+                                      shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(25)),
+                                      ),
+                                      side: MaterialStateProperty.all(
+                                          const BorderSide(
+                                              color: Colors.lightBlue)),
+                                    ),
+                                    onPressed: () {
+                                      if (_outputController.text.isEmpty) {
+                                        context.showSnackBar(
+                                            message:
+                                                'No hay información para compartir',
+                                            backgroundColor: Colors.amber,
+                                            icon: Icons.warning_amber_rounded);
+                                      } else {
+                                        Share.share(_outputController.text);
+                                      }
+                                    },
+                                    child: const Center(
+                                      child: Text(
+                                        'Compartir',
+                                        style:
+                                            TextStyle(color: Colors.lightBlue),
+                                      ),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(right: 50.0, left: 50.0),
-                      child: Column(
-                        children: const [
-                          Text(
-                            '¿Desea crear un código QR?',
-                            style: TextStyle(
-                                fontSize: 18.0, fontWeight: FontWeight.bold),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            'Ingrese información en el siguiente cuadro de texto y luego genere el código',
-                            textAlign: TextAlign.justify,
-                          )
-                        ],
-                      ),
+                    const SizedBox(
+                      height: 20.0,
                     ),
                     Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: TextFormField(
-                        validator: (value) {
-                          if (value.toString().isEmpty) {
-                            return 'Este campo no puede estar vacío';
-                          }
-                        },
-                        onFieldSubmitted: (value) {
-                          _generateBarCode(value, context);
-                        },
-                        maxLines: 3,
-                        cursorColor: Colors.blue,
-                        keyboardType: TextInputType.multiline,
-                        style: const TextStyle(color: Colors.black),
-                        controller: _inputController,
-                        decoration: InputDecoration(
-                          labelText: "Texto para convertir a código QR",
-                          labelStyle: const TextStyle(color: Colors.blue),
-                          enabledBorder: OutlineInputBorder(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(25.0),
-                            borderSide: const BorderSide(
-                              color: Colors.blue,
-                              width: 1.5,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                                color: Colors.blue, width: 2.0),
-                            borderRadius: BorderRadius.circular(25.0),
+                            color: Colors.white),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            children: [
+                              const Text(
+                                '¿Desea crear un código QR?',
+                                style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                              const SizedBox(
+                                height: 10,
+                              ),
+                              const Text(
+                                'Ingrese información en el siguiente cuadro de texto y luego genere el código',
+                                textAlign: TextAlign.justify,
+                              ),
+                              const SizedBox(
+                                height: 20.0,
+                              ),
+                              TextFormField(
+                                validator: (value) {
+                                  if (value.toString().isEmpty) {
+                                    return 'Este campo no puede estar vacío';
+                                  }
+                                  return null;
+                                },
+                                onFieldSubmitted: (value) {
+                                  _generateBarCode(value, context);
+                                },
+                                maxLines: 3,
+                                cursorColor: Colors.blue,
+                                keyboardType: TextInputType.multiline,
+                                style: const TextStyle(color: Colors.black),
+                                controller: _inputController,
+                                decoration: InputDecoration(
+                                  labelText: "Texto para convertir a código QR",
+                                  labelStyle:
+                                      const TextStyle(color: Colors.blue),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25.0),
+                                    borderSide: const BorderSide(
+                                      color: Colors.blue,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        color: Colors.blue, width: 2.0),
+                                    borderRadius: BorderRadius.circular(25.0),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
                     Padding(
                       padding: const EdgeInsets.only(
-                          right: 125.0, left: 125.0, top: 20.0),
+                          right: 125.0, left: 125.0, top: 5.0),
                       child: _buttonGroupDown(),
                     ),
                   ],
@@ -235,7 +310,7 @@ class _ReadQRANDROIDState extends State<ReadQRANDROID>
           Column(
             children: <Widget>[
               SizedBox(
-                height: 250,
+                height: 350,
                 child: bytes.isEmpty
                     ? const Text(
                         'Sin código',
@@ -438,9 +513,16 @@ class _ReadQRANDROIDState extends State<ReadQRANDROID>
   }
 
   Future _scanPhoto() async {
-    await Permission.storage.request();
-    String barcode = await scanner.scanPhoto();
-    _outputController.text = barcode;
+    try {
+      await Permission.storage.request();
+      String barcode = await scanner.scanPhoto();
+      _outputController.text = barcode;
+    } catch (e) {
+      context.showSnackBar(
+          message: 'Algo salió mal, intenta con otro código',
+          backgroundColor: Colors.amber,
+          icon: Icons.sim_card_alert_outlined);
+    }
   }
 
   Future _generateBarCode(String inputCode, BuildContext context) async {
@@ -468,7 +550,7 @@ class _ReadQRANDROIDState extends State<ReadQRANDROID>
                       topRight: Radius.circular(50.0),
                     )),
                 padding: const EdgeInsets.all(30.0),
-                height: 500,
+                height: 600,
                 child: _qrCodeWidget(bytes, context),
               );
             });
