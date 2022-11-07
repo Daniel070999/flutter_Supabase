@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttersupabase/pages_user_main/user_new_note.dart';
 import 'package:fluttersupabase/pages_user_main/user_read_qr_android.dart';
 import 'package:fluttersupabase/pages_user_main/user_read_qr_ios.dart';
+import 'package:fluttersupabase/pages_user_main/user_translate.dart';
 
 class ContainerUserMain extends StatefulWidget {
   const ContainerUserMain({super.key});
@@ -28,7 +29,13 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
           builder: (context) => const ReadQRIOS(),
         ));
   }
-
+Future<void> _translate(BuildContext context) async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const Translate(),
+        ));
+  }
   Future<void> _scannerQRANDROID(BuildContext context) async {
     Navigator.push(
         context,
@@ -138,7 +145,9 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                 padding: const EdgeInsets.all(15.0),
                 child: ClipRRect(
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      _translate(context);
+                    },
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25.0),
