@@ -19,6 +19,8 @@ const List<String> items = [
   'francés',
   'italiano',
   'chino',
+  'coreano',
+  'japonés',
   'alemán',
   'ruso'
 ];
@@ -125,6 +127,10 @@ class _TranslateState extends State<Translate> {
         toValue = 'it';
       } else if (languajeSelected.contains('chino')) {
         toValue = 'zh-cn';
+      } else if (languajeSelected.contains('coreano')) {
+        toValue = 'ko';
+      } else if (languajeSelected.contains('japonés')) {
+        toValue = 'ja';
       } else if (languajeSelected.contains('alemán')) {
         toValue = 'de';
       } else if (languajeSelected.contains('ruso')) {
@@ -141,6 +147,12 @@ class _TranslateState extends State<Translate> {
 
   @override
   Widget build(BuildContext context) {
+    Object? parametros = ModalRoute.of(context)!.settings.arguments;
+    if (parametros != null) {
+      setState(() {
+        _textInput.text = parametros.toString();
+      });
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -224,6 +236,15 @@ class _TranslateState extends State<Translate> {
                                 setState(() {
                                   _textInput.clear();
                                   _textOutput.clear();
+                                });
+                                setState(() {
+                                  //se revarga toda la página para evitar problemas con los parámetros
+                                  //que son traidos desde la ventana TRANSLATE
+                                  Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (BuildContext context) =>
+                                              super.widget));
                                 });
                               },
                               child: const Center(

@@ -65,6 +65,8 @@ dependencies:
   translator: ^0.1.7
   #mejor vista de drop down 
   dropdown_button2: ^1.8.9
+  #reconocimiento de texto en imagen
+  google_ml_kit: ^0.13.0
   
 dev_dependencies:
   flutter_test:
