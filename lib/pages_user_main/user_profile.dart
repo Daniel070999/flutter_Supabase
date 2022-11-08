@@ -59,7 +59,26 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
     });
   }
 
-  Future<void> _updateProfile() async {
+  Future<void> _signOut(BuildContext context) async {
+    try {
+      await supabase.auth.signOut();
+    } on AuthException catch (error) {
+      context.showSnackBar(
+          message: error.message,
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
+    } catch (error) {
+      context.showSnackBar(
+          message: 'Unexpected error occured',
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
+    }
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/');
+    }
+  }
+
+  Future<void> _updateProfile(BuildContext context) async {
     setState(() {
       _loading = true;
     });
@@ -79,6 +98,7 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
             message: 'Dato actualizados correctamente',
             backgroundColor: Colors.lightGreen,
             icon: Icons.check_circle_outline_outlined);
+        _signOut(context);
       }
     } on PostgrestException catch (error) {
       context.showSnackBar(
@@ -112,6 +132,7 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
             message: 'Contraseña actualizada',
             backgroundColor: Colors.lightGreen,
             icon: Icons.check_circle_outline_outlined);
+        _signOut(context);
       }
     } on PostgrestException catch (error) {
       context.showSnackBar(
@@ -161,6 +182,10 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
         child: ListView(
           padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
           children: [
+            const Center(
+              child: Text('NOTA: Luego de actualizar los datos, se cerrará sesión'),
+            ),
+            const SizedBox(height: 18),
             Form(
               key: _validatedFormData,
               child: Column(children: [
@@ -242,7 +267,7 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                         ),
                         onPressed: () {
                           if (_validatedFormData.currentState!.validate()) {
-                            _updateProfile();
+                            _updateProfile(context);
                           }
                         },
                         child: const Text(

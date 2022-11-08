@@ -86,7 +86,7 @@ class _SplashPageState extends State<SplashPage> {
             }
           } else {
             if (mounted) {
-              Navigator.pushReplacementNamed(context, '/userMain',
+              Navigator.pushReplacementNamed(context, '/drawer',
                   arguments: _stateAuth);
             }
           }
@@ -99,7 +99,7 @@ class _SplashPageState extends State<SplashPage> {
           } else {
             if (mounted) {
               Navigator.of(context)
-                  .pushReplacementNamed('/userMain', arguments: _stateAuth);
+                  .pushReplacementNamed('/drawer', arguments: _stateAuth);
             }
           }
         }

@@ -76,7 +76,7 @@ class _TextImageState extends State<TextImage> {
                   children: <Widget>[
                     Expanded(
                       flex: 3,
-                      child: Image.asset('images/scanPhone.png'),
+                      child: Image.asset('images/camera.png'),
                     ),
                     const Expanded(
                       flex: 1,

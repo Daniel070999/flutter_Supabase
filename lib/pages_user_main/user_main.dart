@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:fluttersupabase/forms/container_user_config.dart';
+import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:fluttersupabase/forms/container_user_main.dart';
-import 'package:google_nav_bar/google_nav_bar.dart';
+import 'package:fluttersupabase/pages_user_main/user_profile.dart';
 
 class UserMain extends StatefulWidget {
   UserMain({super.key});
@@ -27,46 +27,34 @@ class _UserMainState extends State<UserMain> {
     }
 
     return Scaffold(
-        body: (statePage == 0)
-            ? const ContainerUserMain()
-            : const ContainerUserConfig(),
-        bottomNavigationBar: Container(
-          color: Colors.black,
-          child: Padding(
-            padding: const EdgeInsets.all(5.0),
-            child: GNav(
-                onTabChange: (index) {
-                  setState(() {
-                    statePage = index;
-                  });
-                },
-                backgroundColor: Colors.black,
-                rippleColor: Colors.white,
-                hoverColor: Colors.white,
-                haptic: true,
-                tabBorderRadius: 30,
-                tabActiveBorder: Border.all(color: Colors.black, width: 1),
-                tabBorder: Border.all(color: Colors.transparent, width: 1),
-                tabShadow: [BoxShadow(color: Colors.black, blurRadius: 8)],
-                curve: Curves.easeInQuart,
-                duration: Duration(milliseconds: 900),
-                gap: 8,
-                color: Colors.grey.shade600,
-                activeColor: Colors.white,
-                iconSize: 24,
-                tabBackgroundColor: Colors.white.withOpacity(0.5),
-                padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
-                tabs: const [
-                  GButton(
-                    icon: Icons.home,
-                    text: 'Menu Principal',
-                  ),
-                  GButton(
-                    icon: Icons.settings,
-                    text: 'Configuraciones',
-                  )
-                ]),
+      appBar: AppBar(
+        title: const Text(
+          'Menu principal',
+        ),
+        leading: IconButton(
+            onPressed: () {
+              if (ZoomDrawer.of(context)!.isOpen()) {
+                ZoomDrawer.of(context)!.close();
+              } else {
+                ZoomDrawer.of(context)!.open();
+              }
+            },
+            icon: const Icon(
+              Icons.menu_open_rounded,
+              color: Colors.white,
+            )),
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient:
+                LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
+              Colors.green,
+              Colors.blue.shade300,
+            ]),
           ),
-        ));
+        ),
+        backgroundColor: Colors.lightBlue,
+      ),
+      body: const Center(child: ContainerUserMain()),
+    );
   }
 }

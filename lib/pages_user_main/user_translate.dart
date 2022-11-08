@@ -236,8 +236,6 @@ class _TranslateState extends State<Translate> {
                                 setState(() {
                                   _textInput.clear();
                                   _textOutput.clear();
-                                });
-                                setState(() {
                                   //se revarga toda la página para evitar problemas con los parámetros
                                   //que son traidos desde la ventana TRANSLATE
                                   Navigator.pushReplacement(
