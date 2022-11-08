@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:fluttersupabase/pages_user_main/user_image_text.dart';
 import 'package:fluttersupabase/pages_user_main/user_new_note.dart';
 import 'package:fluttersupabase/pages_user_main/user_read_qr_android.dart';
 import 'package:fluttersupabase/pages_user_main/user_read_qr_ios.dart';
@@ -43,7 +44,13 @@ Future<void> _translate(BuildContext context) async {
           builder: (context) => const ReadQRANDROID(),
         ));
   }
-
+Future<void> _textImage(BuildContext context) async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TextImage(),
+        ));
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -177,7 +184,9 @@ Future<void> _translate(BuildContext context) async {
                 padding: const EdgeInsets.all(15.0),
                 child: ClipRRect(
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      _textImage(context);
+                    },
                     child: Container(
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25.0),

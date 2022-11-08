@@ -6,6 +6,7 @@ import 'package:fluttersupabase/pages_auth/no_internet.dart';
 import 'package:fluttersupabase/pages_auth/resetPassword_page.dart';
 import 'package:fluttersupabase/pages_auth/splash_page.dart';
 import 'package:fluttersupabase/pages_user_main/user_main.dart';
+import 'package:fluttersupabase/pages_user_main/user_translate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -50,6 +51,7 @@ class MyApp extends StatelessWidget {
         '/reset': (_) => const ResetPassword(),
         '/userMain': (_) => UserMain(),
         '/noInternet': (_) => const NoInternet(),
+        '/translate': (_) => Translate(),
       },
     );
   }
