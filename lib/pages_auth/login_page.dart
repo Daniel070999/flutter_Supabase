@@ -265,17 +265,12 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         Container(
                           width: double.infinity,
-                          decoration: const BoxDecoration(
-                            image: DecorationImage(
-                                image: AssetImage('images/login.png'),
-                                scale: 2,
-                                alignment: Alignment.topCenter),
-                            color: Colors.white,
-                            borderRadius: BorderRadius.all(Radius.circular(25)),
+                          decoration:  BoxDecoration(
+                            color: Colors.white.withOpacity(0.8),
+                            borderRadius: const BorderRadius.all(Radius.circular(25)),
                           ),
                           child: Padding(
                             padding: const EdgeInsets.only(
-                              top: 250,
                               left: 30,
                               right: 30,
                             ),
@@ -283,6 +278,8 @@ class _LoginPageState extends State<LoginPage> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
+                                const Image(
+                                    image: AssetImage('images/logo.png')),
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [

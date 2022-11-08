@@ -58,30 +58,6 @@ Future<void> _textImage(BuildContext context) async {
         color: Colors.grey.withOpacity(0.2),
         child: CustomScrollView(
           slivers: [
-            SliverAppBar(
-              backgroundColor: Colors.lightBlue,
-              expandedHeight: 80,
-              floating: true,
-              pinned: true,
-              flexibleSpace: FlexibleSpaceBar(
-                titlePadding: const EdgeInsets.all(15.0),
-                centerTitle: true,
-                background: Container(
-                    decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [
-                      Colors.lightGreen,
-                      Colors.lightBlue,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.centerRight,
-                  ),
-                )),
-                title: const Text(
-                  'Menu principal',
-                ),
-              ),
-            ),
             SliverToBoxAdapter(
               child: Padding(
                 padding: const EdgeInsets.all(15.0),
