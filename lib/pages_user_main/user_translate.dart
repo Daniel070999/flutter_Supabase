@@ -1,7 +1,7 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttersupabase/pages_user_main/user_speech_to_text.dart';
 import 'package:pdf_text/pdf_text.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:translator/translator.dart';
@@ -34,8 +34,6 @@ class _TranslateState extends State<Translate> {
   final _textOutput = TextEditingController();
   String languajeSelected = '';
   PDFDoc? _pdfDoc;
-
-
   Widget _listItemsLanguaje(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
@@ -146,40 +144,15 @@ class _TranslateState extends State<Translate> {
     } catch (e) {
       print(e);
       if (e.toString().contains('Broken')) {
-        _textOutput.text ='Intenta con un texto mas corto';
-      }else{
+        _textOutput.text = 'Intenta con un texto mas corto';
+      } else {
         _textOutput.clear();
       }
-      
     }
   }
 
-  Future _pickPDFText(BuildContext context) async {
-    try {
-      var filePickerResult = await FilePicker.platform
-          .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
 
-      if (filePickerResult != null) {
-        _textInput.text = 'Cargando PDF...';
-        _pdfDoc = await PDFDoc.fromPath(filePickerResult.files.single.path!);
 
-        setState(() {});
-      }
-      if (_pdfDoc == null) {
-        return;
-      }
-      String text = await _pdfDoc!.text;
-
-      setState(() {
-        _textInput.text = text;
-      });
-    } catch (e) {
-      context.showSnackBar(
-          message: 'Intenta con otro documento',
-          backgroundColor: Colors.red,
-          icon: Icons.warning_amber_rounded);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -292,34 +265,6 @@ class _TranslateState extends State<Translate> {
                                     style: TextStyle(color: Colors.lightBlue),
                                   )),
                                 ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                OutlinedButton(
-                                  style: ButtonStyle(
-                                    backgroundColor: MaterialStateProperty.all(
-                                        Colors.transparent),
-                                    foregroundColor: MaterialStateProperty.all(
-                                        Colors.lightBlue),
-                                    shape: MaterialStateProperty.all(
-                                      RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(25)),
-                                    ),
-                                    side: MaterialStateProperty.all(
-                                        const BorderSide(
-                                            color: Colors.lightBlue)),
-                                  ),
-                                  onPressed: () {
-                                    _pickPDFText(context);
-                                  },
-                                  child: const Center(
-                                    child: Text(
-                                      'Seleccionar PDF',
-                                      style: TextStyle(color: Colors.lightBlue),
-                                    ),
-                                  ),
-                                ),
                               ],
                             ),
                           ],
@@ -390,21 +335,15 @@ class _TranslateState extends State<Translate> {
                                             color: Colors.lightBlue)),
                                   ),
                                   onPressed: () {
-                                    if (_textOutput.text.isEmpty) {
-                                      context.showSnackBar(
-                                          message:
-                                              'No hay información que copiar',
-                                          backgroundColor: Colors.amber,
-                                          icon: Icons.warning_amber_rounded);
-                                    } else {
-                                      Clipboard.setData(ClipboardData(
+                                    if (_textOutput.text.isNotEmpty) {
+                                       Clipboard.setData(ClipboardData(
                                           text: _textOutput.text));
                                       context.showSnackBar(
                                           message: 'Se copio al portapeles',
                                           backgroundColor: Colors.lightGreen,
                                           icon: Icons
                                               .check_circle_outline_outlined);
-                                    }
+                                    } 
                                   },
                                   child: const Center(
                                       child: Text(

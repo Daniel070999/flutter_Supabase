@@ -1,60 +1,70 @@
 import 'package:flutter/material.dart';
+import 'package:fluttersupabase/pages_user_main/user_read_pdf.dart';
+import 'package:fluttersupabase/pages_user_main/user_speech_to_text.dart';
 import 'package:fluttersupabase/pages_user_main/user_image_text.dart';
 import 'package:fluttersupabase/pages_user_main/user_new_note.dart';
 import 'package:fluttersupabase/pages_user_main/user_read_qr_android.dart';
 import 'package:fluttersupabase/pages_user_main/user_read_qr_ios.dart';
 import 'package:fluttersupabase/pages_user_main/user_translate.dart';
-import 'package:fluttersupabase/pages_user_main/user_translate_doc.dart';
 import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final supabase = Supabase.instance.client;
+readPDF(BuildContext context) async {
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ReadPDF(),
+      ));
+}
+speechToText(BuildContext context) async {
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SpeechToTextPage(),
+      ));
+}
 
 newNote(BuildContext context) async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const NewNote(),
-        ));
-  }
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const NewNote(),
+      ));
+}
 
 scannerQRIOS(BuildContext context) async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ReadQRIOS(),
-        ));
-  }
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ReadQRIOS(),
+      ));
+}
 
- translate(BuildContext context) async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const Translate(),
-        ));
-  }
-translateDoc(BuildContext context) async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const TranslateDoc(),
-        ));
-  }
- scannerQRANDROID(BuildContext context) async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ReadQRANDROID(),
-        ));
-  }
+translate(BuildContext context) async {
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const Translate(),
+      ));
+}
 
-  textImage(BuildContext context) async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => TextImage(),
-        ));
-  }
+scannerQRANDROID(BuildContext context) async {
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const ReadQRANDROID(),
+      ));
+}
+
+textImage(BuildContext context) async {
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TextImage(),
+      ));
+}
+
 extension ShowSnackBar on BuildContext {
   void showSnackBar({
     required String message,

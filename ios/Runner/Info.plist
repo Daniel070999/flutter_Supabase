@@ -17,6 +17,10 @@
 
     <key>NSCameraUsageDescription</key>
     <string >Necesitamos acceso a tu cámara.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+    <string >Reconocimiento de voz.</string>
+	<key>NSMicrophoneUsageDescription</key>
+    <string >Uso del micrófono.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

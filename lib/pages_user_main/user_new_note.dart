@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -26,15 +27,17 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
   bool _loadingNotes = false;
   bool _titleUpdate = false;
   bool _descriptionUpdate = false;
+  Codec<String, String> stringToBase64 = utf8.fuse(base64);
 
   Future<void> _saveNote(BuildContext context) async {
     showLoaderDialog(context, 'Guardando nota', 'images/lottie/save.zip');
     setState(() {});
     try {
-      final title = _titleController.text;
-      final description = _descriptionController.text;
+      final title = stringToBase64.encode(_titleController.text);
+      final description = stringToBase64.encode(_descriptionController.text);
       final createAt = DateTime.now().toIso8601String();
       final userId = supabase.auth.currentUser!.id;
+
       final data = {
         'id_notes_user': userId,
         'create_at': createAt,
@@ -73,8 +76,8 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       final id = idUpdate;
       final data = {
         'update_at': createAt,
-        'title': titleUpdate,
-        'description': descriptionUpdate
+        'title': stringToBase64.encode(titleUpdate),
+        'description': stringToBase64.encode(descriptionUpdate)
       };
       await supabase.from('notes').update(data).eq('id', id);
       if (mounted) {
@@ -424,6 +427,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
     );
   }
 
+
   @override
   void initState() {
     _getNotes();
@@ -457,7 +461,8 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Text('No tiene notas creadas'),
-                            Lottie.asset('images/lottie/empty.zip', repeat: false),
+                            Lottie.asset('images/lottie/empty.zip',
+                                repeat: false),
                             const Divider(
                                 height: 50,
                                 color: Colors.grey,
@@ -499,7 +504,8 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
                                         topLeft: Radius.circular(50),
                                         bottomLeft: Radius.circular(50)),
                                     onPressed: (context) {
-                                      _newTitleUpdate = data[index]['title'];
+                                      _newTitleUpdate = stringToBase64
+                                          .decode(data[index]['title']);
                                       _newIdNoteUpdate = data[index]['id'];
                                       _viewDeleteNote(
                                           _newTitleUpdate, _newIdNoteUpdate);
@@ -513,12 +519,14 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
                                     onPressed: (context) {
                                       // ignore: prefer_interpolation_to_compose_strings
                                       Share.share('*' +
-                                          data[index]['title']
+                                          stringToBase64
+                                              .decode(data[index]['title'])
                                               .toString()
                                               .trimRight() +
                                           '*' +
                                           '\n' +
-                                          data[index]['description']);
+                                          stringToBase64.decode(
+                                              data[index]['description']));
                                     },
                                     backgroundColor: Colors.lightBlue,
                                     foregroundColor: Colors.white,
@@ -541,9 +549,10 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
                                     //agregar para ver la fecha de creacion de nota
                                   },
                                   onTap: () {
-                                    _newTitleUpdate = data[index]['title'];
-                                    _newDescriptionUpdate =
-                                        data[index]['description'];
+                                    _newTitleUpdate = stringToBase64
+                                        .decode(data[index]['title']);
+                                    _newDescriptionUpdate = stringToBase64
+                                        .decode(data[index]['description']);
                                     _newIdNoteUpdate = data[index]['id'];
                                     _viewNote(
                                         context,
@@ -552,14 +561,9 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
                                         _newIdNoteUpdate);
                                   },
                                   minVerticalPadding: 10,
-                                  title: Text(
-                                    '${data[index]['title']}',
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18),
-                                  ),
+                                  title: Text(stringToBase64.decode(data[index]['title'])),
                                   subtitle:
-                                      Text('${data[index]['description']}'),
+                                      Text(stringToBase64.decode(data[index]['description'])),
                                 ),
                               ),
                             ),

@@ -246,42 +246,7 @@ class _TextImageState extends State<TextImage> {
                                     const BorderSide(color: Colors.lightBlue)),
                               ),
                               onPressed: () {
-                                setState(() {
-                                  scannedText.clear();
-                                  imageFile = null;
-                                });
-                              },
-                              child: const Center(
-                                  child: Text(
-                                'Limpiar',
-                                style: TextStyle(color: Colors.lightBlue),
-                              )),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            OutlinedButton(
-                              style: ButtonStyle(
-                                fixedSize: MaterialStateProperty.all(
-                                    const Size.fromWidth(100)),
-                                backgroundColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                foregroundColor:
-                                    MaterialStateProperty.all(Colors.lightBlue),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25)),
-                                ),
-                                side: MaterialStateProperty.all(
-                                    const BorderSide(color: Colors.lightBlue)),
-                              ),
-                              onPressed: () {
-                                if (scannedText.text.isEmpty) {
-                                  context.showSnackBar(
-                                      message: 'No hay información para copiar',
-                                      backgroundColor: Colors.amber,
-                                      icon: Icons.warning_amber_rounded);
-                                } else {
+                                if (scannedText.text.isNotEmpty) {
                                   Clipboard.setData(
                                       ClipboardData(text: scannedText.text));
                                   context.showSnackBar(
@@ -317,13 +282,7 @@ class _TextImageState extends State<TextImage> {
                                     const BorderSide(color: Colors.lightBlue)),
                               ),
                               onPressed: () {
-                                if (scannedText.text.isEmpty) {
-                                  context.showSnackBar(
-                                      message:
-                                          'No hay información para traducir',
-                                      backgroundColor: Colors.amber,
-                                      icon: Icons.warning_amber_rounded);
-                                } else {
+                                if (scannedText.text.isNotEmpty) {
                                   Navigator.pushNamed(context, '/translate',
                                       arguments: scannedText.text);
                                 }
@@ -334,6 +293,36 @@ class _TextImageState extends State<TextImage> {
                                   style: TextStyle(color: Colors.lightBlue),
                                 ),
                               ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            OutlinedButton(
+                              style: ButtonStyle(
+                                fixedSize: MaterialStateProperty.all(
+                                    const Size.fromWidth(100)),
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colors.transparent),
+                                foregroundColor:
+                                    MaterialStateProperty.all(Colors.lightBlue),
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(25)),
+                                ),
+                                side: MaterialStateProperty.all(
+                                    const BorderSide(color: Colors.lightBlue)),
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  scannedText.clear();
+                                  imageFile = null;
+                                });
+                              },
+                              child: const Center(
+                                  child: Text(
+                                'Limpiar',
+                                style: TextStyle(color: Colors.lightBlue),
+                              )),
                             ),
                           ],
                         ),

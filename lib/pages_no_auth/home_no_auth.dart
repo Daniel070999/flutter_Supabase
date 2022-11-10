@@ -169,6 +169,77 @@ class _UserNoAuthState extends State<UserNoAuth> {
                   ),
                 ),
               ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: ClipRRect(
+                    child: GestureDetector(
+                      onTap: () {
+                        readPDF(context);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25.0),
+                            color: Colors.white),
+                        height: 100,
+                        child: Row(
+                          children: const [
+                            Image(
+                              image: AssetImage('images/pdf.png'),
+                            ),
+                            SizedBox(
+                              width: 20,
+                            ),
+                            Text(
+                              'ABRIR PDF',
+                              style: TextStyle(fontSize: 22),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: ClipRRect(
+                    child: GestureDetector(
+                      onTap: null,
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25.0),
+                            color: Colors.white.withOpacity(0.5)),
+                        height: 100,
+                        child: Row(
+                          children: [
+                            const Image(
+                              image: AssetImage('images/recording.png'),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: const [
+                                Text(
+                                  'VOZ A TEXTO',
+                                  style: TextStyle(fontSize: 22, color: Colors.grey),
+                                ),
+                                Text(
+                                  '(Disponible solo iniciando sesión)',
+                                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                                )
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ));
