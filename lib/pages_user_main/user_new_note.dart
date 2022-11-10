@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'dart:io';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'dart:math' as math;
+import 'package:lottie/lottie.dart';
 
 import 'package:share_plus/share_plus.dart';
-import 'package:shimmer/shimmer.dart';
 
 class NewNote extends StatefulWidget {
   const NewNote({super.key});
@@ -31,7 +28,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
   bool _descriptionUpdate = false;
 
   Future<void> _saveNote(BuildContext context) async {
-    showLoaderDialog(context, 'Guardando nota');
+    showLoaderDialog(context, 'Guardando nota', 'images/lottie/save.zip');
     setState(() {});
     try {
       final title = _titleController.text;
@@ -47,10 +44,6 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       await supabase.from('notes').insert(data);
       if (mounted) {
         Navigator.pop(context);
-        context.showSnackBar(
-            message: 'Nota creada',
-            backgroundColor: Colors.lightGreen,
-            icon: Icons.check_circle_outline_outlined);
       }
     } catch (e) {
       Navigator.pop(context);
@@ -73,7 +66,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
 
   Future<void> _updateNote(BuildContext context, String titleUpdate,
       String descriptionUpdate, String idUpdate) async {
-    showLoaderDialog(context, 'Actualizando nota');
+    showLoaderDialog(context, 'Actualizando nota', 'images/lottie/update.zip');
     setState(() {});
     try {
       final createAt = DateTime.now().toIso8601String();
@@ -89,13 +82,8 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
         _titleUpdate = false;
         _descriptionUpdate = false;
         Navigator.pop(context);
-        context.showSnackBar(
-            message: 'Nota actualizada',
-            backgroundColor: Colors.lightGreen,
-            icon: Icons.check_circle_outline_outlined);
       }
     } catch (e) {
-      print(e);
       context.showSnackBar(
           message: e.toString(),
           backgroundColor: Colors.red,
@@ -106,7 +94,6 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       _descriptionController.clear();
       _getNotes();
     });
-    if (mounted) {}
   }
 
   Future<List> _getNotes() async {
@@ -135,7 +122,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
   }
 
   Future<void> _deleteNote(BuildContext context, String idUpdate) async {
-    showLoaderDialog(context, 'Eliminando nota');
+    showLoaderDialog(context, 'Eliminando nota', 'images/lottie/delete.zip');
     try {
       String id = idUpdate.trim();
       await supabase.from('notes').delete().eq('id', id);
@@ -144,10 +131,6 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
         setState(() {
           _getNotes();
         });
-        context.showSnackBar(
-            message: 'Nota eliminada',
-            backgroundColor: Colors.lightGreen,
-            icon: Icons.delete);
       }
     } catch (e) {
       if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
@@ -308,7 +291,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
             backgroundColor: MaterialStatePropertyAll(Colors.lightGreen),
           ),
           child: const Text(
-            'Guardar',
+            'Actualizar',
             style: TextStyle(color: Colors.white),
           ),
           onPressed: () {
@@ -466,113 +449,131 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
         backgroundColor: Colors.lightBlue,
       ),
       body: Container(
-        color: Colors.grey.withOpacity(0.2),
-        child: (_loadingNotes == false)
-            ? ListView.builder(
-                itemCount: data.length,
-                itemBuilder: (context, index) {
-                  return Column(
-                    children: [
-                      const SizedBox(
-                        height: 5.0,
-                      ),
-                      Slidable(
-                        key: const ValueKey(0),
-                        startActionPane: ActionPane(
-                          motion: const ScrollMotion(),
+          color: Colors.grey.withOpacity(0.2),
+          child: (_loadingNotes == false)
+              ? (data.isEmpty)
+                  ? Center(
+                      child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            SlidableAction(
-                              borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(50),
-                                  bottomLeft: Radius.circular(50)),
-                              onPressed: (context) {
-                                _newTitleUpdate = data[index]['title'];
-                                _newIdNoteUpdate = data[index]['id'];
-                                _viewDeleteNote(
-                                    _newTitleUpdate, _newIdNoteUpdate);
-                              },
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
-                              icon: Icons.delete,
-                              label: 'Eliminar',
+                            const Text('No tiene notas creadas'),
+                            Lottie.asset('images/lottie/empty.zip', repeat: false),
+                            const Divider(
+                                height: 50,
+                                color: Colors.grey,
+                                thickness: 1,
+                                endIndent: 20,
+                                indent: 20),
+                            const Text(
+                                'Puede crear su primera nota en esta parte'),
+                            const SizedBox(
+                              height: 10,
                             ),
-                            SlidableAction(
-                              onPressed: (context) {
-                                // ignore: prefer_interpolation_to_compose_strings
-                                Share.share('*' +
-                                    data[index]['title'] +
-                                    '*' +
-                                    '\n' +
-                                    data[index]['description']);
-                              },
-                              backgroundColor: Colors.lightBlue,
-                              foregroundColor: Colors.white,
-                              icon: Icons.share,
-                              label: 'Compartir',
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Lottie.asset(
+                                  'images/lottie/arrowdown.zip',
+                                  height: 150,
+                                  width: 150,
+                                ),
+                              ],
                             ),
+                          ]),
+                    )
+                  : ListView.builder(
+                      itemCount: data.length,
+                      itemBuilder: (context, index) {
+                        return Column(
+                          children: [
+                            const SizedBox(
+                              height: 5.0,
+                            ),
+                            Slidable(
+                              key: const ValueKey(0),
+                              startActionPane: ActionPane(
+                                motion: const ScrollMotion(),
+                                children: [
+                                  SlidableAction(
+                                    borderRadius: const BorderRadius.only(
+                                        topLeft: Radius.circular(50),
+                                        bottomLeft: Radius.circular(50)),
+                                    onPressed: (context) {
+                                      _newTitleUpdate = data[index]['title'];
+                                      _newIdNoteUpdate = data[index]['id'];
+                                      _viewDeleteNote(
+                                          _newTitleUpdate, _newIdNoteUpdate);
+                                    },
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.delete,
+                                    label: 'Eliminar',
+                                  ),
+                                  SlidableAction(
+                                    onPressed: (context) {
+                                      // ignore: prefer_interpolation_to_compose_strings
+                                      Share.share('*' +
+                                          data[index]['title']
+                                              .toString()
+                                              .trimRight() +
+                                          '*' +
+                                          '\n' +
+                                          data[index]['description']);
+                                    },
+                                    backgroundColor: Colors.lightBlue,
+                                    foregroundColor: Colors.white,
+                                    icon: Icons.share,
+                                    label: 'Compartir',
+                                  ),
+                                ],
+                              ),
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.only(
+                                      bottomRight: Radius.circular(50),
+                                      topRight: Radius.circular(50)),
+                                ),
+                                child: ListTile(
+                                  leading:
+                                      const Icon(Icons.swipe_right_outlined),
+                                  onLongPress: () {
+                                    //agregar para ver la fecha de creacion de nota
+                                  },
+                                  onTap: () {
+                                    _newTitleUpdate = data[index]['title'];
+                                    _newDescriptionUpdate =
+                                        data[index]['description'];
+                                    _newIdNoteUpdate = data[index]['id'];
+                                    _viewNote(
+                                        context,
+                                        _newTitleUpdate,
+                                        _newDescriptionUpdate,
+                                        _newIdNoteUpdate);
+                                  },
+                                  minVerticalPadding: 10,
+                                  title: Text(
+                                    '${data[index]['title']}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 18),
+                                  ),
+                                  subtitle:
+                                      Text('${data[index]['description']}'),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              height: 5.0,
+                            )
                           ],
-                        ),
-                        child: Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.only(
-                                bottomRight: Radius.circular(50),
-                                topRight: Radius.circular(50)),
-                          ),
-                          child: ListTile(
-                            leading: const Icon(Icons.navigate_next_rounded),
-                            onLongPress: () {
-                              //agregar para ver la fecha de creacion de nota
-                            },
-                            onTap: () {
-                              _newTitleUpdate = data[index]['title'];
-                              _newDescriptionUpdate =
-                                  data[index]['description'];
-                              _newIdNoteUpdate = data[index]['id'];
-                              _viewNote(context, _newTitleUpdate,
-                                  _newDescriptionUpdate, _newIdNoteUpdate);
-                            },
-                            minVerticalPadding: 10,
-                            title: Text(
-                              '${data[index]['title']}',
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18),
-                            ),
-                            subtitle: Text('${data[index]['description']}'),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 5.0,
-                      )
-                    ],
-                  );
-                },
-              )
-            : ListView(
-                padding: const EdgeInsets.all(8.0),
-                children: [
-                  const SizedBox(
-                    height: 8,
-                  ),
-                  Shimmer.fromColors(
-                    period: const Duration(milliseconds: 1000),
-                    baseColor: Colors.grey.shade400,
-                    highlightColor: Colors.white,
-                    child: ListView.separated(
-                      shrinkWrap: true,
-                      physics: const ClampingScrollPhysics(),
-                      itemCount: 8,
-                      itemBuilder: (_, __) => Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
-                        child: placeHolderRow(),
-                      ),
-                      separatorBuilder: (_, __) => const SizedBox(height: 2),
-                    ),
-                  ),
-                ],
-              ),
-      ),
+                        );
+                      },
+                    )
+              : Center(
+                  child: Lottie.asset('images/lottie/searching.zip',
+                      width: 300, height: 300, fit: BoxFit.fill),
+                )),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           showModalBottomSheet(

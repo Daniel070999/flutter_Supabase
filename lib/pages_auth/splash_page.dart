@@ -1,6 +1,10 @@
+import 'dart:io';
+
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class SplashPage extends StatefulWidget {
@@ -16,6 +20,22 @@ class _SplashPageState extends State<SplashPage> {
   bool _redicrectCalled = false;
 
   final _usernameProfile = TextEditingController();
+
+  @override
+  void initState() {
+    _preferencesAnimationLoad();
+    super.initState();
+  }
+
+  Future<void> _preferencesAnimationLoad() async {
+    final prefs = await SharedPreferences.getInstance();
+    final bool? repeat = prefs.getBool('animationState');
+    if (repeat != null) {
+      setState(() {
+        animationState = repeat;
+      });
+    }
+  }
 
   @override
   void didChangeDependencies() {
@@ -113,8 +133,9 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(child: CircularProgressIndicator()),
+    return  const Scaffold(
+      body: Center(
+          child: CircularProgressIndicator()),
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:fluttersupabase/pages_auth/login_page.dart';
 import 'package:fluttersupabase/pages_auth/no_internet.dart';
 import 'package:fluttersupabase/pages_auth/resetPassword_page.dart';
 import 'package:fluttersupabase/pages_auth/splash_page.dart';
+import 'package:fluttersupabase/pages_no_auth/home_no_auth.dart';
 import 'package:fluttersupabase/pages_user_main/user_main.dart';
 import 'package:fluttersupabase/pages_user_main/user_profile.dart';
 import 'package:fluttersupabase/pages_user_main/user_translate.dart';

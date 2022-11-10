@@ -32,17 +32,19 @@ class _UserMainState extends State<UserMain> {
           'Menu principal',
         ),
         leading: IconButton(
-            onPressed: () {
-              if (ZoomDrawer.of(context)!.isOpen()) {
-                ZoomDrawer.of(context)!.close();
-              } else {
-                ZoomDrawer.of(context)!.open();
-              }
-            },
-            icon: const Icon(
-              Icons.menu_open_rounded,
-              color: Colors.white,
-            )),
+          
+          onPressed: () {
+            if (ZoomDrawer.of(context)!.isOpen()) {
+              ZoomDrawer.of(context)!.close();
+            } else {
+              ZoomDrawer.of(context)!.open();
+            }
+          },
+          icon: const Icon(
+            Icons.menu,
+            color: Colors.white,
+          ),
+        ),
         flexibleSpace: Container(
           decoration: BoxDecoration(
             gradient:
