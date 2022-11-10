@@ -1,10 +1,60 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttersupabase/pages_user_main/user_image_text.dart';
+import 'package:fluttersupabase/pages_user_main/user_new_note.dart';
+import 'package:fluttersupabase/pages_user_main/user_read_qr_android.dart';
+import 'package:fluttersupabase/pages_user_main/user_read_qr_ios.dart';
+import 'package:fluttersupabase/pages_user_main/user_translate.dart';
+import 'package:fluttersupabase/pages_user_main/user_translate_doc.dart';
+import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'dart:io';
 
 final supabase = Supabase.instance.client;
 
+newNote(BuildContext context) async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const NewNote(),
+        ));
+  }
+
+scannerQRIOS(BuildContext context) async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ReadQRIOS(),
+        ));
+  }
+
+ translate(BuildContext context) async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const Translate(),
+        ));
+  }
+translateDoc(BuildContext context) async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const TranslateDoc(),
+        ));
+  }
+ scannerQRANDROID(BuildContext context) async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const ReadQRANDROID(),
+        ));
+  }
+
+  textImage(BuildContext context) async {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => TextImage(),
+        ));
+  }
 extension ShowSnackBar on BuildContext {
   void showSnackBar({
     required String message,
@@ -65,21 +115,47 @@ extension ShowSnackBarWithButton on BuildContext {
   }
 }
 
+bool animationState = true;
+
 //dialogo que ocupa toda la ventana
-showLoaderDialog(BuildContext context, String message) {
+showLoaderDialog(BuildContext context, String message, String ruteLottie) {
   AlertDialog alert = AlertDialog(
-    backgroundColor: Colors.white,
-    content: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(message),
-        const SizedBox(
-          width: 20,
-        ),
-        Platform.isAndroid
-            ? const CircularProgressIndicator()
-            : const CupertinoActivityIndicator()
-      ],
+    backgroundColor: Colors.transparent,
+    content: Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(25.0),
+              color: Colors.grey.withOpacity(0.5),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25.0),
+                  color: Colors.grey.withOpacity(0.8),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(children: [
+                    Lottie.asset(
+                      ruteLottie,
+                      width: 100,
+                      height: 100,
+                    ),
+                    Text(
+                      message,
+                      style: const TextStyle(color: Colors.white),
+                    ),
+                  ]),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
     ),
   );
   showDialog(
@@ -90,41 +166,3 @@ showLoaderDialog(BuildContext context, String message) {
     },
   );
 }
-
-Widget placeHolderRow() => Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Padding(
-          padding: EdgeInsets.all(20.0),
-          child: Icon(Icons.keyboard_arrow_right),
-        ),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Container(
-                width: double.infinity,
-                height: 8.0,
-                color: Colors.white,
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 5.0),
-              ),
-              Container(
-                width: 200,
-                height: 8.0,
-                color: Colors.white,
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 5.0),
-              ),
-              Container(
-                width: 40.0,
-                height: 8.0,
-                color: Colors.white,
-              ),
-            ],
-          ),
-        )
-      ],
-    );

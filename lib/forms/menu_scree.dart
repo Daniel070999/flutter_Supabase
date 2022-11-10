@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
+import 'package:fluttersupabase/forms/drawer_screen.dart';
 import 'package:fluttersupabase/pages_user_main/user_profile.dart';
+import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MenuScreen extends StatefulWidget {
@@ -18,6 +21,11 @@ class _MenuScreenState extends State<MenuScreen> {
   void initState() {
     super.initState();
     _getProfile();
+  }
+
+  Future<void> _preferencesAnimationSave() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setBool('animationState', animationState);
   }
 
   Future<void> _getProfile() async {
@@ -93,12 +101,16 @@ class _MenuScreenState extends State<MenuScreen> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const InkWell(
+                InkWell(
                   child: Align(
                     alignment: Alignment.center,
                     child: Padding(
-                        padding: EdgeInsets.all(12.0),
-                        child: Image(image: AssetImage('images/logo.png'))),
+                      padding: const EdgeInsets.all(12.0),
+                      child: Lottie.asset(
+                        'images/lottie/user.zip',
+                        repeat: animationState,
+                      ),
+                    ),
                   ),
                 ),
                 InkWell(
@@ -136,25 +148,57 @@ class _MenuScreenState extends State<MenuScreen> {
                     alignment: Alignment.center,
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
-                      child: OutlinedButton(
-                        style: ButtonStyle(
-                          elevation: MaterialStateProperty.all(10),
-                          backgroundColor: MaterialStateProperty.all(
-                              Colors.white.withOpacity(0.8)),
-                          overlayColor:
-                              MaterialStateProperty.all(Colors.red.shade200),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
-                          ),
+                      child: Container(
+                        height: 40,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25.0),
+                            color: Colors.white.withOpacity(0.8)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            const Text("Animaciones"),
+                            Switch(
+                              value: animationState,
+                              onChanged: (value) {
+                                setState(() {
+                                  animationState = value;
+                                  Navigator.pushReplacementNamed(
+                                      context, '/drawer');
+                                  _preferencesAnimationSave();
+                                });
+                              },
+                            ),
+                          ],
                         ),
-                        onPressed: () {
-                          _userProfile(context);
-                        },
-                        child: const Center(
-                          child: Text(
-                            'Actualizar Datos',
-                            style: TextStyle(color: Colors.blue),
+                      ),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Container(
+                        color: Colors.transparent,
+                        height: 40,
+                        child: OutlinedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                Colors.white.withOpacity(0.8)),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25)),
+                            ),
+                          ),
+                          onPressed: () {
+                            _userProfile(context);
+                          },
+                          child: const Center(
+                            child: Text(
+                              'Actualizar Datos',
+                              style: TextStyle(color: Colors.black),
+                            ),
                           ),
                         ),
                       ),
@@ -166,25 +210,28 @@ class _MenuScreenState extends State<MenuScreen> {
                     alignment: Alignment.center,
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
-                      child: OutlinedButton(
-                        style: ButtonStyle(
-                          elevation: MaterialStateProperty.all(10),
-                          backgroundColor: MaterialStateProperty.all(
-                              Colors.white.withOpacity(0.8)),
-                          overlayColor:
-                              MaterialStateProperty.all(Colors.red.shade200),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
+                      child: Container(
+                        color: Colors.transparent,
+                        height: 40.0,
+                        child: OutlinedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                Colors.white.withOpacity(0.8)),
+                            overlayColor:
+                                MaterialStateProperty.all(Colors.red.shade200),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25)),
+                            ),
                           ),
-                        ),
-                        onPressed: () {
-                          _signOut(context);
-                        },
-                        child: const Center(
-                          child: Text(
-                            'Cerrar sesion',
-                            style: TextStyle(color: Colors.red),
+                          onPressed: () {
+                            _signOut(context);
+                          },
+                          child: const Center(
+                            child: Text(
+                              'Cerrar sesion',
+                              style: TextStyle(color: Colors.red),
+                            ),
                           ),
                         ),
                       ),

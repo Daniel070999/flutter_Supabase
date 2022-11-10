@@ -1,11 +1,8 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:fluttersupabase/pages_user_main/user_image_text.dart';
-import 'package:fluttersupabase/pages_user_main/user_new_note.dart';
-import 'package:fluttersupabase/pages_user_main/user_read_qr_android.dart';
-import 'package:fluttersupabase/pages_user_main/user_read_qr_ios.dart';
-import 'package:fluttersupabase/pages_user_main/user_translate.dart';
+import 'package:fluttersupabase/constants.dart';
+import 'package:lottie/lottie.dart';
 
 class ContainerUserMain extends StatefulWidget {
   const ContainerUserMain({super.key});
@@ -15,181 +12,167 @@ class ContainerUserMain extends StatefulWidget {
 }
 
 class _ContainerUserMainState extends State<ContainerUserMain> {
-  Future<void> _newNote(BuildContext context) async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const NewNote(),
-        ));
+  
+
+
+  Widget _buttonGroupUp() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          flex: 1,
+          child: SizedBox(
+            height: 300,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(25.0),
+              onTap: () {
+                newNote(context);
+              },
+              child: Card(
+                elevation: 5,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 3,
+                      child: Lottie.asset(
+                        'images/lottie/notes.zip',
+                        repeat: animationState,
+                      ),
+                    ),
+                    const Expanded(flex: 1, child: Text("LISTA DE NOTAS")),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: SizedBox(
+            height: 300,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(25.0),
+              onTap: () {
+                Platform.isAndroid
+                    ? scannerQRANDROID(context)
+                    : scannerQRIOS(context);
+              },
+              child: Card(
+                elevation: 5,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 3,
+                      child: Lottie.asset(
+                        'images/lottie/qr.zip',
+                        repeat: animationState,
+                      ),
+                    ),
+                    const Expanded(
+                      flex: 1,
+                      child: Text(
+                        "LECTOR DE CÓDIGO QR Y CÓDIGO DE BARRAS",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 
-  Future<void> _scannerQRIOS(BuildContext context) async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ReadQRIOS(),
-        ));
+  Widget _buttonGroupDown() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          flex: 1,
+          child: SizedBox(
+            height: 300,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(25.0),
+              onTap: () {
+                translate(context);
+              },
+              child: Card(
+                elevation: 5,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 3,
+                      child: Lottie.asset(
+                        'images/lottie/translate.zip',
+                        repeat: animationState,
+                      ),
+                    ),
+                    const Expanded(flex: 1, child: Text("TRADUCTOR DE TEXTO")),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: SizedBox(
+            height: 300,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(25.0),
+              onTap: () {
+                textImage(context);
+              },
+              child: Card(
+                elevation: 5,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 3,
+                      child: Lottie.asset(
+                        'images/lottie/imagetext.zip',
+                        repeat: animationState,
+                      ),
+                    ),
+                    const Expanded(
+                      flex: 1,
+                      child: Text(
+                        "TEXTO EN IMAGEN",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
-Future<void> _translate(BuildContext context) async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const Translate(),
-        ));
-  }
-  Future<void> _scannerQRANDROID(BuildContext context) async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => const ReadQRANDROID(),
-        ));
-  }
-Future<void> _textImage(BuildContext context) async {
-    Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => TextImage(),
-        ));
-  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        color: Colors.grey.withOpacity(0.2),
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: ClipRRect(
-                  child: GestureDetector(
-                    onTap: () {
-                      _newNote(context);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25.0),
-                          color: Colors.white),
-                      height: 100,
-                      child: Row(
-                        children: const [
-                          Image(
-                            image: AssetImage('images/notes.png'),
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Text(
-                            'LISTA DE NOTAS',
-                            style: TextStyle(fontSize: 22),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+          color: Colors.grey.withOpacity(0.2),
+          child: Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: ListView(
+              children: [
+                _buttonGroupUp(),
+                _buttonGroupDown(),
+              ],
             ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: ClipRRect(
-                  child: GestureDetector(
-                    onTap: () {
-                      if (Platform.isAndroid) {
-                        _scannerQRANDROID(context);
-                      } else {
-                        _scannerQRIOS(context);
-                      }
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25.0),
-                          color: Colors.white),
-                      height: 100,
-                      child: Row(
-                        children: const [
-                          Image(
-                            image: AssetImage('images/qr.png'),
-                          ),
-                          Text(
-                            'LECTOR DE CÓDIGO QR\nY CÓDIGO DE BARRAS',
-                            style: TextStyle(fontSize: 22),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: ClipRRect(
-                  child: GestureDetector(
-                    onTap: () {
-                      _translate(context);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25.0),
-                          color: Colors.white),
-                      height: 100,
-                      child: Row(
-                        children: const [
-                          Image(
-                            image: AssetImage('images/translate.png'),
-                          ),
-                          SizedBox(
-                            width: 10,
-                          ),
-                          Text(
-                            'TRADUCTOR DE TEXTO',
-                            style: TextStyle(fontSize: 22),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.all(15.0),
-                child: ClipRRect(
-                  child: GestureDetector(
-                    onTap: () {
-                      _textImage(context);
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(25.0),
-                          color: Colors.white),
-                      height: 100,
-                      child: Row(
-                        children: const [
-                          Image(
-                            image: AssetImage('images/capturetext.png'),
-                          ),
-                          SizedBox(
-                            width: 20,
-                          ),
-                          Text(
-                            'TEXTO EN IMAGEN',
-                            style: TextStyle(fontSize: 22),
-                          )
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
+          )),
     );
   }
 }

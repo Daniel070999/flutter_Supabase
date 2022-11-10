@@ -1,6 +1,8 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pdf_text/pdf_text.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:translator/translator.dart';
 import 'package:fluttersupabase/constants.dart';
@@ -31,6 +33,8 @@ class _TranslateState extends State<Translate> {
   final _textInput = TextEditingController();
   final _textOutput = TextEditingController();
   String languajeSelected = '';
+  PDFDoc? _pdfDoc;
+
 
   Widget _listItemsLanguaje(BuildContext context) {
     return Container(
@@ -141,7 +145,39 @@ class _TranslateState extends State<Translate> {
       });
     } catch (e) {
       print(e);
-      _textOutput.clear();
+      if (e.toString().contains('Broken')) {
+        _textOutput.text ='Intenta con un texto mas corto';
+      }else{
+        _textOutput.clear();
+      }
+      
+    }
+  }
+
+  Future _pickPDFText(BuildContext context) async {
+    try {
+      var filePickerResult = await FilePicker.platform
+          .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
+
+      if (filePickerResult != null) {
+        _textInput.text = 'Cargando PDF...';
+        _pdfDoc = await PDFDoc.fromPath(filePickerResult.files.single.path!);
+
+        setState(() {});
+      }
+      if (_pdfDoc == null) {
+        return;
+      }
+      String text = await _pdfDoc!.text;
+
+      setState(() {
+        _textInput.text = text;
+      });
+    } catch (e) {
+      context.showSnackBar(
+          message: 'Intenta con otro documento',
+          backgroundColor: Colors.red,
+          icon: Icons.warning_amber_rounded);
     }
   }
 
@@ -217,39 +253,74 @@ class _TranslateState extends State<Translate> {
                                 ),
                               ),
                             ),
-                            OutlinedButton(
-                              style: ButtonStyle(
-                                fixedSize: MaterialStateProperty.all(
-                                    const Size.fromWidth(100)),
-                                backgroundColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                foregroundColor:
-                                    MaterialStateProperty.all(Colors.lightBlue),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25)),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                OutlinedButton(
+                                  style: ButtonStyle(
+                                    fixedSize: MaterialStateProperty.all(
+                                        const Size.fromWidth(100)),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Colors.transparent),
+                                    foregroundColor: MaterialStateProperty.all(
+                                        Colors.lightBlue),
+                                    shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(25)),
+                                    ),
+                                    side: MaterialStateProperty.all(
+                                        const BorderSide(
+                                            color: Colors.lightBlue)),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _textInput.clear();
+                                      _textOutput.clear();
+                                      //se revarga toda la página para evitar problemas con los parámetros
+                                      //que son traidos desde la ventana TRANSLATE
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  super.widget));
+                                    });
+                                  },
+                                  child: const Center(
+                                      child: Text(
+                                    'Limpiar',
+                                    style: TextStyle(color: Colors.lightBlue),
+                                  )),
                                 ),
-                                side: MaterialStateProperty.all(
-                                    const BorderSide(color: Colors.lightBlue)),
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _textInput.clear();
-                                  _textOutput.clear();
-                                  //se revarga toda la página para evitar problemas con los parámetros
-                                  //que son traidos desde la ventana TRANSLATE
-                                  Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (BuildContext context) =>
-                                              super.widget));
-                                });
-                              },
-                              child: const Center(
-                                  child: Text(
-                                'Limpiar',
-                                style: TextStyle(color: Colors.lightBlue),
-                              )),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                OutlinedButton(
+                                  style: ButtonStyle(
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Colors.transparent),
+                                    foregroundColor: MaterialStateProperty.all(
+                                        Colors.lightBlue),
+                                    shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(25)),
+                                    ),
+                                    side: MaterialStateProperty.all(
+                                        const BorderSide(
+                                            color: Colors.lightBlue)),
+                                  ),
+                                  onPressed: () {
+                                    _pickPDFText(context);
+                                  },
+                                  child: const Center(
+                                    child: Text(
+                                      'Seleccionar PDF',
+                                      style: TextStyle(color: Colors.lightBlue),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

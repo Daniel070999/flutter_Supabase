@@ -46,9 +46,9 @@ class _AccountPageState extends State<AccountPage> {
       );
       if (mounted) {
         context.showSnackBar(
-            message: 'Datos actualizados correctamente',
+            message: 'Cuenta creada correctamente',
             backgroundColor: Colors.lightGreen,icon: Icons.check_circle_outline_outlined);
-            Navigator.of(context).pushReplacementNamed('/userMain');
+            _signOut(context);
       }
     } on PostgrestException catch (error) {
       print(error);
@@ -66,7 +66,24 @@ class _AccountPageState extends State<AccountPage> {
       _loading = false;
     });
   }
-
+Future<void> _signOut(BuildContext context) async {
+    try {
+      await supabase.auth.signOut();
+    } on AuthException catch (error) {
+      context.showSnackBar(
+          message: error.message,
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
+    } catch (error) {
+      context.showSnackBar(
+          message: 'Unexpected error occured',
+          backgroundColor: Colors.red,
+          icon: Icons.dangerous_outlined);
+    }
+    if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/');
+    }
+  }
   @override
   void initState() {
     super.initState();
