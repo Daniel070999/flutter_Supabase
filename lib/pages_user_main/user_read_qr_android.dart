@@ -116,37 +116,6 @@ class _ReadQRANDROIDState extends State<ReadQRANDROID>
                                               color: Colors.lightBlue)),
                                     ),
                                     onPressed: () {
-                                      _outputController.clear();
-                                    },
-                                    child: const Center(
-                                        child: Text(
-                                      'Limpiar',
-                                      style: TextStyle(color: Colors.lightBlue),
-                                    )),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  OutlinedButton(
-                                    style: ButtonStyle(
-                                      fixedSize: MaterialStateProperty.all(
-                                          const Size.fromWidth(100)),
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.transparent),
-                                      foregroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.lightBlue),
-                                      shape: MaterialStateProperty.all(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(25)),
-                                      ),
-                                      side: MaterialStateProperty.all(
-                                          const BorderSide(
-                                              color: Colors.lightBlue)),
-                                    ),
-                                    onPressed: () {
                                       if (_outputController.text.isEmpty) {
                                         context.showSnackBar(
                                             message:
@@ -211,6 +180,37 @@ class _ReadQRANDROIDState extends State<ReadQRANDROID>
                                             TextStyle(color: Colors.lightBlue),
                                       ),
                                     ),
+                                  ),
+                                  const SizedBox(
+                                    width: 10,
+                                  ),
+                                  OutlinedButton(
+                                    style: ButtonStyle(
+                                      fixedSize: MaterialStateProperty.all(
+                                          const Size.fromWidth(100)),
+                                      backgroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.transparent),
+                                      foregroundColor:
+                                          MaterialStateProperty.all(
+                                              Colors.lightBlue),
+                                      shape: MaterialStateProperty.all(
+                                        RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(25)),
+                                      ),
+                                      side: MaterialStateProperty.all(
+                                          const BorderSide(
+                                              color: Colors.lightBlue)),
+                                    ),
+                                    onPressed: () {
+                                      _outputController.clear();
+                                    },
+                                    child: const Center(
+                                        child: Text(
+                                      'Limpiar',
+                                      style: TextStyle(color: Colors.lightBlue),
+                                    )),
                                   ),
                                 ],
                               ),

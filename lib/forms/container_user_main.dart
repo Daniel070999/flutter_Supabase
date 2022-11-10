@@ -21,7 +21,7 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
         Expanded(
           flex: 1,
           child: SizedBox(
-            height: 300,
+            height: 250,
             child: InkWell(
               borderRadius: BorderRadius.circular(25.0),
               onTap: () {
@@ -50,7 +50,7 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
         Expanded(
           flex: 1,
           child: SizedBox(
-            height: 300,
+            height: 250,
             child: InkWell(
               borderRadius: BorderRadius.circular(25.0),
               onTap: () {
@@ -94,7 +94,7 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
         Expanded(
           flex: 1,
           child: SizedBox(
-            height: 300,
+            height: 250,
             child: InkWell(
               borderRadius: BorderRadius.circular(25.0),
               onTap: () {
@@ -123,7 +123,7 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
         Expanded(
           flex: 1,
           child: SizedBox(
-            height: 300,
+            height: 250,
             child: InkWell(
               borderRadius: BorderRadius.circular(25.0),
               onTap: () {
@@ -158,7 +158,76 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
       ],
     );
   }
-
+Widget _buttonGroupDown2() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          flex: 1,
+          child: SizedBox(
+            height: 250,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(25.0),
+              onTap: () {
+                speechToText(context);
+              },
+              child: Card(
+                elevation: 5,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 3,
+                      child: Lottie.asset(
+                        'images/lottie/microphone.zip',
+                        repeat: animationState,
+                      ),
+                    ),
+                    const Expanded(flex: 1, child: Text("VOZ A TEXTO")),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: SizedBox(
+            height: 250,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(25.0),
+              onTap: () {
+                readPDF(context);
+              },
+              child: Card(
+                elevation: 5,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 3,
+                      child: Lottie.asset(
+                        'images/lottie/pdf.zip',
+                        repeat: animationState,
+                      ),
+                    ),
+                    const Expanded(
+                      flex: 1,
+                      child: Text(
+                        "ABRIR PDF",
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -170,6 +239,7 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
               children: [
                 _buttonGroupUp(),
                 _buttonGroupDown(),
+                _buttonGroupDown2(),
               ],
             ),
           )),
