@@ -116,13 +116,7 @@ class _ReadQRANDROIDState extends State<ReadQRANDROID>
                                               color: Colors.lightBlue)),
                                     ),
                                     onPressed: () {
-                                      if (_outputController.text.isEmpty) {
-                                        context.showSnackBar(
-                                            message:
-                                                'No hay información para copiar',
-                                            backgroundColor: Colors.amber,
-                                            icon: Icons.warning_amber_rounded);
-                                      } else {
+                                      if (_outputController.text.isNotEmpty) {
                                         Clipboard.setData(ClipboardData(
                                             text: _outputController.text));
                                         context.showSnackBar(
