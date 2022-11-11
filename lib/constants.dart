@@ -5,6 +5,7 @@ import 'package:fluttersupabase/pages_user_main/user_image_text.dart';
 import 'package:fluttersupabase/pages_user_main/user_new_note.dart';
 import 'package:fluttersupabase/pages_user_main/user_read_qr_android.dart';
 import 'package:fluttersupabase/pages_user_main/user_read_qr_ios.dart';
+import 'package:fluttersupabase/pages_user_main/user_text_to_speech.dart';
 import 'package:fluttersupabase/pages_user_main/user_translate.dart';
 import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -24,7 +25,13 @@ speechToText(BuildContext context) async {
         builder: (context) => SpeechToTextPage(),
       ));
 }
-
+textToSpeech(BuildContext context) async {
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => TextToSpeechPage(),
+      ));
+}
 newNote(BuildContext context) async {
   Navigator.push(
       context,

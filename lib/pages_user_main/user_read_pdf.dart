@@ -1,5 +1,6 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pdf_text/pdf_text.dart';
 import 'package:fluttersupabase/constants.dart';
 
@@ -152,7 +153,44 @@ class _ReadPDFState extends State<ReadPDF> {
                                     OutlinedButton(
                                       style: ButtonStyle(
                                         fixedSize: MaterialStateProperty.all(
-                                            const Size.fromWidth(100)),
+                                            const Size.fromWidth(150)),
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                Colors.transparent),
+                                        foregroundColor:
+                                            MaterialStateProperty.all(
+                                                Colors.lightBlue),
+                                        shape: MaterialStateProperty.all(
+                                          RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(25)),
+                                        ),
+                                        side: MaterialStateProperty.all(
+                                            const BorderSide(
+                                                color: Colors.lightBlue)),
+                                      ),
+                                      onPressed: () {
+                                        if (_textInput.text.isNotEmpty) {
+                                          Navigator.pushNamed(
+                                              context, '/textToSpeech',
+                                              arguments: _textInput.text);
+                                        }
+                                      },
+                                      child: const Center(
+                                        child: Text(
+                                          'Escuchar',
+                                          style: TextStyle(
+                                              color: Colors.lightBlue),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    OutlinedButton(
+                                      style: ButtonStyle(
+                                        fixedSize: MaterialStateProperty.all(
+                                            const Size.fromWidth(150)),
                                         backgroundColor:
                                             MaterialStateProperty.all(
                                                 Colors.transparent),
@@ -178,6 +216,50 @@ class _ReadPDFState extends State<ReadPDF> {
                                       child: const Center(
                                         child: Text(
                                           'Traducir',
+                                          style: TextStyle(
+                                              color: Colors.lightBlue),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    OutlinedButton(
+                                      style: ButtonStyle(
+                                        fixedSize: MaterialStateProperty.all(
+                                            const Size.fromWidth(100)),
+                                        backgroundColor:
+                                            MaterialStateProperty.all(
+                                                Colors.transparent),
+                                        foregroundColor:
+                                            MaterialStateProperty.all(
+                                                Colors.lightBlue),
+                                        shape: MaterialStateProperty.all(
+                                          RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(25)),
+                                        ),
+                                        side: MaterialStateProperty.all(
+                                            const BorderSide(
+                                                color: Colors.lightBlue)),
+                                      ),
+                                      onPressed: () {
+                                        if (_textInput.text.isNotEmpty) {
+                                          Clipboard.setData(ClipboardData(
+                                              text: _textInput.text));
+                                          context.showSnackBar(
+                                              message: 'Texto copiado',
+                                              backgroundColor:
+                                                  Colors.lightGreen,
+                                              icon: Icons
+                                                  .check_circle_outline_rounded);
+                                        }
+                                      },
+                                      child: const Center(
+                                        child: Text(
+                                          'Copiar',
                                           style: TextStyle(
                                               color: Colors.lightBlue),
                                         ),

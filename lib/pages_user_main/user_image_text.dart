@@ -230,6 +230,74 @@ class _TextImageState extends State<TextImage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
+                            
+                            OutlinedButton(
+                              style: ButtonStyle(
+                                fixedSize: MaterialStateProperty.all(
+                                    const Size.fromWidth(150)),
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colors.transparent),
+                                foregroundColor:
+                                    MaterialStateProperty.all(Colors.lightBlue),
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(25)),
+                                ),
+                                side: MaterialStateProperty.all(
+                                    const BorderSide(color: Colors.lightBlue)),
+                              ),
+                              onPressed: () {
+                                if (scannedText.text.isNotEmpty) {
+                                  Navigator.pushNamed(context, '/textToSpeech',
+                                      arguments: scannedText.text);
+                                }
+                              },
+                              child: const Center(
+                                child: Text(
+                                  'Escuchar',
+                                  style: TextStyle(color: Colors.lightBlue),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            OutlinedButton(
+                              style: ButtonStyle(
+                                fixedSize: MaterialStateProperty.all(
+                                    const Size.fromWidth(150)),
+                                backgroundColor: MaterialStateProperty.all(
+                                    Colors.transparent),
+                                foregroundColor:
+                                    MaterialStateProperty.all(Colors.lightBlue),
+                                shape: MaterialStateProperty.all(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(25)),
+                                ),
+                                side: MaterialStateProperty.all(
+                                    const BorderSide(color: Colors.lightBlue)),
+                              ),
+                              onPressed: () {
+                                if (scannedText.text.isNotEmpty) {
+                                  Navigator.pushNamed(context, '/translate',
+                                      arguments: scannedText.text);
+                                }
+                              },
+                              child: const Center(
+                                child: Text(
+                                  'Traducir',
+                                  style: TextStyle(color: Colors.lightBlue),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                          ],
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
                             OutlinedButton(
                               style: ButtonStyle(
                                 fixedSize: MaterialStateProperty.all(
@@ -282,48 +350,19 @@ class _TextImageState extends State<TextImage> {
                                     const BorderSide(color: Colors.lightBlue)),
                               ),
                               onPressed: () {
-                                if (scannedText.text.isNotEmpty) {
-                                  Navigator.pushNamed(context, '/translate',
-                                      arguments: scannedText.text);
-                                }
-                              },
-                              child: const Center(
-                                child: Text(
-                                  'Traducir',
-                                  style: TextStyle(color: Colors.lightBlue),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            OutlinedButton(
-                              style: ButtonStyle(
-                                fixedSize: MaterialStateProperty.all(
-                                    const Size.fromWidth(100)),
-                                backgroundColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                foregroundColor:
-                                    MaterialStateProperty.all(Colors.lightBlue),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25)),
-                                ),
-                                side: MaterialStateProperty.all(
-                                    const BorderSide(color: Colors.lightBlue)),
-                              ),
-                              onPressed: () {
                                 setState(() {
                                   scannedText.clear();
                                   imageFile = null;
                                 });
                               },
                               child: const Center(
-                                  child: Text(
-                                'Limpiar',
-                                style: TextStyle(color: Colors.lightBlue),
-                              )),
+                                child: Text(
+                                  'Limpiar',
+                                  style: TextStyle(color: Colors.lightBlue),
+                                ),
+                              ),
                             ),
+                            
                           ],
                         ),
                       ],

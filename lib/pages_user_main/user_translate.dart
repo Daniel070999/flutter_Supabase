@@ -1,7 +1,6 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttersupabase/pages_user_main/user_speech_to_text.dart';
 import 'package:pdf_text/pdf_text.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:translator/translator.dart';
@@ -32,7 +31,7 @@ final TextEditingController textEditingController = TextEditingController();
 class _TranslateState extends State<Translate> {
   final _textInput = TextEditingController();
   final _textOutput = TextEditingController();
-  String languajeSelected = '';
+  String languajeSelected = 'español';
   PDFDoc? _pdfDoc;
   Widget _listItemsLanguaje(BuildContext context) {
     return Container(
@@ -151,9 +150,6 @@ class _TranslateState extends State<Translate> {
     }
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
     Object? parametros = ModalRoute.of(context)!.settings.arguments;
@@ -228,44 +224,7 @@ class _TranslateState extends State<Translate> {
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                OutlinedButton(
-                                  style: ButtonStyle(
-                                    fixedSize: MaterialStateProperty.all(
-                                        const Size.fromWidth(100)),
-                                    backgroundColor: MaterialStateProperty.all(
-                                        Colors.transparent),
-                                    foregroundColor: MaterialStateProperty.all(
-                                        Colors.lightBlue),
-                                    shape: MaterialStateProperty.all(
-                                      RoundedRectangleBorder(
-                                          borderRadius:
-                                              BorderRadius.circular(25)),
-                                    ),
-                                    side: MaterialStateProperty.all(
-                                        const BorderSide(
-                                            color: Colors.lightBlue)),
-                                  ),
-                                  onPressed: () {
-                                    setState(() {
-                                      _textInput.clear();
-                                      _textOutput.clear();
-                                      //se revarga toda la página para evitar problemas con los parámetros
-                                      //que son traidos desde la ventana TRANSLATE
-                                      Navigator.pushReplacement(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (BuildContext context) =>
-                                                  super.widget));
-                                    });
-                                  },
-                                  child: const Center(
-                                      child: Text(
-                                    'Limpiar',
-                                    style: TextStyle(color: Colors.lightBlue),
-                                  )),
-                                ),
-                              ],
+                              children: [],
                             ),
                           ],
                         ),
@@ -320,7 +279,7 @@ class _TranslateState extends State<Translate> {
                                 OutlinedButton(
                                   style: ButtonStyle(
                                     fixedSize: MaterialStateProperty.all(
-                                        const Size.fromWidth(100)),
+                                        const Size.fromWidth(150)),
                                     backgroundColor: MaterialStateProperty.all(
                                         Colors.transparent),
                                     foregroundColor: MaterialStateProperty.all(
@@ -336,28 +295,25 @@ class _TranslateState extends State<Translate> {
                                   ),
                                   onPressed: () {
                                     if (_textOutput.text.isNotEmpty) {
-                                       Clipboard.setData(ClipboardData(
-                                          text: _textOutput.text));
-                                      context.showSnackBar(
-                                          message: 'Se copio al portapeles',
-                                          backgroundColor: Colors.lightGreen,
-                                          icon: Icons
-                                              .check_circle_outline_outlined);
-                                    } 
+                                      Navigator.pushNamed(
+                                          context, '/textToSpeech',
+                                          arguments: _textOutput.text);
+                                    }
                                   },
                                   child: const Center(
-                                      child: Text(
-                                    'Copiar',
-                                    style: TextStyle(color: Colors.lightBlue),
-                                  )),
+                                    child: Text(
+                                      'Escuchar',
+                                      style: TextStyle(color: Colors.lightBlue),
+                                    ),
+                                  ),
                                 ),
                                 const SizedBox(
-                                  width: 20,
+                                  width: 10,
                                 ),
                                 OutlinedButton(
                                   style: ButtonStyle(
                                     fixedSize: MaterialStateProperty.all(
-                                        const Size.fromWidth(100)),
+                                        const Size.fromWidth(150)),
                                     backgroundColor: MaterialStateProperty.all(
                                         Colors.transparent),
                                     foregroundColor: MaterialStateProperty.all(
@@ -388,6 +344,84 @@ class _TranslateState extends State<Translate> {
                                       style: TextStyle(color: Colors.lightBlue),
                                     ),
                                   ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                OutlinedButton(
+                                  style: ButtonStyle(
+                                    fixedSize: MaterialStateProperty.all(
+                                        const Size.fromWidth(100)),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Colors.transparent),
+                                    foregroundColor: MaterialStateProperty.all(
+                                        Colors.lightBlue),
+                                    shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(25)),
+                                    ),
+                                    side: MaterialStateProperty.all(
+                                        const BorderSide(
+                                            color: Colors.lightBlue)),
+                                  ),
+                                  onPressed: () {
+                                    if (_textOutput.text.isNotEmpty) {
+                                      Clipboard.setData(ClipboardData(
+                                          text: _textOutput.text));
+                                      context.showSnackBar(
+                                          message: 'Se copio al portapeles',
+                                          backgroundColor: Colors.lightGreen,
+                                          icon: Icons
+                                              .check_circle_outline_outlined);
+                                    }
+                                  },
+                                  child: const Center(
+                                      child: Text(
+                                    'Copiar',
+                                    style: TextStyle(color: Colors.lightBlue),
+                                  )),
+                                ),
+                                const SizedBox(
+                                  width: 10,
+                                ),
+                                OutlinedButton(
+                                  style: ButtonStyle(
+                                    fixedSize: MaterialStateProperty.all(
+                                        const Size.fromWidth(100)),
+                                    backgroundColor: MaterialStateProperty.all(
+                                        Colors.transparent),
+                                    foregroundColor: MaterialStateProperty.all(
+                                        Colors.lightBlue),
+                                    shape: MaterialStateProperty.all(
+                                      RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(25)),
+                                    ),
+                                    side: MaterialStateProperty.all(
+                                        const BorderSide(
+                                            color: Colors.lightBlue)),
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _textInput.clear();
+                                      _textOutput.clear();
+                                      //se revarga toda la página para evitar problemas con los parámetros
+                                      //que son traidos desde la ventana TRANSLATE
+                                      Navigator.pushReplacement(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (BuildContext context) =>
+                                                  super.widget));
+                                    });
+                                  },
+                                  child: const Center(
+                                      child: Text(
+                                    'Limpiar',
+                                    style: TextStyle(color: Colors.lightBlue),
+                                  )),
                                 ),
                               ],
                             ),

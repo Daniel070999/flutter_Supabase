@@ -12,9 +12,6 @@ class ContainerUserMain extends StatefulWidget {
 }
 
 class _ContainerUserMainState extends State<ContainerUserMain> {
-  
-
-
   Widget _buttonGroupUp() {
     return Row(
       children: <Widget>[
@@ -158,7 +155,8 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
       ],
     );
   }
-Widget _buttonGroupDown2() {
+
+  Widget _buttonGroupDown2() {
     return Row(
       children: <Widget>[
         Expanded(
@@ -197,6 +195,40 @@ Widget _buttonGroupDown2() {
             child: InkWell(
               borderRadius: BorderRadius.circular(25.0),
               onTap: () {
+                textToSpeech(context);
+              },
+              child: Card(
+                elevation: 5,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 3,
+                      child: Lottie.asset('images/lottie/speaker.zip',
+                          repeat: animationState, fit: BoxFit.contain),
+                    ),
+                    const Expanded(flex: 1, child: Text("TEXTO A VOZ")),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buttonGroupDown3() {
+    return Row(
+      children: <Widget>[
+        Expanded(
+          flex: 1,
+          child: SizedBox(
+            height: 250,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(25.0),
+              onTap: () {
                 readPDF(context);
               },
               child: Card(
@@ -228,6 +260,7 @@ Widget _buttonGroupDown2() {
       ],
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -240,6 +273,7 @@ Widget _buttonGroupDown2() {
                 _buttonGroupUp(),
                 _buttonGroupDown(),
                 _buttonGroupDown2(),
+                _buttonGroupDown3(),
               ],
             ),
           )),

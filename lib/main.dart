@@ -9,6 +9,7 @@ import 'package:fluttersupabase/pages_auth/splash_page.dart';
 import 'package:fluttersupabase/pages_no_auth/home_no_auth.dart';
 import 'package:fluttersupabase/pages_user_main/user_main.dart';
 import 'package:fluttersupabase/pages_user_main/user_profile.dart';
+import 'package:fluttersupabase/pages_user_main/user_text_to_speech.dart';
 import 'package:fluttersupabase/pages_user_main/user_translate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -55,6 +56,7 @@ class MyApp extends StatelessWidget {
         '/userMain': (_) => UserMain(),
         '/noInternet': (_) => const NoInternet(),
         '/translate': (_) => const Translate(),
+        '/textToSpeech': (_) => TextToSpeechPage(),
         '/drawer': (_) => const DrawerScreen(),
         '/userProfile': (_) => const UserProfileUpdate(),
       },
