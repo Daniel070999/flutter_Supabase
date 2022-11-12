@@ -23,10 +23,13 @@ class _MenuScreenState extends State<MenuScreen> {
     _getProfile();
   }
 
-  Future<void> _preferencesAnimationSave() async {
+  Future<void> _preferences() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool('animationState', animationState);
+    prefs.setBool('theme', theme);
   }
+
+  
 
   Future<void> _getProfile() async {
     try {
@@ -91,11 +94,7 @@ class _MenuScreenState extends State<MenuScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              colors: <Color>[Colors.blue.shade300, Colors.green]),
-        ),
+        decoration: BoxDecoration(gradient: barColorScreen()),
         child: ListView(
           children: [
             Column(
@@ -156,6 +155,37 @@ class _MenuScreenState extends State<MenuScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
+                            const Text("Tema oscuro"),
+                            Switch(
+                              value: theme,
+                              onChanged: (value) {
+                                setState(() {
+                                  theme = value;
+                                  Navigator.pushReplacementNamed(
+                                      context, '/drawer');
+                                  _preferences();
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Container(
+                        height: 40,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25.0),
+                            color: Colors.white.withOpacity(0.8)),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
                             const Text("Animaciones"),
                             Switch(
                               value: animationState,
@@ -164,7 +194,7 @@ class _MenuScreenState extends State<MenuScreen> {
                                   animationState = value;
                                   Navigator.pushReplacementNamed(
                                       context, '/drawer');
-                                  _preferencesAnimationSave();
+                                  _preferences();
                                 });
                               },
                             ),

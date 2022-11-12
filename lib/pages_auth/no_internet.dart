@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttersupabase/constants.dart';
 import 'package:lottie/lottie.dart';
 
 class NoInternet extends StatefulWidget {
@@ -14,23 +15,27 @@ class NoInternet extends StatefulWidget {
 class _NoInternetState extends State<NoInternet> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Lottie.asset('images/lottie/nointernet.zip',
-                repeat: true, height: 200, width: 200, fit: BoxFit.contain),
-            const SizedBox(
-              height: 20,
-            ),
-            const Text('Sin conexión'),
-            OutlinedButton(
-                onPressed: () {
-                  Navigator.of(context).pushReplacementNamed('/');
-                },
-                child: Text('Reintentar'))
-          ],
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: themeSelect(),
+      home:  Scaffold(
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Lottie.asset('images/lottie/nointernet.zip',
+                  repeat: true, height: 200, width: 200, fit: BoxFit.contain),
+              const SizedBox(
+                height: 20,
+              ),
+              const Text('Sin conexión'),
+              OutlinedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushReplacementNamed('/');
+                  },
+                  child: Text('Reintentar'))
+            ],
+          ),
         ),
       ),
     );

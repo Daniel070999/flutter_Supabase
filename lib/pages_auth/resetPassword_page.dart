@@ -217,126 +217,126 @@ void _passwordUpdate() {
 
         return false;
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Restauración de contraseña'),
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient:
-                  LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
-                Colors.green,
-                Colors.blue.shade300,
-              ]),
+      child: MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: themeSelect(),
+      home:  Scaffold(
+          appBar: AppBar(
+            title: const Text('Restauración de contraseña'),
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient:barColor()
+              ),
             ),
           ),
-        ),
-        body: Container(
-          padding: const EdgeInsets.all(30.0),
-          child: Form(
-            key: _validatedPass,
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
-              children: [
-                const SizedBox(height: 18.0),
-                TextFormField(
-                  validator: (value) {
-                    if (value.toString().isEmpty) {
-                      return 'Este campo no puede estar vacio';
-                    } else if (value.toString().length < 6) {
-                      return 'No puede haber menos de 6 caracteres';
-                    }
-                  },
-                  obscureText: true,
-                  style: const TextStyle(color: Colors.lightBlue),
-                  controller: _newPasswordController,
-                  decoration: InputDecoration(
-                    labelText: "Cree una nueva contraseña",
-                    labelStyle: const TextStyle(color: Colors.lightBlue),
-                    prefixIcon: const Icon(
-                      Icons.lock,
-                      color: Colors.lightBlue,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: const BorderSide(
+          body: Container(
+            padding: const EdgeInsets.all(30.0),
+            child: Form(
+              key: _validatedPass,
+              child: ListView(
+                padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+                children: [
+                  const SizedBox(height: 18.0),
+                  TextFormField(
+                    validator: (value) {
+                      if (value.toString().isEmpty) {
+                        return 'Este campo no puede estar vacio';
+                      } else if (value.toString().length < 6) {
+                        return 'No puede haber menos de 6 caracteres';
+                      }
+                    },
+                    obscureText: true,
+                    style: const TextStyle(color: Colors.lightBlue),
+                    controller: _newPasswordController,
+                    decoration: InputDecoration(
+                      labelText: "Cree una nueva contraseña",
+                      labelStyle: const TextStyle(color: Colors.lightBlue),
+                      prefixIcon: const Icon(
+                        Icons.lock,
                         color: Colors.lightBlue,
-                        width: 1.5,
                       ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.lightBlue, width: 2.0),
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 18.0),
-                TextFormField(
-                  validator: (value) {
-                    if (value.toString().isEmpty) {
-                      return 'Este campo no puede estar vacio';
-                    } else if (_newPasswordController.text !=
-                        value.toString()) {
-                      return 'Las contraseñas no coinciden';
-                    }
-                  },
-                  obscureText: true,
-                  style: const TextStyle(color: Colors.lightBlue),
-                  controller: _confirmNewPasswordController,
-                  decoration: InputDecoration(
-                    labelText: "Confirmar contraseña",
-                    labelStyle: const TextStyle(color: Colors.lightBlue),
-                    prefixIcon: const Icon(
-                      Icons.lock,
-                      color: Colors.lightBlue,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: const BorderSide(
-                        color: Colors.lightBlue,
-                        width: 1.5,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.lightBlue, width: 2.0),
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 18),
-                (_loading == false)
-                    ? OutlinedButton(
-                        style: ButtonStyle(
-                          fixedSize: MaterialStateProperty.all(
-                              const Size.fromWidth(200)),
-                          overlayColor:
-                              MaterialStateProperty.all(Colors.lightBlue),
-                          foregroundColor:
-                              MaterialStateProperty.all(Colors.white),
-                          backgroundColor:
-                              MaterialStateProperty.all(Colors.lightGreen),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
-                          ),
-                          side: MaterialStateProperty.all(
-                              const BorderSide(color: Colors.lightGreen)),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        borderSide: const BorderSide(
+                          color: Colors.lightBlue,
+                          width: 1.5,
                         ),
-                        onPressed: () {
-                          _newPasswordController.text.trimRight();
-                          _confirmNewPasswordController.text.trimRight();
-                          if (_validatedPass.currentState!.validate()) {
-                            _updateAuth();
-                          }
-                        },
-                        child: const Text('Guardar'),
-                      )
-                    : Platform.isAndroid
-                        ? const Center(child: CircularProgressIndicator())
-                        : const Center(child: CupertinoActivityIndicator()),
-                const SizedBox(height: 18),
-              ],
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.lightBlue, width: 2.0),
+                        borderRadius: BorderRadius.circular(25.0),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 18.0),
+                  TextFormField(
+                    validator: (value) {
+                      if (value.toString().isEmpty) {
+                        return 'Este campo no puede estar vacio';
+                      } else if (_newPasswordController.text !=
+                          value.toString()) {
+                        return 'Las contraseñas no coinciden';
+                      }
+                    },
+                    obscureText: true,
+                    style: const TextStyle(color: Colors.lightBlue),
+                    controller: _confirmNewPasswordController,
+                    decoration: InputDecoration(
+                      labelText: "Confirmar contraseña",
+                      labelStyle: const TextStyle(color: Colors.lightBlue),
+                      prefixIcon: const Icon(
+                        Icons.lock,
+                        color: Colors.lightBlue,
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(25.0),
+                        borderSide: const BorderSide(
+                          color: Colors.lightBlue,
+                          width: 1.5,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide:
+                            const BorderSide(color: Colors.lightBlue, width: 2.0),
+                        borderRadius: BorderRadius.circular(25.0),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 18),
+                  (_loading == false)
+                      ? OutlinedButton(
+                          style: ButtonStyle(
+                            fixedSize: MaterialStateProperty.all(
+                                const Size.fromWidth(200)),
+                            overlayColor:
+                                MaterialStateProperty.all(Colors.lightBlue),
+                            foregroundColor:
+                                MaterialStateProperty.all(Colors.white),
+                            backgroundColor:
+                                MaterialStateProperty.all(Colors.lightGreen),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25)),
+                            ),
+                            side: MaterialStateProperty.all(
+                                const BorderSide(color: Colors.lightGreen)),
+                          ),
+                          onPressed: () {
+                            _newPasswordController.text.trimRight();
+                            _confirmNewPasswordController.text.trimRight();
+                            if (_validatedPass.currentState!.validate()) {
+                              _updateAuth();
+                            }
+                          },
+                          child: const Text('Guardar'),
+                        )
+                      : Platform.isAndroid
+                          ? const Center(child: CircularProgressIndicator())
+                          : const Center(child: CupertinoActivityIndicator()),
+                  const SizedBox(height: 18),
+                ],
+              ),
             ),
           ),
         ),

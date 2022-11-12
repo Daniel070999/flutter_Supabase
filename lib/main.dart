@@ -1,5 +1,6 @@
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttersupabase/constants.dart';
 import 'package:fluttersupabase/forms/drawer_screen.dart';
 import 'package:fluttersupabase/pages_auth/account_page.dart';
 import 'package:fluttersupabase/pages_auth/login_page.dart';
@@ -32,21 +33,7 @@ class MyApp extends StatelessWidget {
       color: Colors.white,
       debugShowCheckedModeBanner: false,
       title: 'Herramientas de texto',
-      theme: ThemeData.light().copyWith(
-        textTheme: GoogleFonts.ralewayTextTheme(),
-        primaryColor: Colors.green,
-        textButtonTheme: TextButtonThemeData(
-          style: TextButton.styleFrom(
-            foregroundColor: Colors.green,
-          ),
-        ),
-        elevatedButtonTheme: ElevatedButtonThemeData(
-          style: ElevatedButton.styleFrom(
-            foregroundColor: Colors.white,
-            backgroundColor: Colors.green,
-          ),
-        ),
-      ),
+      theme: themeSelect(),
       initialRoute: '/',
       routes: <String, WidgetBuilder>{
         '/': (_) => const SplashPage(),

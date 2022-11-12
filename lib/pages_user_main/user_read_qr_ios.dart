@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_qr_bar_scanner/qr_bar_scanner_camera.dart';
+import 'package:fluttersupabase/constants.dart';
 
 class ReadQRIOS extends StatefulWidget {
   const ReadQRIOS({Key? key});
@@ -37,76 +38,80 @@ class _ReadQRIOSState extends State<ReadQRIOS> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            'Lector de códigos QR y Barras',
-          ),
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient:
-                  LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
-                Colors.green,
-                Colors.blue.shade300,
-              ]),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: themeSelect(),
+      home: Scaffold(
+          appBar: AppBar(
+            title: const Text(
+              'Lector de códigos QR y Barras',
             ),
+            flexibleSpace: Container(
+              decoration: BoxDecoration(
+                gradient:
+                    LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
+                  Colors.green,
+                  Colors.blue.shade300,
+                ]),
+              ),
+            ),
+            backgroundColor: Colors.lightBlue,
           ),
-          backgroundColor: Colors.lightBlue,
-        ),
-        body: Container(
-          color: Colors.grey.withOpacity(0.2),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                SizedBox(
-                  height: 300,
-                  width: 300,
-                  child: QRBarScannerCamera(
-                    offscreenBuilder: (context) {
-                      return Column(
-                        children: [
-                          const Text('La cámara esta pausada'),
-                          OutlinedButton(
-                              onPressed: () {
-                                Navigator.pushReplacementNamed(
-                                    context, '/userMain');
-                              },
-                              child: const Text('Salir'))
-                        ],
-                      );
-                    },
-                    onError:  (context, error) {
-                      return Column(
-                        children: [
-                          const Text('No se han otorgado permisos, por favor, elimine los datos de la aplicación desde configuraciones'),
-                          OutlinedButton(
-                              onPressed: () {
-                                Navigator.pushReplacementNamed(
-                                    context, '/userMain');
-                              },
-                              child: const Text('Salir'))
-                        ],
-                      );
-                    },
-                    qrCodeCallback: (code) {
-                      _qrCallback(code);
-                    },
+          body: Container(
+            color: Colors.grey.withOpacity(0.2),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 300,
+                    width: 300,
+                    child: QRBarScannerCamera(
+                      offscreenBuilder: (context) {
+                        return Column(
+                          children: [
+                            const Text('La cámara esta pausada'),
+                            OutlinedButton(
+                                onPressed: () {
+                                  Navigator.pushReplacementNamed(
+                                      context, '/userMain');
+                                },
+                                child: const Text('Salir'))
+                          ],
+                        );
+                      },
+                      onError:  (context, error) {
+                        return Column(
+                          children: [
+                            const Text('No se han otorgado permisos, por favor, elimine los datos de la aplicación desde configuraciones'),
+                            OutlinedButton(
+                                onPressed: () {
+                                  Navigator.pushReplacementNamed(
+                                      context, '/userMain');
+                                },
+                                child: const Text('Salir'))
+                          ],
+                        );
+                      },
+                      qrCodeCallback: (code) {
+                        _qrCallback(code);
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(
-                  height: 40,
-                ),
-                _camState
-                    ? const Text(
-                        'Enfoque hacia código QR o código de barras')
-                    : SelectableText(
-                        _qrInfo.toString(),
-                        style: TextStyle(fontSize: 16),
-                      ),
-              ],
+                  const SizedBox(
+                    height: 40,
+                  ),
+                  _camState
+                      ? const Text(
+                          'Enfoque hacia código QR o código de barras')
+                      : SelectableText(
+                          _qrInfo.toString(),
+                          style: TextStyle(fontSize: 16),
+                        ),
+                ],
+              ),
             ),
-          ),
-        ));
+          )),
+    );
   }
 }

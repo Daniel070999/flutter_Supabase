@@ -18,6 +18,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
   @override
   Widget build(BuildContext context) {
     return ZoomDrawer(
+      
       duration: const Duration(milliseconds: 400),
       controller: zoomDrawerController,
       menuScreen: const MenuScreen(),
@@ -27,7 +28,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
       angle: -10.0,
       drawerShadowsBackgroundColor: Colors.grey[300]!,
       slideWidth: MediaQuery.of(context).size.width * 0.65,
-      menuBackgroundColor: Colors.green,
+      menuBackgroundColor: menuBackgroundColor()
     );
   }
 }
