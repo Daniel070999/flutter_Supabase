@@ -1,4 +1,4 @@
-package com.example.fluttersupabase
+package com.herramientasdetexto.app
 
 import io.flutter.embedding.android.FlutterActivity
 
