@@ -73,45 +73,8 @@ textImage(BuildContext context) async {
   Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TextImage(),
+        builder: (context) => const TextImage(),
       ));
-}
-
-extension ShowSnackBar on BuildContext {
-  void showSnackBar({
-    required String message,
-    required Color backgroundColor,
-    required IconData icon,
-  }) {
-    ScaffoldMessenger.of(this).showSnackBar(SnackBar(
-      content: Container(
-        height: 50,
-        decoration: BoxDecoration(
-            color: backgroundColor,
-            borderRadius: BorderRadius.all(Radius.circular(20.0))),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              icon,
-              size: 25,
-              color: Colors.white,
-            ),
-            const SizedBox(
-              width: 10,
-            ),
-            Text(
-              message,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
-            ),
-          ],
-        ),
-      ),
-      backgroundColor: Colors.transparent,
-      behavior: SnackBarBehavior.floating,
-      elevation: 0,
-    ));
-  }
 }
 
 bool animationState = true;

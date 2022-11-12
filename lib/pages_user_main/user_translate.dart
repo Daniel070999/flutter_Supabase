@@ -206,6 +206,8 @@ class _TranslateState extends State<Translate> {
       print(e);
       if (e.toString().contains('Broken')) {
         _textOutput.text = 'Intenta con un texto mas corto';
+      } else if (e.toString().contains('Failed')) {
+        _textOutput.text = 'No hay conexión a internet';
       } else {
         _textOutput.clear();
       }
@@ -390,11 +392,8 @@ class _TranslateState extends State<Translate> {
                                     ),
                                     onPressed: () {
                                       if (_textOutput.text.isEmpty) {
-                                        context.showSnackBar(
-                                            message:
-                                                'No hay información para compartir',
-                                            backgroundColor: Colors.amber,
-                                            icon: Icons.warning_amber_rounded);
+                                        Fluttertoast.showToast(
+                                            msg: 'No hay nada para copiar');
                                       } else {
                                         Share.share(_textOutput.text);
                                       }
@@ -432,13 +431,15 @@ class _TranslateState extends State<Translate> {
                                               color: Colors.lightBlue)),
                                     ),
                                     onPressed: () {
-                                      if (_textOutput.text.isNotEmpty) {
+                                      if (_textOutput.text.isEmpty) {
+                                        Fluttertoast.showToast(
+                                            msg: 'No hay nada para copiar');
+                                      } else {
                                         Clipboard.setData(ClipboardData(
                                             text: _textOutput.text));
                                         Fluttertoast.showToast(
                                             msg: 'Se copió al portapepeles',
-                                            toastLength: Toast.LENGTH_SHORT,
-                                            backgroundColor: Colors.lightGreen);
+                                            toastLength: Toast.LENGTH_SHORT);
                                       }
                                     },
                                     child: const Center(

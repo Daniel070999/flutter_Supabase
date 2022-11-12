@@ -4,6 +4,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -75,10 +76,7 @@ class _SplashPageState extends State<SplashPage> {
     try {
       await supabase.from('profiles').upsert(updates);
     } catch (error) {
-      context.showSnackBar(
-          message: 'Unexpeted error occured',
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     }
   }
 
@@ -139,9 +137,8 @@ class _SplashPageState extends State<SplashPage> {
 
   @override
   Widget build(BuildContext context) {
-    return  const Scaffold(
-      body: Center(
-          child: CircularProgressIndicator()),
+    return const Scaffold(
+      body: Center(child: CircularProgressIndicator()),
     );
   }
 }

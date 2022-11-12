@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:fluttersupabase/constants.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:qrscan/qrscan.dart' as scanner;
@@ -39,9 +40,7 @@ class _ReadQRANDROIDState extends State<ReadQRANDROID>
             'Códigos QR y Códigos de barras',
           ),
           flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient:barColor()
-            ),
+            decoration: BoxDecoration(gradient: barColor()),
           ),
         ),
         body: Container(
@@ -114,21 +113,21 @@ class _ReadQRANDROIDState extends State<ReadQRANDROID>
                                                 color: Colors.lightBlue)),
                                       ),
                                       onPressed: () {
-                                        if (_outputController.text.isNotEmpty) {
+                                        if (_outputController.text.isEmpty) {
+                                          Fluttertoast.showToast(
+                                              msg: 'No hay nada para copiar');
+                                        } else {
                                           Clipboard.setData(ClipboardData(
                                               text: _outputController.text));
-                                          context.showSnackBar(
-                                              message: 'Texto copiado',
-                                              backgroundColor: Colors.lightGreen,
-                                              icon: Icons
-                                                  .check_circle_outline_rounded);
+                                          Fluttertoast.showToast(
+                                              msg: 'Se copió al portapapeles');
                                         }
                                       },
                                       child: const Center(
                                         child: Text(
                                           'Copiar',
-                                          style:
-                                              TextStyle(color: Colors.lightBlue),
+                                          style: TextStyle(
+                                              color: Colors.lightBlue),
                                         ),
                                       ),
                                     ),
@@ -156,11 +155,9 @@ class _ReadQRANDROIDState extends State<ReadQRANDROID>
                                       ),
                                       onPressed: () {
                                         if (_outputController.text.isEmpty) {
-                                          context.showSnackBar(
-                                              message:
-                                                  'No hay información para compartir',
-                                              backgroundColor: Colors.amber,
-                                              icon: Icons.warning_amber_rounded);
+                                          Fluttertoast.showToast(
+                                              msg:
+                                                  'No hay nada para compartir');
                                         } else {
                                           Share.share(_outputController.text);
                                         }
@@ -168,8 +165,8 @@ class _ReadQRANDROIDState extends State<ReadQRANDROID>
                                       child: const Center(
                                         child: Text(
                                           'Compartir',
-                                          style:
-                                              TextStyle(color: Colors.lightBlue),
+                                          style: TextStyle(
+                                              color: Colors.lightBlue),
                                         ),
                                       ),
                                     ),
@@ -201,7 +198,8 @@ class _ReadQRANDROIDState extends State<ReadQRANDROID>
                                       child: const Center(
                                           child: Text(
                                         'Limpiar',
-                                        style: TextStyle(color: Colors.lightBlue),
+                                        style:
+                                            TextStyle(color: Colors.lightBlue),
                                       )),
                                     ),
                                   ],
@@ -256,7 +254,8 @@ class _ReadQRANDROIDState extends State<ReadQRANDROID>
                                   style: const TextStyle(color: Colors.black),
                                   controller: _inputController,
                                   decoration: InputDecoration(
-                                    labelText: "Texto para convertir a código QR",
+                                    labelText:
+                                        "Texto para convertir a código QR",
                                     labelStyle:
                                         const TextStyle(color: Colors.blue),
                                     enabledBorder: OutlineInputBorder(
@@ -333,18 +332,14 @@ class _ReadQRANDROIDState extends State<ReadQRANDROID>
                             try {
                               await ImageGallerySaver.saveImage(this.bytes);
                               if (mounted) {
-                                context.showSnackBar(
-                                    message: 'Se guardo en galeria',
-                                    backgroundColor: Colors.lightGreen,
-                                    icon: Icons.check_circle_outline_outlined);
+                                Fluttertoast.showToast(
+                                    msg: 'Se guardó en la galería');
                                 Navigator.pop(context);
                                 _inputController.clear();
                               }
                             } catch (e) {
-                              context.showSnackBar(
-                                  message: 'No se pudo guardar la imagen',
-                                  backgroundColor: Colors.red,
-                                  icon: Icons.warning);
+                              Fluttertoast.showToast(
+                                  msg: 'No se pudo guardar');
                             }
                           },
                           child: const Center(
@@ -510,19 +505,14 @@ class _ReadQRANDROIDState extends State<ReadQRANDROID>
       String barcode = await scanner.scanPhoto();
       _outputController.text = barcode;
     } catch (e) {
-      context.showSnackBar(
-          message: 'Algo salió mal, intenta con otro código',
-          backgroundColor: Colors.amber,
-          icon: Icons.sim_card_alert_outlined);
+      Fluttertoast.showToast(
+          msg: 'Intente con otro código');
     }
   }
 
   Future _generateBarCode(String inputCode, BuildContext context) async {
     if (inputCode.isEmpty) {
-      context.showSnackBar(
-          message: 'Primero debe ingresar un texto',
-          backgroundColor: Colors.red,
-          icon: Icons.warning);
+      Fluttertoast.showToast(msg: 'No hay información para crear QR');
     } else {
       Uint8List result = await scanner.generateBarCode(inputCode);
       setState(() {

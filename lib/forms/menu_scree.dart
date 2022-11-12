@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
 import 'package:fluttersupabase/forms/drawer_screen.dart';
 import 'package:fluttersupabase/pages_user_main/user_profile.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -16,7 +17,6 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   final _usernameController = TextEditingController();
   final _lastnameController = TextEditingController();
-  var _loading = false;
   @override
   void initState() {
     super.initState();
@@ -28,8 +28,6 @@ class _MenuScreenState extends State<MenuScreen> {
     prefs.setBool('animationState', animationState);
     prefs.setBool('theme', theme);
   }
-
-  
 
   Future<void> _getProfile() async {
     try {
@@ -44,15 +42,9 @@ class _MenuScreenState extends State<MenuScreen> {
         _lastnameController.text = (data['lastname'] ?? '') as String;
       });
     } on PostgrestException catch (error) {
-      context.showSnackBar(
-          message: error.message,
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     } catch (error) {
-      context.showSnackBar(
-          message: 'Unexpected exception occurred',
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     }
   }
 
@@ -60,15 +52,9 @@ class _MenuScreenState extends State<MenuScreen> {
     try {
       await supabase.auth.signOut();
     } on AuthException catch (error) {
-      context.showSnackBar(
-          message: error.message,
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     } catch (error) {
-      context.showSnackBar(
-          message: 'Unexpected error occured',
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     }
     if (mounted) {
       Navigator.of(context).pushReplacementNamed('/');
@@ -83,10 +69,7 @@ class _MenuScreenState extends State<MenuScreen> {
             builder: (context) => const UserProfileUpdate(),
           ));
     } catch (error) {
-      context.showSnackBar(
-          message: 'Unexpected error occured',
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     }
   }
 
@@ -106,7 +89,7 @@ class _MenuScreenState extends State<MenuScreen> {
                     child: Padding(
                       padding: const EdgeInsets.all(12.0),
                       child: Lottie.asset(
-                        'images/lottie/user.zip',
+                        'images/lottie/logo.zip',
                         repeat: animationState,
                       ),
                     ),
