@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
@@ -73,18 +74,13 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
       };
       await supabase.from('notes').insert(data);
       if (mounted) {
-        context.showSnackBar(
-            message: "Nota creada\nPor favor actualice sus notas",
-            backgroundColor: Colors.lightGreen,
-            icon: Icons.check_circle_outline_outlined);
+        Fluttertoast.showToast(msg: 'Nota guardada');
       }
     } catch (e) {
       Navigator.pop(context);
       if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
-        context.showSnackBar(
-            message: "Revise su conexión a Internet",
-            backgroundColor: Colors.red,
-            icon: Icons.dangerous_outlined);
+        Fluttertoast.showToast(
+            msg: 'Revise su conexión a Internet', backgroundColor: Colors.red);
       }
     }
     setState(() {
@@ -105,7 +101,9 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
             child: InkWell(
               borderRadius: BorderRadius.circular(25.0),
               onTap: () {
-                if (lastWords.text.isNotEmpty) {
+                if (lastWords.text.isEmpty) {
+                  Fluttertoast.showToast(msg: 'No hay nada para guardar');
+                } else {
                   _saveNote(context);
                 }
               },
@@ -142,7 +140,9 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
             child: InkWell(
               borderRadius: BorderRadius.circular(25.0),
               onTap: () {
-                if (lastWords.text.isNotEmpty) {
+                if (lastWords.text.isEmpty) {
+                  Fluttertoast.showToast(msg: 'No hay nada para traducir');
+                } else {
                   Navigator.pushNamed(context, '/translate',
                       arguments: lastWords.text);
                 }
@@ -213,7 +213,7 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: themeSelect(),
-      home:  Scaffold(
+      home: Scaffold(
         appBar: AppBar(
           title: const Text(
             'Voz a texto',

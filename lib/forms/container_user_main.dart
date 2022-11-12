@@ -267,8 +267,7 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: themeSelect(),
-      home: Scaffold(
-        body: Container(
+      home: Container(
             color: Colors.grey.withOpacity(0.2),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
@@ -281,7 +280,6 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                 ],
               ),
             )),
-      ),
-    );
+      );
   }
 }

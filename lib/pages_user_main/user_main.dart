@@ -27,31 +27,35 @@ class _UserMainState extends State<UserMain> {
       _resetPass(context);
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Menu principal',
-        ),
-        leading: IconButton(
-          onPressed: () {
-            if (ZoomDrawer.of(context)!.isOpen()) {
-              ZoomDrawer.of(context)!.close();
-            } else {
-              ZoomDrawer.of(context)!.open();
-            }
-          },
-          icon: const Icon(
-            Icons.menu,
-            color: Colors.white,
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: themeSelect(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Menu principal',
+          ),
+          leading: IconButton(
+            onPressed: () {
+              if (ZoomDrawer.of(context)!.isOpen()) {
+                ZoomDrawer.of(context)!.close();
+              } else {
+                ZoomDrawer.of(context)!.open();
+              }
+            },
+            icon: const Icon(
+              Icons.menu,
+              color: Colors.white,
+            ),
+          ),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: barColor(),
+            ),
           ),
         ),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient:barColor(),
-          ),
-        ),
+        body: const ContainerUserMain(),
       ),
-      body: const ContainerUserMain(),
     );
   }
 }

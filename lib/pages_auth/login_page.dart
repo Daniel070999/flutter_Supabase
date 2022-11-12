@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
 import 'package:fluttersupabase/pages_no_auth/home_no_auth.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -120,10 +121,8 @@ class _LoginPageState extends State<LoginPage> {
               kIsWeb ? null : 'io.supabase.flutterquickstart://login-callback/',
         );
         if (mounted) {
-          context.showSnackBar(
-              message: 'Revisa tu correo para ingresar',
-              backgroundColor: Colors.lightGreen,
-              icon: Icons.check_circle_outline_outlined);
+          Fluttertoast.showToast(msg: 'Revise su correo');
+
           _emailController.clear();
           Navigator.of(context).pop();
         }
@@ -131,27 +130,18 @@ class _LoginPageState extends State<LoginPage> {
         if (mounted) {
           var text_input = error.toString();
           if (text_input.endsWith("422)")) {
-            context.showSnackBar(
-                message: 'Correo no valido',
-                backgroundColor: Colors.red,
-                icon: Icons.dangerous_outlined);
+            Fluttertoast.showToast(msg: 'Correo no válido');
+
             Navigator.of(context).pop();
           } else if (text_input.endsWith("429)")) {
-            context.showSnackBar(
-                message: 'Vuelva a enviar luego de 60 segundos',
-                backgroundColor: Colors.red,
-                icon: Icons.dangerous_outlined);
+            Fluttertoast.showToast(msg: 'Intente de nuevo en 60 segundos');
+
             Navigator.of(context).pop();
           } else if (text_input.endsWith("400)")) {
-            context.showSnackBar(
-                message: 'Ingrese un correo electrónico',
-                backgroundColor: Colors.red,
-                icon: Icons.dangerous_outlined);
+            Fluttertoast.showToast(msg: 'Ingrese un correo electrónico');
           } else {
-            context.showSnackBar(
-                message: 'Error al enviar el correo',
-                backgroundColor: Colors.red,
-                icon: Icons.dangerous_outlined);
+            Fluttertoast.showToast(msg: 'Algo salió mal, vuelva a intentar');
+
             Navigator.of(context).pop();
           }
           print(error.toString());
@@ -180,19 +170,15 @@ class _LoginPageState extends State<LoginPage> {
           redirectTo: kIsWeb ? null : 'io.supabase.flutter://reset-callback/',
         );
         if (mounted) {
-          context.showSnackBar(
-              message: 'Revisa tu correo para ingresar',
-              backgroundColor: Colors.lightGreen,
-              icon: Icons.check_circle_outline_outlined);
+          Fluttertoast.showToast(msg: 'Revise su correo electrónico');
+
           _emailController.clear();
           Navigator.of(context).pop();
         }
       } on AuthException catch (error) {
         if (mounted) {
-          context.showSnackBar(
-              message: 'Intenta luego de 60 segundos',
-              backgroundColor: Colors.red,
-              icon: Icons.dangerous_outlined);
+          Fluttertoast.showToast(msg: 'Intente luego de 60 segundos');
+
           Navigator.of(context).pop();
         }
       }
@@ -216,10 +202,7 @@ class _LoginPageState extends State<LoginPage> {
 
       if (_emailController.text == "" || _passwordController.text == "") {
         if (mounted) {
-          context.showSnackBar(
-              message: "Ingrese los datos",
-              backgroundColor: Colors.red,
-              icon: Icons.dangerous_outlined);
+          Fluttertoast.showToast(msg: 'Ingrese los datos');
         }
       } else {
         try {
@@ -233,17 +216,14 @@ class _LoginPageState extends State<LoginPage> {
         } catch (e) {
           if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
             if (mounted) {
-              context.showSnackBar(
-                  message: "Revise su conexión a Internet",
-                  backgroundColor: Colors.red,
-                  icon: Icons.warning_amber_rounded);
+              Fluttertoast.showToast(
+                  msg: 'Revise su conexión a internet',
+                  backgroundColor: Colors.red);
             }
           } else {
             if (mounted) {
-              context.showSnackBar(
-                  message: "Los datos ingresados son incorrectos",
-                  backgroundColor: Colors.red,
-                  icon: Icons.dangerous_outlined);
+              Fluttertoast.showToast(
+                  msg: 'Los datos ingresados son incorrectos');
             }
           }
         }

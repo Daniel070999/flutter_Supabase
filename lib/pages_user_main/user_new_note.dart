@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:flutter_expandable_fab/flutter_expandable_fab.dart';
 import 'package:share_plus/share_plus.dart';
@@ -47,14 +48,13 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       await supabase.from('notes').insert(data);
       if (mounted) {
         Navigator.pop(context);
+        Fluttertoast.showToast(msg: 'Nota creada');
       }
     } catch (e) {
       Navigator.pop(context);
       if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
-        context.showSnackBar(
-            message: "Revise su conexión a Internet",
-            backgroundColor: Colors.red,
-            icon: Icons.dangerous_outlined);
+        Fluttertoast.showToast(
+            msg: 'Revise su conexión a internet', backgroundColor: Colors.red);
       }
     }
     setState(() {
@@ -84,13 +84,12 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
         Navigator.pop(context);
         _titleUpdate = false;
         _descriptionUpdate = false;
+        Fluttertoast.showToast(msg: 'Nota actualizada');
+
         Navigator.pop(context);
       }
     } catch (e) {
-      context.showSnackBar(
-          message: e.toString(),
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     }
     setState(() {
       _titleController.clear();
@@ -112,10 +111,8 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
           .order('create_at', ascending: false);
     } catch (e) {
       if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
-        context.showSnackBar(
-            message: "Revise su conexión a Internet",
-            backgroundColor: Colors.red,
-            icon: Icons.dangerous_outlined);
+        Fluttertoast.showToast(
+            msg: 'Revise su conexión a internet', backgroundColor: Colors.red);
       }
     }
     setState(() {
@@ -131,16 +128,16 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       await supabase.from('notes').delete().eq('id', id);
       if (mounted) {
         Navigator.pop(context);
+        Fluttertoast.showToast(msg: 'Nota eliminada');
+
         setState(() {
           getNotes();
         });
       }
     } catch (e) {
       if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
-        context.showSnackBar(
-            message: "Revise su conexión a Internet",
-            backgroundColor: Colors.red,
-            icon: Icons.dangerous_outlined);
+        Fluttertoast.showToast(
+            msg: 'Revise su conexión a internet', backgroundColor: Colors.red);
       }
     }
     if (mounted) {
@@ -620,34 +617,42 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
             child: (_loadingNotes == false)
                 ? (data.isEmpty)
                     ? Center(
-                        child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                        child: RefreshIndicator(
+                          onRefresh: _refresh,
+                          child: ListView(
+                            shrinkWrap: true,
                             children: [
-                              const Text('No tiene notas creadas'),
-                              Lottie.asset('images/lottie/empty.zip',
-                                  repeat: false),
-                              const Divider(
-                                  height: 50,
-                                  color: Colors.grey,
-                                  thickness: 1,
-                                  endIndent: 20,
-                                  indent: 20),
-                              const Text(
-                                  'Puede crear su primera nota en esta parte'),
-                              const SizedBox(
-                                height: 10,
-                              ),
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.end,
-                                children: [
-                                  Lottie.asset(
-                                    'images/lottie/arrowdown.zip',
-                                    height: 150,
-                                    width: 150,
-                                  ),
-                                ],
-                              ),
-                            ]),
+                              Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Text('No tiene notas creadas'),
+                                    Lottie.asset('images/lottie/empty.zip',
+                                        repeat: false),
+                                    const Divider(
+                                        height: 50,
+                                        color: Colors.grey,
+                                        thickness: 1,
+                                        endIndent: 20,
+                                        indent: 20),
+                                    const Text(
+                                        'Puede crear su primera nota en esta parte'),
+                                    const SizedBox(
+                                      height: 10,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Lottie.asset(
+                                          'images/lottie/arrowdown.zip',
+                                          height: 150,
+                                          width: 150,
+                                        ),
+                                      ],
+                                    ),
+                                  ]),
+                            ],
+                          ),
+                        ),
                       )
                     : RefreshIndicator(
                         onRefresh: _refresh,

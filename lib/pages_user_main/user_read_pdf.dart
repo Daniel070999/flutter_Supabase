@@ -1,6 +1,7 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pdf_text/pdf_text.dart';
 import 'package:fluttersupabase/constants.dart';
 
@@ -35,10 +36,7 @@ class _ReadPDFState extends State<ReadPDF> {
         _textInput.text = text;
       });
     } catch (e) {
-      context.showSnackBar(
-          message: 'Intenta con otro documento',
-          backgroundColor: Colors.red,
-          icon: Icons.warning_amber_rounded);
+      Fluttertoast.showToast(msg: 'Intenta con otro documento');
     }
   }
 
@@ -244,15 +242,15 @@ class _ReadPDFState extends State<ReadPDF> {
                                                   color: Colors.lightBlue)),
                                         ),
                                         onPressed: () {
-                                          if (_textInput.text.isNotEmpty) {
+                                          if (_textInput.text.isEmpty) {
+                                            Fluttertoast.showToast(
+                                                msg: 'No hay nada para copiar');
+                                          } else {
                                             Clipboard.setData(ClipboardData(
                                                 text: _textInput.text));
-                                            context.showSnackBar(
-                                                message: 'Texto copiado',
-                                                backgroundColor:
-                                                    Colors.lightGreen,
-                                                icon: Icons
-                                                    .check_circle_outline_rounded);
+                                            Fluttertoast.showToast(
+                                                msg:
+                                                    'Se copió al portapapeles');
                                           }
                                         },
                                         child: const Center(

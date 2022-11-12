@@ -19,15 +19,8 @@ class _UserNoAuthState extends State<UserNoAuth> {
             'Menu principal',
           ),
           flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient:
-                  LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
-                Colors.green,
-                Colors.blue.shade300,
-              ]),
-            ),
+            decoration: BoxDecoration(gradient: barColor()),
           ),
-          backgroundColor: Colors.lightBlue,
         ),
         body: Container(
           color: Colors.grey.withOpacity(0.2),
@@ -242,7 +235,8 @@ class _UserNoAuthState extends State<UserNoAuth> {
                                 Text(
                                   'TEXTO A VOZ',
                                   style: TextStyle(
-                                      fontSize: 22, ),
+                                    fontSize: 22,
+                                  ),
                                 ),
                               ],
                             ),

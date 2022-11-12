@@ -48,14 +48,9 @@ class _ReadQRIOSState extends State<ReadQRIOS> {
             ),
             flexibleSpace: Container(
               decoration: BoxDecoration(
-                gradient:
-                    LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
-                  Colors.green,
-                  Colors.blue.shade300,
-                ]),
+                gradient: barColor(),
               ),
             ),
-            backgroundColor: Colors.lightBlue,
           ),
           body: Container(
             color: Colors.grey.withOpacity(0.2),
@@ -80,10 +75,11 @@ class _ReadQRIOSState extends State<ReadQRIOS> {
                           ],
                         );
                       },
-                      onError:  (context, error) {
+                      onError: (context, error) {
                         return Column(
                           children: [
-                            const Text('No se han otorgado permisos, por favor, elimine los datos de la aplicación desde configuraciones'),
+                            const Text(
+                                'No se han otorgado permisos, por favor, elimine los datos de la aplicación desde configuraciones'),
                             OutlinedButton(
                                 onPressed: () {
                                   Navigator.pushReplacementNamed(
@@ -102,8 +98,7 @@ class _ReadQRIOSState extends State<ReadQRIOS> {
                     height: 40,
                   ),
                   _camState
-                      ? const Text(
-                          'Enfoque hacia código QR o código de barras')
+                      ? const Text('Enfoque hacia código QR o código de barras')
                       : SelectableText(
                           _qrInfo.toString(),
                           style: TextStyle(fontSize: 16),

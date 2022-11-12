@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AccountPage extends StatefulWidget {
@@ -45,45 +46,34 @@ class _AccountPageState extends State<AccountPage> {
         ),
       );
       if (mounted) {
-        context.showSnackBar(
-            message: 'Cuenta creada correctamente',
-            backgroundColor: Colors.lightGreen,icon: Icons.check_circle_outline_outlined);
-            _signOut(context);
+        Fluttertoast.showToast(msg: 'Cuenta creada correctamente');
+
+        _signOut(context);
       }
     } on PostgrestException catch (error) {
       print(error);
-      context.showSnackBar(
-          message: error.toString(),
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     } catch (error) {
-      context.showSnackBar(
-          message: 'Unexpeted error occured',
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     }
     setState(() {
       _loading = false;
     });
   }
-Future<void> _signOut(BuildContext context) async {
+
+  Future<void> _signOut(BuildContext context) async {
     try {
       await supabase.auth.signOut();
     } on AuthException catch (error) {
-      context.showSnackBar(
-          message: error.message,
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     } catch (error) {
-      context.showSnackBar(
-          message: 'Unexpected error occured',
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     }
     if (mounted) {
       Navigator.of(context).pushReplacementNamed('/');
     }
   }
+
   @override
   void initState() {
     super.initState();
@@ -103,15 +93,12 @@ Future<void> _signOut(BuildContext context) async {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: themeSelect(),
-      home:  Scaffold(
+      home: Scaffold(
         appBar: AppBar(
           title: const Text('Registro de datos'),
           flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient:barColor()
-            ),
+            decoration: BoxDecoration(gradient: barColor()),
           ),
-          backgroundColor: Colors.lightBlue,
         ),
         body: Container(
           padding: const EdgeInsets.all(30.0),

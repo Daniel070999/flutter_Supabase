@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fluttersupabase/constants.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ResetPassword extends StatefulWidget {
@@ -26,15 +27,9 @@ class _ResetPasswordState extends State<ResetPassword> {
     try {
       await supabase.auth.signOut();
     } on AuthException catch (error) {
-      context.showSnackBar(
-          message: error.message,
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     } catch (error) {
-      context.showSnackBar(
-          message: 'Unexpected error occured',
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     }
     if (mounted) {
       Navigator.of(context).pushReplacementNamed('/');
@@ -66,10 +61,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       final User? updatedUser = res.user;
       _passwordUpdate();
     } catch (e) {
-      context.showSnackBar(
-          message: 'Algo salio mal',
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     }
     setState(() {
       _loading = false;
@@ -131,6 +123,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       ],
     );
   }
+
   Widget _showAnimatepasswordUpdate(BuildContext context) {
     return AlertDialog(
       icon: const Icon(
@@ -192,7 +185,7 @@ class _ResetPasswordState extends State<ResetPassword> {
     );
   }
 
-void _passwordUpdate() {
+  void _passwordUpdate() {
     showGeneralDialog(
       context: context,
       pageBuilder: (ctx, a1, a2) {
@@ -218,15 +211,13 @@ void _passwordUpdate() {
         return false;
       },
       child: MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: themeSelect(),
-      home:  Scaffold(
+        debugShowCheckedModeBanner: false,
+        theme: themeSelect(),
+        home: Scaffold(
           appBar: AppBar(
             title: const Text('Restauración de contraseña'),
             flexibleSpace: Container(
-              decoration: BoxDecoration(
-                gradient:barColor()
-              ),
+              decoration: BoxDecoration(gradient: barColor()),
             ),
           ),
           body: Container(
@@ -234,7 +225,8 @@ void _passwordUpdate() {
             child: Form(
               key: _validatedPass,
               child: ListView(
-                padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
                 children: [
                   const SizedBox(height: 18.0),
                   TextFormField(
@@ -263,8 +255,8 @@ void _passwordUpdate() {
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.lightBlue, width: 2.0),
+                        borderSide: const BorderSide(
+                            color: Colors.lightBlue, width: 2.0),
                         borderRadius: BorderRadius.circular(25.0),
                       ),
                     ),
@@ -297,8 +289,8 @@ void _passwordUpdate() {
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.lightBlue, width: 2.0),
+                        borderSide: const BorderSide(
+                            color: Colors.lightBlue, width: 2.0),
                         borderRadius: BorderRadius.circular(25.0),
                       ),
                     ),

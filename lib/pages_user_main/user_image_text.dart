@@ -5,6 +5,7 @@ import 'package:fluttersupabase/constants.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/pages_user_main/user_translate.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_ml_kit/google_ml_kit.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -143,9 +144,7 @@ class _TextImageState extends State<TextImage> {
             'Texto en imagen',
           ),
           flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: barColor()
-            ),
+            decoration: BoxDecoration(gradient: barColor()),
           ),
         ),
         body: Container(
@@ -228,25 +227,27 @@ class _TextImageState extends State<TextImage> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              
                               OutlinedButton(
                                 style: ButtonStyle(
                                   fixedSize: MaterialStateProperty.all(
                                       const Size.fromWidth(150)),
                                   backgroundColor: MaterialStateProperty.all(
                                       Colors.transparent),
-                                  foregroundColor:
-                                      MaterialStateProperty.all(Colors.lightBlue),
+                                  foregroundColor: MaterialStateProperty.all(
+                                      Colors.lightBlue),
                                   shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(25)),
+                                        borderRadius:
+                                            BorderRadius.circular(25)),
                                   ),
                                   side: MaterialStateProperty.all(
-                                      const BorderSide(color: Colors.lightBlue)),
+                                      const BorderSide(
+                                          color: Colors.lightBlue)),
                                 ),
                                 onPressed: () {
                                   if (scannedText.text.isNotEmpty) {
-                                    Navigator.pushNamed(context, '/textToSpeech',
+                                    Navigator.pushNamed(
+                                        context, '/textToSpeech',
                                         arguments: scannedText.text);
                                   }
                                 },
@@ -266,14 +267,16 @@ class _TextImageState extends State<TextImage> {
                                       const Size.fromWidth(150)),
                                   backgroundColor: MaterialStateProperty.all(
                                       Colors.transparent),
-                                  foregroundColor:
-                                      MaterialStateProperty.all(Colors.lightBlue),
+                                  foregroundColor: MaterialStateProperty.all(
+                                      Colors.lightBlue),
                                   shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(25)),
+                                        borderRadius:
+                                            BorderRadius.circular(25)),
                                   ),
                                   side: MaterialStateProperty.all(
-                                      const BorderSide(color: Colors.lightBlue)),
+                                      const BorderSide(
+                                          color: Colors.lightBlue)),
                                 ),
                                 onPressed: () {
                                   if (scannedText.text.isNotEmpty) {
@@ -302,24 +305,27 @@ class _TextImageState extends State<TextImage> {
                                       const Size.fromWidth(100)),
                                   backgroundColor: MaterialStateProperty.all(
                                       Colors.transparent),
-                                  foregroundColor:
-                                      MaterialStateProperty.all(Colors.lightBlue),
+                                  foregroundColor: MaterialStateProperty.all(
+                                      Colors.lightBlue),
                                   shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(25)),
+                                        borderRadius:
+                                            BorderRadius.circular(25)),
                                   ),
                                   side: MaterialStateProperty.all(
-                                      const BorderSide(color: Colors.lightBlue)),
+                                      const BorderSide(
+                                          color: Colors.lightBlue)),
                                 ),
                                 onPressed: () {
-                                  if (scannedText.text.isNotEmpty) {
+                                  if (scannedText.text.isEmpty) {
+                                    Fluttertoast.showToast(
+                                        msg: 'No hay nada para copiar');
+                                  } else {
                                     Clipboard.setData(
                                         ClipboardData(text: scannedText.text));
-                                    context.showSnackBar(
-                                        message: 'Texto copiado',
-                                        backgroundColor: Colors.lightGreen,
-                                        icon:
-                                            Icons.check_circle_outline_outlined);
+
+                                    Fluttertoast.showToast(
+                                        msg: 'Se copió al portapapeles');
                                   }
                                 },
                                 child: const Center(
@@ -338,14 +344,16 @@ class _TextImageState extends State<TextImage> {
                                       const Size.fromWidth(100)),
                                   backgroundColor: MaterialStateProperty.all(
                                       Colors.transparent),
-                                  foregroundColor:
-                                      MaterialStateProperty.all(Colors.lightBlue),
+                                  foregroundColor: MaterialStateProperty.all(
+                                      Colors.lightBlue),
                                   shape: MaterialStateProperty.all(
                                     RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(25)),
+                                        borderRadius:
+                                            BorderRadius.circular(25)),
                                   ),
                                   side: MaterialStateProperty.all(
-                                      const BorderSide(color: Colors.lightBlue)),
+                                      const BorderSide(
+                                          color: Colors.lightBlue)),
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -360,7 +368,6 @@ class _TextImageState extends State<TextImage> {
                                   ),
                                 ),
                               ),
-                              
                             ],
                           ),
                         ],

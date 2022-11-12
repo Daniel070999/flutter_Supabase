@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class UserProfileUpdate extends StatefulWidget {
@@ -43,15 +44,9 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
       _usernameController.text = (data['username'] ?? '') as String;
       _lastnameController.text = (data['lastname'] ?? '') as String;
     } on PostgrestException catch (error) {
-      context.showSnackBar(
-          message: error.message,
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'No se pudo cargar sus datos');
     } catch (error) {
-      context.showSnackBar(
-          message: 'Unexpected exception occurred',
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'No se pudo cargar sus datos');
     }
 
     setState(() {
@@ -63,15 +58,9 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
     try {
       await supabase.auth.signOut();
     } on AuthException catch (error) {
-      context.showSnackBar(
-          message: error.message,
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     } catch (error) {
-      context.showSnackBar(
-          message: 'Unexpected error occured',
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     }
     if (mounted) {
       Navigator.of(context).pushReplacementNamed('/');
@@ -94,22 +83,13 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
     try {
       await supabase.from('profiles').update(updates).eq('id', id);
       if (mounted) {
-        context.showSnackBar(
-            message: 'Dato actualizados correctamente',
-            backgroundColor: Colors.lightGreen,
-            icon: Icons.check_circle_outline_outlined);
+        Fluttertoast.showToast(msg: 'Datos actualizados');
         _signOut(context);
       }
     } on PostgrestException catch (error) {
-      context.showSnackBar(
-          message: error.message,
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     } catch (error) {
-      context.showSnackBar(
-          message: 'Unexpeted error occured',
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     }
     setState(() {
       _loading = false;
@@ -128,22 +108,13 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
         ),
       );
       if (mounted) {
-        context.showSnackBar(
-            message: 'Contraseña actualizada',
-            backgroundColor: Colors.lightGreen,
-            icon: Icons.check_circle_outline_outlined);
+        Fluttertoast.showToast(msg: 'Contraseña actualizada');
         _signOut(context);
       }
     } on PostgrestException catch (error) {
-      context.showSnackBar(
-          message: error.message,
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     } catch (error) {
-      context.showSnackBar(
-          message: 'Unexpeted error occured',
-          backgroundColor: Colors.red,
-          icon: Icons.dangerous_outlined);
+      Fluttertoast.showToast(msg: 'Algo salió mal');
     }
     setState(() {
       _loadingPass = false;
@@ -166,15 +137,12 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: themeSelect(),
-      home:  Scaffold(
+      home: Scaffold(
         appBar: AppBar(
           title: const Text('Actualización de datos'),
           flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient:barColor()
-            ),
+            decoration: BoxDecoration(gradient: barColor()),
           ),
-          backgroundColor: Colors.lightBlue,
         ),
         body: Container(
           padding: const EdgeInsets.all(30.0),
@@ -182,7 +150,10 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
             padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
             children: [
               const Center(
-                child: Text('NOTA: Luego de actualizar los datos, se cerrará sesión', style: TextStyle(color: Colors.red),),
+                child: Text(
+                  'NOTA: Luego de actualizar los datos, se cerrará sesión',
+                  style: TextStyle(color: Colors.red),
+                ),
               ),
               const SizedBox(height: 18),
               Form(
@@ -213,8 +184,8 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.lightBlue, width: 2.0),
+                        borderSide: const BorderSide(
+                            color: Colors.lightBlue, width: 2.0),
                         borderRadius: BorderRadius.circular(25.0),
                       ),
                     ),
@@ -245,8 +216,8 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.lightBlue, width: 2.0),
+                        borderSide: const BorderSide(
+                            color: Colors.lightBlue, width: 2.0),
                         borderRadius: BorderRadius.circular(25.0),
                       ),
                     ),
@@ -321,7 +292,8 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                       validator: (value) {
                         if (value.toString().isEmpty) {
                           return 'Este campo no puede estar vacio';
-                        } else if (_passwordController.text != value.toString()) {
+                        } else if (_passwordController.text !=
+                            value.toString()) {
                           return 'Las contraseñas no coinciden';
                         }
                       },
