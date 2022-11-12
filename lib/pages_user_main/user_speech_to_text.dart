@@ -58,8 +58,8 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
   }
 
   Future<void> _saveNote(BuildContext context) async {
-    showLoaderDialog(context, 'Guardando nota', 'images/lottie/save.zip');
-    setState(() {});
+    Fluttertoast.showToast(
+        msg: 'Guardando nota...', gravity: ToastGravity.CENTER);
     try {
       final title = stringToBase64.encode('Voz a Texto');
       final description = stringToBase64.encode(lastWords.text);
@@ -77,7 +77,6 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
         Fluttertoast.showToast(msg: 'Nota guardada');
       }
     } catch (e) {
-      Navigator.pop(context);
       if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
         Fluttertoast.showToast(
             msg: 'Revise su conexión a Internet', backgroundColor: Colors.red);
@@ -86,9 +85,6 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
     setState(() {
       lastWords.clear();
     });
-    if (mounted) {
-      Navigator.pop(context);
-    }
   }
 
   Widget _buttonGroupOptions() {

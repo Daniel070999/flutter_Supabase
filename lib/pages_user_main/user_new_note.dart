@@ -31,7 +31,8 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
   Codec<String, String> stringToBase64 = utf8.fuse(base64);
 
   Future<void> _saveNote(BuildContext context) async {
-    showLoaderDialog(context, 'Guardando nota', 'images/lottie/save.zip');
+    Fluttertoast.showToast(
+        msg: 'Guardando nota...', gravity: ToastGravity.CENTER);
     setState(() {});
     try {
       final title = stringToBase64.encode(_titleController.text);
@@ -47,11 +48,10 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       };
       await supabase.from('notes').insert(data);
       if (mounted) {
-        Navigator.pop(context);
         Fluttertoast.showToast(msg: 'Nota creada');
+        Navigator.pop(context);
       }
     } catch (e) {
-      Navigator.pop(context);
       if (e.toString().contains('ergjvwwsxxowhfbktrnj.supabase.co')) {
         Fluttertoast.showToast(
             msg: 'Revise su conexión a internet', backgroundColor: Colors.red);
@@ -62,9 +62,6 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
       _descriptionController.clear();
       getNotes();
     });
-    if (mounted) {
-      Navigator.pop(context);
-    }
   }
 
   Future<void> _updateNote(BuildContext context, String titleUpdate,
