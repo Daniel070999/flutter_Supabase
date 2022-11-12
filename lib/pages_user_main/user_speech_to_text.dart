@@ -74,7 +74,7 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
       await supabase.from('notes').insert(data);
       if (mounted) {
         context.showSnackBar(
-            message: "Nota creada",
+            message: "Nota creada\nPor favor actualice sus notas",
             backgroundColor: Colors.lightGreen,
             icon: Icons.check_circle_outline_outlined);
       }
@@ -106,41 +106,6 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
               borderRadius: BorderRadius.circular(25.0),
               onTap: () {
                 if (lastWords.text.isNotEmpty) {
-                  Navigator.pushNamed(context, '/translate',
-                      arguments: lastWords.text);
-                }
-              },
-              child: Card(
-                elevation: 5,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 3,
-                      child: Image.asset('images/translate.png'),
-                    ),
-                    const Expanded(
-                      flex: 1,
-                      child: Text("Traducir"),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(
-          width: 10.0,
-        ),
-        Expanded(
-          flex: 1,
-          child: SizedBox(
-            height: 150,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(25.0),
-              onTap: () {
-                if (lastWords.text.isNotEmpty) {
                   _saveNote(context);
                 }
               },
@@ -160,6 +125,41 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
                         "Guardar como nota",
                         textAlign: TextAlign.center,
                       ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(
+          width: 10.0,
+        ),
+        Expanded(
+          flex: 1,
+          child: SizedBox(
+            height: 150,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(25.0),
+              onTap: () {
+                if (lastWords.text.isNotEmpty) {
+                  Navigator.pushNamed(context, '/translate',
+                      arguments: lastWords.text);
+                }
+              },
+              child: Card(
+                elevation: 5,
+                shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                child: Column(
+                  children: <Widget>[
+                    Expanded(
+                      flex: 3,
+                      child: Image.asset('images/translate.png'),
+                    ),
+                    const Expanded(
+                      flex: 1,
+                      child: Text("Traducir"),
                     ),
                   ],
                 ),
@@ -210,85 +210,83 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Voz a texto',
-        ),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient:
-                LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
-              Colors.green,
-              Colors.blue.shade300,
-            ]),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: themeSelect(),
+      home:  Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Voz a texto',
+          ),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(gradient: barColor()),
           ),
         ),
-        backgroundColor: Colors.lightBlue,
-      ),
-      body: Container(
-        color: Colors.grey.withOpacity(0.2),
-        child: Center(
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25.0),
-                        color: Colors.white,
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Column(
-                          children: [
-                            TextFormField(
-                              maxLines: 15,
-                              cursorColor: Colors.blue,
-                              keyboardType: TextInputType.multiline,
-                              style: const TextStyle(color: Colors.black),
-                              controller: lastWords,
-                              decoration: InputDecoration(
-                                labelText: "Texto Reconocido",
-                                labelStyle: const TextStyle(color: Colors.blue),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(25.0),
-                                  borderSide: const BorderSide(
-                                    color: Colors.blue,
-                                    width: 1.5,
+        body: Container(
+          color: Colors.grey.withOpacity(0.2),
+          child: Center(
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25.0),
+                          color: colorContainer(),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10.0),
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                maxLines: 15,
+                                cursorColor: Colors.blue,
+                                keyboardType: TextInputType.multiline,
+                                style: const TextStyle(color: Colors.black),
+                                controller: lastWords,
+                                decoration: InputDecoration(
+                                  labelText: "Texto Reconocido",
+                                  labelStyle:
+                                      const TextStyle(color: Colors.blue),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25.0),
+                                    borderSide: const BorderSide(
+                                      color: Colors.blue,
+                                      width: 1.5,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                        color: Colors.blue, width: 2.0),
+                                    borderRadius: BorderRadius.circular(25.0),
                                   ),
                                 ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: const BorderSide(
-                                      color: Colors.blue, width: 2.0),
-                                  borderRadius: BorderRadius.circular(25.0),
-                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(right: 5.0, left: 5.0),
-                    child: _buttonGroupOptions(),
-                  ),
-                  GestureDetector(
-                    onTap: (isListening) ? null : startListening,
-                    child: Center(
-                        child: speech.isListening
-                            ? Lottie.asset('images/lottie/recording.zip',
-                                animate: true, width: 300, height: 200)
-                            : Lottie.asset('images/lottie/recording.zip',
-                                animate: false, width: 300, height: 200)),
-                  ),
-                ],
-              ),
-            ],
+                    Padding(
+                      padding: const EdgeInsets.only(right: 5.0, left: 5.0),
+                      child: _buttonGroupOptions(),
+                    ),
+                    GestureDetector(
+                      onTap: (isListening) ? null : startListening,
+                      child: Center(
+                          child: speech.isListening
+                              ? Lottie.asset('images/lottie/recording.zip',
+                                  animate: true, width: 300, height: 200)
+                              : Lottie.asset('images/lottie/recording.zip',
+                                  animate: false, width: 300, height: 200)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -411,7 +409,7 @@ class SpeechControlWidget extends StatelessWidget {
       children: <Widget>[
         TextButton(
           onPressed: isListening ? null : startListening,
-          child: Text('Grabar'),
+          child: const Text('Grabar'),
         ),
       ],
     );

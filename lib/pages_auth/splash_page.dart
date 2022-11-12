@@ -30,9 +30,15 @@ class _SplashPageState extends State<SplashPage> {
   Future<void> _preferencesAnimationLoad() async {
     final prefs = await SharedPreferences.getInstance();
     final bool? repeat = prefs.getBool('animationState');
+    final bool? themeSave = prefs.getBool('theme');
     if (repeat != null) {
       setState(() {
         animationState = repeat;
+      });
+    }
+    if (themeSave != null) {
+      setState(() {
+        theme = themeSave;
       });
     }
   }

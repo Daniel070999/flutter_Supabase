@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
 import 'package:fluttersupabase/pages_no_auth/home_no_auth.dart';
 import 'package:lottie/lottie.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class LoginPage extends StatefulWidget {
@@ -57,7 +58,8 @@ class _LoginPageState extends State<LoginPage> {
           children: const <Widget>[
             Center(
               child: Text(
-                'Al usar la aplicación sin registrarse se limitarán herramientas y funciones',textAlign: TextAlign.justify,
+                'Al usar la aplicación sin registrarse se limitarán herramientas y funciones',
+                textAlign: TextAlign.justify,
               ),
             ),
             SizedBox(
@@ -89,8 +91,7 @@ class _LoginPageState extends State<LoginPage> {
         ),
         ElevatedButton(
           style: const ButtonStyle(
-            backgroundColor:
-                MaterialStatePropertyAll(Colors.lightGreen),
+            backgroundColor: MaterialStatePropertyAll(Colors.lightGreen),
           ),
           child: const Text(
             'Registrarme',
@@ -406,8 +407,19 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Future<void> _deletePreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.remove('animationState');
+    prefs.remove('theme');
+    setState(() {
+      animationState = true;
+      theme = false;
+    });
+  }
+
   @override
   void initState() {
+    _deletePreferences();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _authStateSubscription = supabase.auth.onAuthStateChange.listen((data) {
@@ -430,256 +442,270 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Form(
-          key: _validatedForm,
-          child: Container(
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height,
-              maxWidth: MediaQuery.of(context).size.width,
-            ),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  Colors.lightGreen,
-                  Colors.lightBlue,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.centerRight,
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: themeSelect(),
+      home: Scaffold(
+        body: SingleChildScrollView(
+          child: Form(
+            key: _validatedForm,
+            child: Container(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height,
+                maxWidth: MediaQuery.of(context).size.width,
               ),
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: 30.0, horizontal: 24.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          "Inicio de Sesión",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 42,
-                            fontWeight: FontWeight.w800,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [
+                    Colors.lightGreen,
+                    Colors.lightBlue,
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.centerRight,
+                ),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    flex: 2,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 30.0, horizontal: 24.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const [
+                          Text(
+                            "Inicio de Sesión",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 42,
+                              fontWeight: FontWeight.w800,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                Expanded(
-                  flex: 8,
-                  child: Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: ListView(
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.8),
-                            borderRadius:
-                                const BorderRadius.all(Radius.circular(25)),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                              left: 30,
-                              right: 30,
+                  Expanded(
+                    flex: 8,
+                    child: Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: ListView(
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.white.withOpacity(0.8),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(25)),
                             ),
-                            child: Column(
-                              children: [
-                                Lottie.asset(
-                                  'images/lottie/hello.zip',
-                                  repeat: true,
-                                ),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      '¿No tiene cuenta?/¿Olvidó su contraseña?',
-                                      style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.deepPurple.shade800),
-                                    ),
-                                    TextButton(
-                                      onPressed: () {
-                                        _passwordController.clear();
-                                        showMore();
-                                      },
-                                      child: Text(
-                                        "CLIC AQUÍ",
+                            child: Padding(
+                              padding: const EdgeInsets.only(
+                                left: 30,
+                                right: 30,
+                              ),
+                              child: Column(
+                                children: [
+                                  Lottie.asset(
+                                    'images/lottie/hello.zip',
+                                    repeat: true,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        '¿No tiene cuenta?/¿Olvidó su contraseña?',
                                         style: TextStyle(
-                                            decoration:
-                                                TextDecoration.underline,
-                                            color: Colors.blue.shade700,
                                             fontSize: 12,
-                                            fontStyle: FontStyle.italic),
+                                            color: Colors.deepPurple.shade800),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                TextFormField(
-                                  keyboardType: TextInputType.emailAddress,
-                                  validator: (value) {
-                                    if (value.toString().isEmpty) {
-                                      return 'Ingrese un correo electrónico';
-                                    } else if (!value
-                                            .toString()
-                                            .contains('@') ||
-                                        !value.toString().contains('.')) {
-                                      return 'Ingrese un correo válido';
-                                    }
-                                    return null;
-                                  },
-                                  style:
-                                      const TextStyle(color: Colors.lightBlue),
-                                  controller: _emailController,
-                                  decoration: InputDecoration(
-                                    labelText: "Correo electrónico",
-                                    labelStyle: const TextStyle(
-                                        color: Colors.lightBlue),
-                                    prefixIcon: const Icon(
-                                      Icons.email_outlined,
-                                      color: Colors.lightBlue,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(25.0),
-                                      borderSide: const BorderSide(
-                                        color: Colors.lightBlue,
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.lightBlue, width: 2.0),
-                                      borderRadius: BorderRadius.circular(25.0),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10.0,
-                                ),
-                                TextFormField(
-                                  validator: (value) {
-                                    if (value.toString().isEmpty) {
-                                      return 'Ingrese la contraseña';
-                                    }
-                                    return null;
-                                  },
-                                  obscureText: _obscureText,
-                                  style:
-                                      const TextStyle(color: Colors.lightBlue),
-                                  controller: _passwordController,
-                                  decoration: InputDecoration(
-                                    suffixIcon: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            _obscureText = !_obscureText;
-                                          });
-                                        },
-                                        child: _obscureText
-                                            ? const Icon(Icons.remove_red_eye)
-                                            : const Icon(
-                                                Icons.remove_red_eye_outlined)),
-                                    labelText: "Clave",
-                                    labelStyle: const TextStyle(
-                                        color: Colors.lightBlue),
-                                    prefixIcon: const Icon(
-                                      Icons.lock,
-                                      color: Colors.lightBlue,
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(25.0),
-                                      borderSide: const BorderSide(
-                                        color: Colors.lightBlue,
-                                        width: 1.5,
-                                      ),
-                                    ),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderSide: const BorderSide(
-                                          color: Colors.lightBlue, width: 2.0),
-                                      borderRadius: BorderRadius.circular(25.0),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(
-                                  height: 10.0,
-                                ),
-                                (_isLoadingLogin == false)
-                                    ? OutlinedButton(
-                                        style: ButtonStyle(
-                                          fixedSize: MaterialStateProperty.all(
-                                              const Size.fromWidth(200)),
-                                          overlayColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.lightBlue),
-                                          foregroundColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.white),
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.lightGreen),
-                                          shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(25)),
-                                          ),
-                                          side: MaterialStateProperty.all(
-                                              const BorderSide(
-                                                  color: Colors.lightGreen)),
-                                        ),
+                                      TextButton(
                                         onPressed: () {
-                                          if (_validatedForm.currentState!
-                                              .validate()) {
-                                            _emailController.text =
-                                                _emailController.text.trim();
-                                            _passwordController.text =
-                                                _passwordController.text.trim();
-                                            _signInAgain();
-                                          }
+                                          _passwordController.clear();
+                                          showMore();
                                         },
-                                        child: const Text('Iniciar Sesion'),
-                                      )
-                                    : Platform.isAndroid
-                                        ? const Center(
-                                            child: CircularProgressIndicator())
-                                        : const Center(
-                                            child:
-                                                CupertinoActivityIndicator()),
-                                Row(
-                                  mainAxisAlignment: MainAxisAlignment.end,
-                                  children: [
-                                    TextButton(
-                                      onPressed: () {
-                                        _noAuth();
-                                      },
-                                      child: Text(
-                                        "Usar aplicación sin registro",
-                                        style: TextStyle(
-                                            decoration:
-                                                TextDecoration.underline,
-                                            color: Colors.blue.shade700,
-                                            fontSize: 12,
-                                            fontStyle: FontStyle.italic),
+                                        child: Text(
+                                          "CLIC AQUÍ",
+                                          style: TextStyle(
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              color: Colors.blue.shade700,
+                                              fontSize: 12,
+                                              fontStyle: FontStyle.italic),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  TextFormField(
+                                    keyboardType: TextInputType.emailAddress,
+                                    validator: (value) {
+                                      if (value.toString().isEmpty) {
+                                        return 'Ingrese un correo electrónico';
+                                      } else if (!value
+                                              .toString()
+                                              .contains('@') ||
+                                          !value.toString().contains('.')) {
+                                        return 'Ingrese un correo válido';
+                                      }
+                                      return null;
+                                    },
+                                    style: const TextStyle(
+                                        color: Colors.lightBlue),
+                                    controller: _emailController,
+                                    decoration: InputDecoration(
+                                      labelText: "Correo electrónico",
+                                      labelStyle: const TextStyle(
+                                          color: Colors.lightBlue),
+                                      prefixIcon: const Icon(
+                                        Icons.email_outlined,
+                                        color: Colors.lightBlue,
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(25.0),
+                                        borderSide: const BorderSide(
+                                          color: Colors.lightBlue,
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: Colors.lightBlue,
+                                            width: 2.0),
+                                        borderRadius:
+                                            BorderRadius.circular(25.0),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ],
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
+                                  TextFormField(
+                                    validator: (value) {
+                                      if (value.toString().isEmpty) {
+                                        return 'Ingrese la contraseña';
+                                      }
+                                      return null;
+                                    },
+                                    obscureText: _obscureText,
+                                    style: const TextStyle(
+                                        color: Colors.lightBlue),
+                                    controller: _passwordController,
+                                    decoration: InputDecoration(
+                                      suffixIcon: GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              _obscureText = !_obscureText;
+                                            });
+                                          },
+                                          child: _obscureText
+                                              ? const Icon(Icons.remove_red_eye)
+                                              : const Icon(Icons
+                                                  .remove_red_eye_outlined)),
+                                      labelText: "Clave",
+                                      labelStyle: const TextStyle(
+                                          color: Colors.lightBlue),
+                                      prefixIcon: const Icon(
+                                        Icons.lock,
+                                        color: Colors.lightBlue,
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(25.0),
+                                        borderSide: const BorderSide(
+                                          color: Colors.lightBlue,
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderSide: const BorderSide(
+                                            color: Colors.lightBlue,
+                                            width: 2.0),
+                                        borderRadius:
+                                            BorderRadius.circular(25.0),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 10.0,
+                                  ),
+                                  (_isLoadingLogin == false)
+                                      ? OutlinedButton(
+                                          style: ButtonStyle(
+                                            fixedSize:
+                                                MaterialStateProperty.all(
+                                                    const Size.fromWidth(200)),
+                                            overlayColor:
+                                                MaterialStateProperty.all(
+                                                    Colors.lightBlue),
+                                            foregroundColor:
+                                                MaterialStateProperty.all(
+                                                    Colors.white),
+                                            backgroundColor:
+                                                MaterialStateProperty.all(
+                                                    Colors.lightGreen),
+                                            shape: MaterialStateProperty.all(
+                                              RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          25)),
+                                            ),
+                                            side: MaterialStateProperty.all(
+                                                const BorderSide(
+                                                    color: Colors.lightGreen)),
+                                          ),
+                                          onPressed: () {
+                                            if (_validatedForm.currentState!
+                                                .validate()) {
+                                              _emailController.text =
+                                                  _emailController.text.trim();
+                                              _passwordController.text =
+                                                  _passwordController.text
+                                                      .trim();
+                                              _signInAgain();
+                                            }
+                                          },
+                                          child: const Text('Iniciar Sesion'),
+                                        )
+                                      : Platform.isAndroid
+                                          ? const Center(
+                                              child:
+                                                  CircularProgressIndicator())
+                                          : const Center(
+                                              child:
+                                                  CupertinoActivityIndicator()),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      TextButton(
+                                        onPressed: () {
+                                          _noAuth();
+                                        },
+                                        child: Text(
+                                          "Usar aplicación sin registro",
+                                          style: TextStyle(
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              color: Colors.blue.shade700,
+                                              fontSize: 12,
+                                              fontStyle: FontStyle.italic),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

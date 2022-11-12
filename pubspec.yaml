@@ -77,6 +77,10 @@ dependencies:
   speech_to_text: ^6.1.0
   #text to speech
   text_to_speech: ^0.2.3
+  #expanded fab
+  flutter_expandable_fab: ^1.6.0
+  #toast
+  fluttertoast: ^8.1.1
 
 flutter_icons:
   android: "launcher_icon"

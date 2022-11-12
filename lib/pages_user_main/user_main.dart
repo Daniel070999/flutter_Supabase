@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
+import 'package:fluttersupabase/constants.dart';
 import 'package:fluttersupabase/forms/container_user_main.dart';
 import 'package:fluttersupabase/pages_user_main/user_profile.dart';
 
@@ -32,7 +33,6 @@ class _UserMainState extends State<UserMain> {
           'Menu principal',
         ),
         leading: IconButton(
-          
           onPressed: () {
             if (ZoomDrawer.of(context)!.isOpen()) {
               ZoomDrawer.of(context)!.close();
@@ -47,16 +47,11 @@ class _UserMainState extends State<UserMain> {
         ),
         flexibleSpace: Container(
           decoration: BoxDecoration(
-            gradient:
-                LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
-              Colors.green,
-              Colors.blue.shade300,
-            ]),
+            gradient:barColor(),
           ),
         ),
-        backgroundColor: Colors.lightBlue,
       ),
-      body: const Center(child: ContainerUserMain()),
+      body: const ContainerUserMain(),
     );
   }
 }

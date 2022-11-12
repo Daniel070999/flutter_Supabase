@@ -134,245 +134,244 @@ class _TextImageState extends State<TextImage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Texto en imagen',
-        ),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient:
-                LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
-              Colors.green,
-              Colors.blue.shade300,
-            ]),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: themeSelect(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Texto en imagen',
+          ),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: barColor()
+            ),
           ),
         ),
-        backgroundColor: Colors.lightBlue,
-      ),
-      body: Container(
-        color: Colors.grey.withOpacity(0.2),
-        child: Center(
-            child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              if (textScanning)
-                Platform.isAndroid
-                    ? const CircularProgressIndicator()
-                    : const CupertinoActivityIndicator(),
-              Padding(
-                padding:
-                    const EdgeInsets.only(right: 30.0, left: 30.0, top: 10.0),
-                child: _buttonGroupDownTextImage(),
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              if (imageFile != null)
-                Image.file(
-                  File(imageFile!.path),
-                  width: 300,
-                  height: 300,
+        body: Container(
+          color: Colors.grey.withOpacity(0.2),
+          child: Center(
+              child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                if (textScanning)
+                  Platform.isAndroid
+                      ? const CircularProgressIndicator()
+                      : const CupertinoActivityIndicator(),
+                Padding(
+                  padding:
+                      const EdgeInsets.only(right: 30.0, left: 30.0, top: 10.0),
+                  child: _buttonGroupDownTextImage(),
                 ),
-              const SizedBox(
-                height: 10,
-              ),
-              if (!textScanning && imageFile == null)
+                const SizedBox(
+                  height: 10,
+                ),
+                if (imageFile != null)
+                  Image.file(
+                    File(imageFile!.path),
+                    width: 300,
+                    height: 300,
+                  ),
+                const SizedBox(
+                  height: 10,
+                ),
+                if (!textScanning && imageFile == null)
+                  Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25.0),
+                          color: Colors.grey.shade400),
+                      width: 150,
+                      height: 150,
+                      child: const Icon(
+                        Icons.camera_alt_outlined,
+                        color: Colors.grey,
+                        size: 100.0,
+                      ),
+                    ),
+                  ),
                 Padding(
                   padding: const EdgeInsets.all(10.0),
                   child: Container(
                     decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25.0),
-                        color: Colors.grey.shade400),
-                    width: 150,
-                    height: 150,
-                    child: const Icon(
-                      Icons.camera_alt_outlined,
-                      color: Colors.grey,
-                      size: 100.0,
-                    ),
-                  ),
-                ),
-              Padding(
-                padding: const EdgeInsets.all(10.0),
-                child: Container(
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(25.0),
-                      color: Colors.white),
-                  child: Padding(
-                    padding: const EdgeInsets.all(15.0),
-                    child: Column(
-                      children: [
-                        TextFormField(
-                          controller: scannedText,
-                          maxLines: 10,
-                          cursorColor: Colors.blue,
-                          keyboardType: TextInputType.multiline,
-                          style: const TextStyle(color: Colors.black),
-                          decoration: InputDecoration(
-                            labelText: "Texto reconocido",
-                            labelStyle: const TextStyle(color: Colors.blue),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(25.0),
-                              borderSide: const BorderSide(
-                                color: Colors.blue,
-                                width: 1.5,
+                        color: colorContainer()),
+                    child: Padding(
+                      padding: const EdgeInsets.all(15.0),
+                      child: Column(
+                        children: [
+                          TextFormField(
+                            controller: scannedText,
+                            maxLines: 10,
+                            cursorColor: Colors.blue,
+                            keyboardType: TextInputType.multiline,
+                            style: const TextStyle(color: Colors.black),
+                            decoration: InputDecoration(
+                              labelText: "Texto reconocido",
+                              labelStyle: const TextStyle(color: Colors.blue),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(25.0),
+                                borderSide: const BorderSide(
+                                  color: Colors.blue,
+                                  width: 1.5,
+                                ),
                               ),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.blue, width: 2.0),
-                              borderRadius: BorderRadius.circular(25.0),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                    color: Colors.blue, width: 2.0),
+                                borderRadius: BorderRadius.circular(25.0),
+                              ),
                             ),
                           ),
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            
-                            OutlinedButton(
-                              style: ButtonStyle(
-                                fixedSize: MaterialStateProperty.all(
-                                    const Size.fromWidth(150)),
-                                backgroundColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                foregroundColor:
-                                    MaterialStateProperty.all(Colors.lightBlue),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25)),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              
+                              OutlinedButton(
+                                style: ButtonStyle(
+                                  fixedSize: MaterialStateProperty.all(
+                                      const Size.fromWidth(150)),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Colors.transparent),
+                                  foregroundColor:
+                                      MaterialStateProperty.all(Colors.lightBlue),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(25)),
+                                  ),
+                                  side: MaterialStateProperty.all(
+                                      const BorderSide(color: Colors.lightBlue)),
                                 ),
-                                side: MaterialStateProperty.all(
-                                    const BorderSide(color: Colors.lightBlue)),
-                              ),
-                              onPressed: () {
-                                if (scannedText.text.isNotEmpty) {
-                                  Navigator.pushNamed(context, '/textToSpeech',
-                                      arguments: scannedText.text);
-                                }
-                              },
-                              child: const Center(
-                                child: Text(
-                                  'Escuchar',
-                                  style: TextStyle(color: Colors.lightBlue),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            OutlinedButton(
-                              style: ButtonStyle(
-                                fixedSize: MaterialStateProperty.all(
-                                    const Size.fromWidth(150)),
-                                backgroundColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                foregroundColor:
-                                    MaterialStateProperty.all(Colors.lightBlue),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25)),
-                                ),
-                                side: MaterialStateProperty.all(
-                                    const BorderSide(color: Colors.lightBlue)),
-                              ),
-                              onPressed: () {
-                                if (scannedText.text.isNotEmpty) {
-                                  Navigator.pushNamed(context, '/translate',
-                                      arguments: scannedText.text);
-                                }
-                              },
-                              child: const Center(
-                                child: Text(
-                                  'Traducir',
-                                  style: TextStyle(color: Colors.lightBlue),
+                                onPressed: () {
+                                  if (scannedText.text.isNotEmpty) {
+                                    Navigator.pushNamed(context, '/textToSpeech',
+                                        arguments: scannedText.text);
+                                  }
+                                },
+                                child: const Center(
+                                  child: Text(
+                                    'Escuchar',
+                                    style: TextStyle(color: Colors.lightBlue),
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            OutlinedButton(
-                              style: ButtonStyle(
-                                fixedSize: MaterialStateProperty.all(
-                                    const Size.fromWidth(100)),
-                                backgroundColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                foregroundColor:
-                                    MaterialStateProperty.all(Colors.lightBlue),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25)),
-                                ),
-                                side: MaterialStateProperty.all(
-                                    const BorderSide(color: Colors.lightBlue)),
+                              const SizedBox(
+                                width: 10,
                               ),
-                              onPressed: () {
-                                if (scannedText.text.isNotEmpty) {
-                                  Clipboard.setData(
-                                      ClipboardData(text: scannedText.text));
-                                  context.showSnackBar(
-                                      message: 'Texto copiado',
-                                      backgroundColor: Colors.lightGreen,
-                                      icon:
-                                          Icons.check_circle_outline_outlined);
-                                }
-                              },
-                              child: const Center(
-                                child: Text(
-                                  'Copiar',
-                                  style: TextStyle(color: Colors.lightBlue),
+                              OutlinedButton(
+                                style: ButtonStyle(
+                                  fixedSize: MaterialStateProperty.all(
+                                      const Size.fromWidth(150)),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Colors.transparent),
+                                  foregroundColor:
+                                      MaterialStateProperty.all(Colors.lightBlue),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(25)),
+                                  ),
+                                  side: MaterialStateProperty.all(
+                                      const BorderSide(color: Colors.lightBlue)),
+                                ),
+                                onPressed: () {
+                                  if (scannedText.text.isNotEmpty) {
+                                    Navigator.pushNamed(context, '/translate',
+                                        arguments: scannedText.text);
+                                  }
+                                },
+                                child: const Center(
+                                  child: Text(
+                                    'Traducir',
+                                    style: TextStyle(color: Colors.lightBlue),
+                                  ),
                                 ),
                               ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            OutlinedButton(
-                              style: ButtonStyle(
-                                fixedSize: MaterialStateProperty.all(
-                                    const Size.fromWidth(100)),
-                                backgroundColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                foregroundColor:
-                                    MaterialStateProperty.all(Colors.lightBlue),
-                                shape: MaterialStateProperty.all(
-                                  RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(25)),
-                                ),
-                                side: MaterialStateProperty.all(
-                                    const BorderSide(color: Colors.lightBlue)),
+                              const SizedBox(
+                                width: 10,
                               ),
-                              onPressed: () {
-                                setState(() {
-                                  scannedText.clear();
-                                  imageFile = null;
-                                });
-                              },
-                              child: const Center(
-                                child: Text(
-                                  'Limpiar',
-                                  style: TextStyle(color: Colors.lightBlue),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              OutlinedButton(
+                                style: ButtonStyle(
+                                  fixedSize: MaterialStateProperty.all(
+                                      const Size.fromWidth(100)),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Colors.transparent),
+                                  foregroundColor:
+                                      MaterialStateProperty.all(Colors.lightBlue),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(25)),
+                                  ),
+                                  side: MaterialStateProperty.all(
+                                      const BorderSide(color: Colors.lightBlue)),
+                                ),
+                                onPressed: () {
+                                  if (scannedText.text.isNotEmpty) {
+                                    Clipboard.setData(
+                                        ClipboardData(text: scannedText.text));
+                                    context.showSnackBar(
+                                        message: 'Texto copiado',
+                                        backgroundColor: Colors.lightGreen,
+                                        icon:
+                                            Icons.check_circle_outline_outlined);
+                                  }
+                                },
+                                child: const Center(
+                                  child: Text(
+                                    'Copiar',
+                                    style: TextStyle(color: Colors.lightBlue),
+                                  ),
                                 ),
                               ),
-                            ),
-                            
-                          ],
-                        ),
-                      ],
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              OutlinedButton(
+                                style: ButtonStyle(
+                                  fixedSize: MaterialStateProperty.all(
+                                      const Size.fromWidth(100)),
+                                  backgroundColor: MaterialStateProperty.all(
+                                      Colors.transparent),
+                                  foregroundColor:
+                                      MaterialStateProperty.all(Colors.lightBlue),
+                                  shape: MaterialStateProperty.all(
+                                    RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(25)),
+                                  ),
+                                  side: MaterialStateProperty.all(
+                                      const BorderSide(color: Colors.lightBlue)),
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    scannedText.clear();
+                                    imageFile = null;
+                                  });
+                                },
+                                child: const Center(
+                                  child: Text(
+                                    'Limpiar',
+                                    style: TextStyle(color: Colors.lightBlue),
+                                  ),
+                                ),
+                              ),
+                              
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        )),
+              ],
+            ),
+          )),
+        ),
       ),
     );
   }

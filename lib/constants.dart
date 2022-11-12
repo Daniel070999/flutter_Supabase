@@ -7,10 +7,12 @@ import 'package:fluttersupabase/pages_user_main/user_read_qr_android.dart';
 import 'package:fluttersupabase/pages_user_main/user_read_qr_ios.dart';
 import 'package:fluttersupabase/pages_user_main/user_text_to_speech.dart';
 import 'package:fluttersupabase/pages_user_main/user_translate.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final supabase = Supabase.instance.client;
+
 readPDF(BuildContext context) async {
   Navigator.push(
       context,
@@ -18,6 +20,7 @@ readPDF(BuildContext context) async {
         builder: (context) => const ReadPDF(),
       ));
 }
+
 speechToText(BuildContext context) async {
   Navigator.push(
       context,
@@ -25,6 +28,7 @@ speechToText(BuildContext context) async {
         builder: (context) => SpeechToTextPage(),
       ));
 }
+
 textToSpeech(BuildContext context) async {
   Navigator.push(
       context,
@@ -32,6 +36,7 @@ textToSpeech(BuildContext context) async {
         builder: (context) => TextToSpeechPage(),
       ));
 }
+
 newNote(BuildContext context) async {
   Navigator.push(
       context,
@@ -109,30 +114,77 @@ extension ShowSnackBar on BuildContext {
   }
 }
 
-extension ShowSnackBarWithButton on BuildContext {
-  void showSnackBarWithButtion({
-    required String message,
-    required Color backgroundColor,
-    required String messageButton,
-    required void Function() Function,
-  }) {
-    ScaffoldMessenger.of(this).showSnackBar(SnackBar(
-      content: Text(message),
-      backgroundColor: backgroundColor,
-      behavior: SnackBarBehavior.floating,
-      elevation: 10,
-      margin: const EdgeInsets.only(bottom: 100.0, left: 25.0, right: 25.0),
-      action: SnackBarAction(
-        label: messageButton,
-        onPressed: Function,
-        textColor: Colors.black,
-      ),
-      duration: const Duration(minutes: 5),
-    ));
-  }
+bool animationState = true;
+bool theme = false;
+Color menuBackgroundColor() {
+  return theme ? Colors.grey.shade900 : Colors.green;
 }
 
-bool animationState = true;
+Color colorContainer() {
+  return theme ? Colors.grey.shade300 : Colors.white;
+}
+
+Gradient barColorScreen() {
+  return theme
+      ? LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
+          Colors.grey.shade500,
+          Colors.grey.shade900,
+        ])
+      : LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
+          Colors.blue.shade300,
+          Colors.green,
+        ]);
+}
+
+Gradient barColor() {
+  return theme
+      ? LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
+          Colors.black12,
+          Colors.grey.shade300,
+        ])
+      : LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
+          Colors.green,
+          Colors.blue.shade300,
+        ]);
+}
+
+ThemeData themeSelect() {
+  return theme
+      ? ThemeData.dark().copyWith(
+          textTheme: GoogleFonts.ralewayTextTheme(),
+          cardColor: Colors.grey,
+          primaryColorDark: Colors.green,
+          primaryColor: Colors.green,
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.green,
+            ),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.green,
+            ),
+          ),
+        )
+      : ThemeData.light().copyWith(
+          textTheme: GoogleFonts.ralewayTextTheme(),
+          cardColor: Colors.white,
+          primaryColorDark: Colors.green,
+          primaryColor: Colors.green,
+          textButtonTheme: TextButtonThemeData(
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.green,
+            ),
+          ),
+          elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+              foregroundColor: Colors.white,
+              backgroundColor: Colors.green,
+            ),
+          ),
+        );
+}
 
 //dialogo que ocupa toda la ventana
 showLoaderDialog(BuildContext context, String message, String ruteLottie) {

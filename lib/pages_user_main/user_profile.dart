@@ -163,144 +163,46 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Actualización de datos'),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient:
-                LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
-              Colors.green,
-              Colors.blue.shade300,
-            ]),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: themeSelect(),
+      home:  Scaffold(
+        appBar: AppBar(
+          title: const Text('Actualización de datos'),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient:barColor()
+            ),
           ),
+          backgroundColor: Colors.lightBlue,
         ),
-        backgroundColor: Colors.lightBlue,
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(30.0),
-        child: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
-          children: [
-            const Center(
-              child: Text('NOTA: Luego de actualizar los datos, se cerrará sesión'),
-            ),
-            const SizedBox(height: 18),
-            Form(
-              key: _validatedFormData,
-              child: Column(children: [
-                TextFormField(
-                  validator: (value) {
-                    if (value.toString().isEmpty) {
-                      return 'Este campo no puede estar vacio';
-                    } else if (value.toString().length < 3) {
-                      return 'No puede haber menos de 3 caracteres';
-                    }
-                  },
-                  style: const TextStyle(color: Colors.lightBlue),
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                    labelText: "Nombre",
-                    labelStyle: const TextStyle(color: Colors.lightBlue),
-                    prefixIcon: const Icon(
-                      Icons.text_snippet_sharp,
-                      color: Colors.lightBlue,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: const BorderSide(
-                        color: Colors.lightBlue,
-                        width: 1.5,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.lightBlue, width: 2.0),
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 18.0),
-                TextFormField(
-                  validator: (value) {
-                    if (value.toString().isEmpty) {
-                      return 'Este campo no puede estar vacio';
-                    } else if (value.toString().length < 3) {
-                      return 'No puede haber menos de 3 caracteres';
-                    }
-                  },
-                  style: const TextStyle(color: Colors.lightBlue),
-                  controller: _lastnameController,
-                  decoration: InputDecoration(
-                    labelText: "Apellido",
-                    labelStyle: const TextStyle(color: Colors.lightBlue),
-                    prefixIcon: const Icon(
-                      Icons.text_snippet_sharp,
-                      color: Colors.lightBlue,
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(25.0),
-                      borderSide: const BorderSide(
-                        color: Colors.lightBlue,
-                        width: 1.5,
-                      ),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide:
-                          const BorderSide(color: Colors.lightBlue, width: 2.0),
-                      borderRadius: BorderRadius.circular(25.0),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 18),
-                (_loading == false)
-                    ? OutlinedButton(
-                        style: ButtonStyle(
-                          fixedSize: MaterialStateProperty.all(
-                              const Size.fromWidth(200)),
-                          shape: MaterialStateProperty.all(
-                            RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(25)),
-                          ),
-                          side: MaterialStateProperty.all(
-                              const BorderSide(color: Colors.lightGreen)),
-                        ),
-                        onPressed: () {
-                          if (_validatedFormData.currentState!.validate()) {
-                            _updateProfile(context);
-                          }
-                        },
-                        child: const Text(
-                          'Actualizar datos',
-                          style: TextStyle(color: Colors.lightGreen),
-                        ),
-                      )
-                    : Platform.isAndroid
-                        ? const Center(child: CircularProgressIndicator())
-                        : const Center(child: CupertinoActivityIndicator()),
-                const SizedBox(height: 18.0),
-              ]),
-            ),
-            Form(
-              key: _validatedFormPassword,
-              child: Column(
-                children: [
+        body: Container(
+          padding: const EdgeInsets.all(30.0),
+          child: ListView(
+            padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+            children: [
+              const Center(
+                child: Text('NOTA: Luego de actualizar los datos, se cerrará sesión', style: TextStyle(color: Colors.red),),
+              ),
+              const SizedBox(height: 18),
+              Form(
+                key: _validatedFormData,
+                child: Column(children: [
                   TextFormField(
                     validator: (value) {
                       if (value.toString().isEmpty) {
                         return 'Este campo no puede estar vacio';
-                      } else if (value.toString().length < 6) {
-                        return 'No puede haber menos de 6 caracteres';
+                      } else if (value.toString().length < 3) {
+                        return 'No puede haber menos de 3 caracteres';
                       }
                     },
-                    obscureText: true,
                     style: const TextStyle(color: Colors.lightBlue),
-                    controller: _passwordController,
+                    controller: _usernameController,
                     decoration: InputDecoration(
-                      labelText: "Cree una nueva contraseña",
+                      labelText: "Nombre",
                       labelStyle: const TextStyle(color: Colors.lightBlue),
                       prefixIcon: const Icon(
-                        Icons.lock,
+                        Icons.text_snippet_sharp,
                         color: Colors.lightBlue,
                       ),
                       enabledBorder: OutlineInputBorder(
@@ -311,29 +213,28 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Colors.lightBlue, width: 2.0),
+                        borderSide:
+                            const BorderSide(color: Colors.lightBlue, width: 2.0),
                         borderRadius: BorderRadius.circular(25.0),
                       ),
                     ),
                   ),
-                  const SizedBox(height: 18),
+                  const SizedBox(height: 18.0),
                   TextFormField(
                     validator: (value) {
                       if (value.toString().isEmpty) {
                         return 'Este campo no puede estar vacio';
-                      } else if (_passwordController.text != value.toString()) {
-                        return 'Las contraseñas no coinciden';
+                      } else if (value.toString().length < 3) {
+                        return 'No puede haber menos de 3 caracteres';
                       }
                     },
-                    obscureText: true,
                     style: const TextStyle(color: Colors.lightBlue),
-                    controller: _passwordConfirmController,
+                    controller: _lastnameController,
                     decoration: InputDecoration(
-                      labelText: "Confirmar contraseña",
+                      labelText: "Apellido",
                       labelStyle: const TextStyle(color: Colors.lightBlue),
                       prefixIcon: const Icon(
-                        Icons.lock,
+                        Icons.text_snippet_sharp,
                         color: Colors.lightBlue,
                       ),
                       enabledBorder: OutlineInputBorder(
@@ -344,14 +245,14 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Colors.lightBlue, width: 2.0),
+                        borderSide:
+                            const BorderSide(color: Colors.lightBlue, width: 2.0),
                         borderRadius: BorderRadius.circular(25.0),
                       ),
                     ),
                   ),
                   const SizedBox(height: 18),
-                  (_loadingPass == false)
+                  (_loading == false)
                       ? OutlinedButton(
                           style: ButtonStyle(
                             fixedSize: MaterialStateProperty.all(
@@ -364,24 +265,123 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                                 const BorderSide(color: Colors.lightGreen)),
                           ),
                           onPressed: () {
-                            if (_validatedFormPassword.currentState!
-                                .validate()) {
-                              _updateAuth();
+                            if (_validatedFormData.currentState!.validate()) {
+                              _updateProfile(context);
                             }
                           },
                           child: const Text(
-                            'Actualizar contraseña',
+                            'Actualizar datos',
                             style: TextStyle(color: Colors.lightGreen),
                           ),
                         )
                       : Platform.isAndroid
                           ? const Center(child: CircularProgressIndicator())
                           : const Center(child: CupertinoActivityIndicator()),
-                  const SizedBox(height: 18),
-                ],
+                  const SizedBox(height: 18.0),
+                ]),
               ),
-            ),
-          ],
+              Form(
+                key: _validatedFormPassword,
+                child: Column(
+                  children: [
+                    TextFormField(
+                      validator: (value) {
+                        if (value.toString().isEmpty) {
+                          return 'Este campo no puede estar vacio';
+                        } else if (value.toString().length < 6) {
+                          return 'No puede haber menos de 6 caracteres';
+                        }
+                      },
+                      obscureText: true,
+                      style: const TextStyle(color: Colors.lightBlue),
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        labelText: "Cree una nueva contraseña",
+                        labelStyle: const TextStyle(color: Colors.lightBlue),
+                        prefixIcon: const Icon(
+                          Icons.lock,
+                          color: Colors.lightBlue,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: const BorderSide(
+                            color: Colors.lightBlue,
+                            width: 1.5,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                              color: Colors.lightBlue, width: 2.0),
+                          borderRadius: BorderRadius.circular(25.0),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    TextFormField(
+                      validator: (value) {
+                        if (value.toString().isEmpty) {
+                          return 'Este campo no puede estar vacio';
+                        } else if (_passwordController.text != value.toString()) {
+                          return 'Las contraseñas no coinciden';
+                        }
+                      },
+                      obscureText: true,
+                      style: const TextStyle(color: Colors.lightBlue),
+                      controller: _passwordConfirmController,
+                      decoration: InputDecoration(
+                        labelText: "Confirmar contraseña",
+                        labelStyle: const TextStyle(color: Colors.lightBlue),
+                        prefixIcon: const Icon(
+                          Icons.lock,
+                          color: Colors.lightBlue,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: const BorderSide(
+                            color: Colors.lightBlue,
+                            width: 1.5,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                              color: Colors.lightBlue, width: 2.0),
+                          borderRadius: BorderRadius.circular(25.0),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    (_loadingPass == false)
+                        ? OutlinedButton(
+                            style: ButtonStyle(
+                              fixedSize: MaterialStateProperty.all(
+                                  const Size.fromWidth(200)),
+                              shape: MaterialStateProperty.all(
+                                RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(25)),
+                              ),
+                              side: MaterialStateProperty.all(
+                                  const BorderSide(color: Colors.lightGreen)),
+                            ),
+                            onPressed: () {
+                              if (_validatedFormPassword.currentState!
+                                  .validate()) {
+                                _updateAuth();
+                              }
+                            },
+                            child: const Text(
+                              'Actualizar contraseña',
+                              style: TextStyle(color: Colors.lightGreen),
+                            ),
+                          )
+                        : Platform.isAndroid
+                            ? const Center(child: CircularProgressIndicator())
+                            : const Center(child: CupertinoActivityIndicator()),
+                    const SizedBox(height: 18),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

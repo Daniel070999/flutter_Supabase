@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttersupabase/constants.dart';
 import 'package:text_to_speech/text_to_speech.dart';
 
 class TextToSpeechPage extends StatefulWidget {
@@ -27,6 +28,7 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
   String? voice;
 
   final textEditingControllerTS = TextEditingController();
+  final listDownController = TextEditingController();
 
   @override
   void initState() {
@@ -200,7 +202,7 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25.0),
-        color: Colors.white,
+        color: colorContainer(),
       ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -212,17 +214,20 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
             ),
             barrierColor: Colors.grey.withOpacity(0.7),
             buttonPadding: const EdgeInsets.all(10.0),
-            hint: Text(
+            hint: const Text(
               'Seleccione un acento',
               style: TextStyle(
                 fontSize: 14,
-                color: Theme.of(context).hintColor,
+                color: Colors.black,
               ),
             ),
             items: languages.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
-                child: Text(value),
+                child: Text(
+                  value,
+                  style: const TextStyle(color: Colors.grey),
+                ),
               );
             }).toList(),
             value: language,
@@ -236,9 +241,11 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
             buttonHeight: 40,
             itemHeight: 40,
             dropdownMaxHeight: 250,
+            searchController: listDownController,
             searchInnerWidget: Padding(
               padding: const EdgeInsets.all(8),
               child: TextFormField(
+                controller: listDownController,
                 decoration: InputDecoration(
                   isDense: true,
                   contentPadding: const EdgeInsets.symmetric(
@@ -258,7 +265,7 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
             },
             onMenuStateChange: (isOpen) {
               if (!isOpen) {
-                textEditingControllerTS.clear();
+                listDownController.clear();
               }
             },
           ),
@@ -276,85 +283,86 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
         textEditingControllerTS.text = parametros.toString();
       });
     }
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Texto a voz',
-        ),
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient:
-                LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
-              Colors.green,
-              Colors.blue.shade300,
-            ]),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: themeSelect(),
+      home: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            'Texto a voz',
+          ),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: barColor(),
+            ),
           ),
         ),
-        backgroundColor: Colors.lightBlue,
-      ),
-      body: Container(
-        color: Colors.grey.withOpacity(0.2),
-        child: Center(
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Center(
-                  child: Column(
-                    children: <Widget>[
-                      Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25.0),
-                            color: Colors.white),
-                        child: Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: TextFormField(
-                            onChanged: (String newText) {
-                              setState(() {
-                                text = newText;
-                              });
-                            },
-                            maxLines: 15,
-                            cursorColor: Colors.blue,
-                            keyboardType: TextInputType.multiline,
-                            style: const TextStyle(color: Colors.black),
-                            controller: textEditingControllerTS,
-                            decoration: InputDecoration(
-                              labelText: "Ingrese un texto",
-                              labelStyle: const TextStyle(color: Colors.blue),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(25.0),
-                                borderSide: const BorderSide(
-                                  color: Colors.blue,
-                                  width: 1.5,
+        body: Container(
+          color: Colors.grey.withOpacity(0.2),
+          child: Center(
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Center(
+                    child: Column(
+                      children: <Widget>[
+                        Container(
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(25.0),
+                              color: colorContainer()),
+                          child: Padding(
+                            padding: const EdgeInsets.all(10.0),
+                            child: TextFormField(
+                              onChanged: (String newText) {
+                                setState(() {
+                                  text = newText;
+                                });
+                              },
+                              maxLines: 15,
+                              cursorColor: Colors.blue,
+                              keyboardType: TextInputType.multiline,
+                              style: const TextStyle(color: Colors.black),
+                              controller: textEditingControllerTS,
+                              decoration: InputDecoration(
+                                labelText: "Ingrese un texto",
+                                labelStyle: const TextStyle(color: Colors.blue),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(25.0),
+                                  borderSide: const BorderSide(
+                                    color: Colors.blue,
+                                    width: 1.5,
+                                  ),
                                 ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: const BorderSide(
-                                    color: Colors.blue, width: 2.0),
-                                borderRadius: BorderRadius.circular(25.0),
+                                focusedBorder: OutlineInputBorder(
+                                  borderSide: const BorderSide(
+                                      color: Colors.blue, width: 2.0),
+                                  borderRadius: BorderRadius.circular(25.0),
+                                ),
                               ),
                             ),
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 10.0,),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          _listDown(context),
-                        ],
-                      ),
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      _buttonGroupOptions(),
-                    ],
+                        const SizedBox(
+                          height: 10.0,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            _listDown(context),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 20,
+                        ),
+                        _buttonGroupOptions(),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -239,9 +239,10 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
                   children: <Widget>[
                     Expanded(
                       flex: 3,
-                      child: Lottie.asset(
-                        'images/lottie/pdf.zip',
-                        repeat: animationState,
+                      child: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Lottie.asset('images/lottie/pdf.zip',
+                            repeat: animationState, fit: BoxFit.cover),
                       ),
                     ),
                     const Expanded(
@@ -263,20 +264,24 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-          color: Colors.grey.withOpacity(0.2),
-          child: Padding(
-            padding: const EdgeInsets.all(10.0),
-            child: ListView(
-              children: [
-                _buttonGroupUp(),
-                _buttonGroupDown(),
-                _buttonGroupDown2(),
-                _buttonGroupDown3(),
-              ],
-            ),
-          )),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: themeSelect(),
+      home: Scaffold(
+        body: Container(
+            color: Colors.grey.withOpacity(0.2),
+            child: Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: ListView(
+                children: [
+                  _buttonGroupUp(),
+                  _buttonGroupDown(),
+                  _buttonGroupDown2(),
+                  _buttonGroupDown3(),
+                ],
+              ),
+            )),
+      ),
     );
   }
 }
