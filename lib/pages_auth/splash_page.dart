@@ -92,6 +92,7 @@ class _SplashPageState extends State<SplashPage> {
 
       _redicrectCalled = true;
       final session = supabase.auth.currentSession;
+      print(session);
       if (session != null) {
         try {
           final getIdUserAuth = supabase.auth.currentUser?.id;

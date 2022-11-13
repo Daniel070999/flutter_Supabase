@@ -54,19 +54,6 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
     });
   }
 
-  Future<void> _signOut(BuildContext context) async {
-    try {
-      await supabase.auth.signOut();
-    } on AuthException catch (error) {
-      Fluttertoast.showToast(msg: 'Algo salió mal');
-    } catch (error) {
-      Fluttertoast.showToast(msg: 'Algo salió mal');
-    }
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/');
-    }
-  }
-
   Future<void> _updateProfile(BuildContext context) async {
     setState(() {
       _loading = true;
@@ -84,7 +71,7 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
       await supabase.from('profiles').update(updates).eq('id', id);
       if (mounted) {
         Fluttertoast.showToast(msg: 'Datos actualizados');
-        _signOut(context);
+        signOut(context);
       }
     } on PostgrestException catch (error) {
       Fluttertoast.showToast(msg: 'Algo salió mal');
@@ -109,7 +96,7 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
       );
       if (mounted) {
         Fluttertoast.showToast(msg: 'Contraseña actualizada');
-        _signOut(context);
+        signOut(context);
       }
     } on PostgrestException catch (error) {
       Fluttertoast.showToast(msg: 'Algo salió mal');
