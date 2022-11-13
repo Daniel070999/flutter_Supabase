@@ -287,6 +287,42 @@ class _UserNoAuthState extends State<UserNoAuth> {
                   ),
                 ),
               ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: ClipRRect(
+                    child: GestureDetector(
+                      onTap: () {
+                        acerca(context);
+                      },
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(25.0),
+                            color: Colors.white),
+                        height: 50,
+                        child: Row(
+                          children: const [
+                            SizedBox(
+                              width: 15,
+                            ),
+                            CircleAvatar(
+                              radius: 20,
+                              backgroundImage: AssetImage('images/logov5.png'),
+                            ),
+                            SizedBox(
+                              width: 15,
+                            ),
+                            Text(
+                              'ACERCA DE LA APLICACIÓN',
+                              style: TextStyle(fontSize: 16),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ));
