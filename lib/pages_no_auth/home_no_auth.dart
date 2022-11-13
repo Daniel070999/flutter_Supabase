@@ -19,7 +19,15 @@ class _UserNoAuthState extends State<UserNoAuth> {
             'Menu principal',
           ),
           flexibleSpace: Container(
-            decoration: BoxDecoration(gradient: barColor()),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                colors: <Color>[
+                  Colors.green,
+                  Colors.blue.shade300,
+                ],
+              ),
+            ),
           ),
         ),
         body: Container(
