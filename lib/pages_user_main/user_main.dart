@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_zoom_drawer/flutter_zoom_drawer.dart';
 import 'package:fluttersupabase/constants.dart';
 import 'package:fluttersupabase/forms/container_user_main.dart';
-import 'package:fluttersupabase/pages_user_main/user_profile.dart';
 
 class UserMain extends StatefulWidget {
   UserMain({super.key});

@@ -23,18 +23,6 @@ class _ResetPasswordState extends State<ResetPassword> {
 
   /// Called when user taps `Update` button
 
-  Future<void> _signOut() async {
-    try {
-      await supabase.auth.signOut();
-    } on AuthException catch (error) {
-      Fluttertoast.showToast(msg: 'Algo salió mal');
-    } catch (error) {
-      Fluttertoast.showToast(msg: 'Algo salió mal');
-    }
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/');
-    }
-  }
 
   @override
   void initState() {
@@ -61,6 +49,7 @@ class _ResetPasswordState extends State<ResetPassword> {
       final User? updatedUser = res.user;
       _passwordUpdate();
     } catch (e) {
+      print(e);
       Fluttertoast.showToast(msg: 'Algo salió mal');
     }
     setState(() {
@@ -102,7 +91,7 @@ class _ResetPasswordState extends State<ResetPassword> {
             style: TextStyle(color: Colors.white),
           ),
           onPressed: () {
-            _signOut();
+            signOut(context);
           },
         ),
         const SizedBox(
@@ -158,7 +147,7 @@ class _ResetPasswordState extends State<ResetPassword> {
             style: TextStyle(color: Colors.white),
           ),
           onPressed: () {
-            _signOut();
+            signOut(context);
           },
         ),
         const SizedBox(

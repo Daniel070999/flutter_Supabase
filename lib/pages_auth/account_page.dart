@@ -48,7 +48,7 @@ class _AccountPageState extends State<AccountPage> {
       if (mounted) {
         Fluttertoast.showToast(msg: 'Cuenta creada correctamente');
 
-        _signOut(context);
+        signOut(context);
       }
     } on PostgrestException catch (error) {
       print(error);
@@ -61,18 +61,6 @@ class _AccountPageState extends State<AccountPage> {
     });
   }
 
-  Future<void> _signOut(BuildContext context) async {
-    try {
-      await supabase.auth.signOut();
-    } on AuthException catch (error) {
-      Fluttertoast.showToast(msg: 'Algo salió mal');
-    } catch (error) {
-      Fluttertoast.showToast(msg: 'Algo salió mal');
-    }
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/');
-    }
-  }
 
   @override
   void initState() {

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
-import 'package:fluttersupabase/forms/drawer_screen.dart';
 import 'package:fluttersupabase/pages_user_main/user_profile.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
@@ -42,22 +41,9 @@ class _MenuScreenState extends State<MenuScreen> {
         _lastnameController.text = (data['lastname'] ?? '') as String;
       });
     } on PostgrestException catch (error) {
-      Fluttertoast.showToast(msg: 'Algo salió mal');
+      print(error);
     } catch (error) {
-      Fluttertoast.showToast(msg: 'Algo salió mal');
-    }
-  }
-
-  Future<void> _signOut(BuildContext context) async {
-    try {
-      await supabase.auth.signOut();
-    } on AuthException catch (error) {
-      Fluttertoast.showToast(msg: 'Algo salió mal');
-    } catch (error) {
-      Fluttertoast.showToast(msg: 'Algo salió mal');
-    }
-    if (mounted) {
-      Navigator.of(context).pushReplacementNamed('/');
+      print(error);
     }
   }
 
@@ -238,7 +224,7 @@ class _MenuScreenState extends State<MenuScreen> {
                             ),
                           ),
                           onPressed: () {
-                            _signOut(context);
+                            signOut(context);
                           },
                           child: const Center(
                             child: Text(
