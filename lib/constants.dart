@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fluttersupabase/acerca.dart';
 import 'package:fluttersupabase/pages_auth/login_page.dart';
 import 'package:fluttersupabase/pages_auth/splash_page.dart';
 import 'package:fluttersupabase/pages_user_main/user_read_pdf.dart';
@@ -15,6 +16,13 @@ import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 final supabase = Supabase.instance.client;
+acerca(BuildContext context) async {
+  Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const AcercaApp(),
+      ));
+}
 
 readPDF(BuildContext context) async {
   Navigator.push(

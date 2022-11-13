@@ -211,6 +211,37 @@ class _MenuScreenState extends State<MenuScreen> {
                       padding: const EdgeInsets.all(12.0),
                       child: Container(
                         color: Colors.transparent,
+                        height: 40,
+                        child: OutlinedButton(
+                          style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                Colors.white.withOpacity(0.8)),
+                            shape: MaterialStateProperty.all(
+                              RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25)),
+                            ),
+                          ),
+                          onPressed: () {
+                            acerca(context);
+                          },
+                          child: const Center(
+                            child: Text(
+                              'Acerca de la Aplicacón',
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                InkWell(
+                  child: Align(
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Container(
+                        color: Colors.transparent,
                         height: 40.0,
                         child: OutlinedButton(
                           style: ButtonStyle(
