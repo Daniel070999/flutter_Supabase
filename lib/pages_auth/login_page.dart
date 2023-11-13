@@ -54,9 +54,9 @@ class _LoginPageState extends State<LoginPage> {
       actionsAlignment: MainAxisAlignment.center,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32.0))),
-      content: SingleChildScrollView(
+      content: const SingleChildScrollView(
         child: ListBody(
-          children: const <Widget>[
+          children: <Widget>[
             Center(
               child: Text(
                 'Al usar la aplicación sin registrarse se limitarán herramientas y funciones',
@@ -128,16 +128,16 @@ class _LoginPageState extends State<LoginPage> {
         }
       } on AuthException catch (error) {
         if (mounted) {
-          var text_input = error.toString();
-          if (text_input.endsWith("422)")) {
+          var textInput = error.toString();
+          if (textInput.endsWith("422)")) {
             Fluttertoast.showToast(msg: 'Correo no válido');
 
             Navigator.of(context).pop();
-          } else if (text_input.endsWith("429)")) {
+          } else if (textInput.endsWith("429)")) {
             Fluttertoast.showToast(msg: 'Intente de nuevo en 60 segundos');
 
             Navigator.of(context).pop();
-          } else if (text_input.endsWith("400)")) {
+          } else if (textInput.endsWith("400)")) {
             Fluttertoast.showToast(msg: 'Ingrese un correo electrónico');
           } else {
             Fluttertoast.showToast(msg: 'Algo salió mal, vuelva a intentar');
@@ -175,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
           _emailController.clear();
           Navigator.of(context).pop();
         }
-      } on AuthException catch (error) {
+      } on AuthException {
         if (mounted) {
           Fluttertoast.showToast(msg: 'Intente luego de 60 segundos');
 
@@ -448,15 +448,15 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
+                  const Expanded(
                     flex: 2,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
+                      padding: EdgeInsets.symmetric(
                           vertical: 30.0, horizontal: 24.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
                             "Inicio de Sesión",
                             style: TextStyle(

@@ -7,6 +7,8 @@ import 'package:fluttersupabase/constants.dart';
 import 'package:text_to_speech/text_to_speech.dart';
 
 class TextToSpeechPage extends StatefulWidget {
+  const TextToSpeechPage({super.key});
+
   @override
   _TextToSpeechPageState createState() => _TextToSpeechPageState();
 }

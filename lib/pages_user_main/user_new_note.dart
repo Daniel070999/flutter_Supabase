@@ -255,6 +255,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
                 },
                 validator: (value) {
                   descriptionUpdate = value.toString();
+                  return null;
                 },
                 initialValue: descriptionUpdate,
                 maxLines: 10,
@@ -456,6 +457,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
                       if (value.toString().isEmpty) {
                         return 'Este campo es obligatorio';
                       }
+                      return null;
                     },
                     style: const TextStyle(color: Colors.white),
                     controller: _titleController,
@@ -507,7 +509,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
                       OutlinedButton(
                         style: ButtonStyle(
                           fixedSize:
-                              MaterialStateProperty.all(Size.fromWidth(150)),
+                              MaterialStateProperty.all(const Size.fromWidth(150)),
                           backgroundColor:
                               MaterialStateProperty.all(Colors.lightGreen),
                           overlayColor: MaterialStateProperty.all(
@@ -526,9 +528,9 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
                             _saveNote(context);
                           }
                         },
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Center(
                                 child: Text(
                               'Guardar',
@@ -541,7 +543,7 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
                       OutlinedButton(
                         style: ButtonStyle(
                           fixedSize:
-                              MaterialStateProperty.all(Size.fromWidth(150)),
+                              MaterialStateProperty.all(const Size.fromWidth(150)),
                           backgroundColor:
                               MaterialStateProperty.all(Colors.red),
                           overlayColor:
@@ -560,9 +562,9 @@ class _NewNoteState extends State<NewNote> with TickerProviderStateMixin {
                           _titleController.clear();
                           _descriptionController.clear();
                         },
-                        child: Row(
+                        child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
-                          children: const [
+                          children: [
                             Center(
                               child: Text(
                                 'Cancelar',

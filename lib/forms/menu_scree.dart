@@ -90,9 +90,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              _usernameController.text +
-                                  "\n" +
-                                  _lastnameController.text,
+                              "${_usernameController.text}\n${_lastnameController.text}",
                               style: const TextStyle(
                                   color: Colors.white, fontSize: 18),
                             ),

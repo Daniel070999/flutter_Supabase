@@ -4,7 +4,7 @@ import 'package:fluttersupabase/constants.dart';
 import 'package:fluttersupabase/forms/container_user_main.dart';
 
 class UserMain extends StatefulWidget {
-  UserMain({super.key});
+  const UserMain({super.key});
 
   @override
   State<UserMain> createState() => _UserMainState();

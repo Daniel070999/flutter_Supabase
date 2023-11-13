@@ -11,6 +11,8 @@ import 'package:speech_to_text/speech_to_text.dart';
 import 'package:fluttersupabase/constants.dart';
 
 class SpeechToTextPage extends StatefulWidget {
+  const SpeechToTextPage({super.key});
+
   @override
   _SpeechToTextPageState createState() => _SpeechToTextPageState();
 }
@@ -353,7 +355,7 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
 
   void statusListener(String status) {
     setState(() {
-      lastStatus = '$status';
+      lastStatus = status;
     });
   }
 }

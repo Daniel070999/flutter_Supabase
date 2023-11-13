@@ -37,7 +37,7 @@ dependencies:
 
   supabase_flutter: ^1.0.0
   #TextStyle google fonts
-  google_fonts: ^3.0.1
+  google_fonts: ^4.0.4
   #funcion en list slidable
   flutter_slidable: ^2.0.0
   #compartir text

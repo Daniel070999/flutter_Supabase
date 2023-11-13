@@ -45,17 +45,17 @@ class _UserNoAuthState extends State<UserNoAuth> {
                             borderRadius: BorderRadius.circular(25.0),
                             color: Colors.white.withOpacity(0.5)),
                         height: 100,
-                        child: Row(
+                        child: const Row(
                           children: [
-                            const Image(
+                            Image(
                               image: AssetImage('images/notes.png'),
                             ),
-                            const SizedBox(
+                            SizedBox(
                               width: 10,
                             ),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 Text(
                                   'LISTA DE NOTAS',
                                   style: TextStyle(
@@ -92,8 +92,8 @@ class _UserNoAuthState extends State<UserNoAuth> {
                             borderRadius: BorderRadius.circular(25.0),
                             color: Colors.white),
                         height: 100,
-                        child: Row(
-                          children: const [
+                        child: const Row(
+                          children: [
                             Image(
                               image: AssetImage('images/qr.png'),
                             ),
@@ -121,8 +121,8 @@ class _UserNoAuthState extends State<UserNoAuth> {
                             borderRadius: BorderRadius.circular(25.0),
                             color: Colors.white),
                         height: 100,
-                        child: Row(
-                          children: const [
+                        child: const Row(
+                          children: [
                             Image(
                               image: AssetImage('images/translate.png'),
                             ),
@@ -153,8 +153,8 @@ class _UserNoAuthState extends State<UserNoAuth> {
                             borderRadius: BorderRadius.circular(25.0),
                             color: Colors.white),
                         height: 100,
-                        child: Row(
-                          children: const [
+                        child: const Row(
+                          children: [
                             Image(
                               image: AssetImage('images/capturetext.png'),
                             ),
@@ -183,17 +183,17 @@ class _UserNoAuthState extends State<UserNoAuth> {
                             borderRadius: BorderRadius.circular(25.0),
                             color: Colors.white.withOpacity(0.5)),
                         height: 100,
-                        child: Row(
+                        child: const Row(
                           children: [
-                            const Image(
+                            Image(
                               image: AssetImage('images/recording.png'),
                             ),
-                            const SizedBox(
+                            SizedBox(
                               width: 10,
                             ),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 Text(
                                   'VOZ A TEXTO',
                                   style: TextStyle(
@@ -226,20 +226,20 @@ class _UserNoAuthState extends State<UserNoAuth> {
                             borderRadius: BorderRadius.circular(25.0),
                             color: Colors.white),
                         height: 100,
-                        child: Row(
+                        child: const Row(
                           children: [
-                            const Padding(
+                            Padding(
                               padding: EdgeInsets.all(10.0),
                               child: Image(
                                 image: AssetImage('images/speaker.png'),
                               ),
                             ),
-                            const SizedBox(
+                            SizedBox(
                               width: 30,
                             ),
                             Column(
                               mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
+                              children: [
                                 Text(
                                   'TEXTO A VOZ',
                                   style: TextStyle(
@@ -268,8 +268,8 @@ class _UserNoAuthState extends State<UserNoAuth> {
                             borderRadius: BorderRadius.circular(25.0),
                             color: Colors.white),
                         height: 100,
-                        child: Row(
-                          children: const [
+                        child: const Row(
+                          children: [
                             Image(
                               image: AssetImage('images/pdf.png'),
                             ),
@@ -300,8 +300,8 @@ class _UserNoAuthState extends State<UserNoAuth> {
                             borderRadius: BorderRadius.circular(25.0),
                             color: Colors.white),
                         height: 50,
-                        child: Row(
-                          children: const [
+                        child: const Row(
+                          children: [
                             SizedBox(
                               width: 15,
                             ),

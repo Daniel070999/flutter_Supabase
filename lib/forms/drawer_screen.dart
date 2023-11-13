@@ -21,7 +21,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
       duration: const Duration(milliseconds: 400),
       controller: zoomDrawerController,
       menuScreen: const MenuScreen(),
-      mainScreen: UserMain(),
+      mainScreen: const UserMain(),
       borderRadius: 25.0,
       showShadow: true,
       angle: -10.0,
