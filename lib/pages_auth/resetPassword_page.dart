@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fluttersupabase/constants.dart';
@@ -67,9 +66,9 @@ class _ResetPasswordState extends State<ResetPassword> {
       actionsAlignment: MainAxisAlignment.center,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32.0))),
-      content: SingleChildScrollView(
+      content: const SingleChildScrollView(
         child: ListBody(
-          children: const <Widget>[
+          children: <Widget>[
             Center(
               child: Text(
                 '¿Salir sin actualizar su contraseña?',
@@ -123,9 +122,9 @@ class _ResetPasswordState extends State<ResetPassword> {
       actionsAlignment: MainAxisAlignment.center,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32.0))),
-      content: SingleChildScrollView(
+      content: const SingleChildScrollView(
         child: ListBody(
-          children: const <Widget>[
+          children: <Widget>[
             Center(
               child: Text(
                 'Su contraseña ha sido actualizada correctamente.',
@@ -225,6 +224,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                       } else if (value.toString().length < 6) {
                         return 'No puede haber menos de 6 caracteres';
                       }
+                      return null;
                     },
                     obscureText: true,
                     style: const TextStyle(color: Colors.lightBlue),
@@ -259,6 +259,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                           value.toString()) {
                         return 'Las contraseñas no coinciden';
                       }
+                      return null;
                     },
                     obscureText: true,
                     style: const TextStyle(color: Colors.lightBlue),

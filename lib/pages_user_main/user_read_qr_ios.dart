@@ -3,7 +3,7 @@ import 'package:flutter_qr_bar_scanner/qr_bar_scanner_camera.dart';
 import 'package:fluttersupabase/constants.dart';
 
 class ReadQRIOS extends StatefulWidget {
-  const ReadQRIOS({Key? key});
+  const ReadQRIOS({Key? key}) : super(key: key);
   @override
   State<ReadQRIOS> createState() => _ReadQRIOSState();
 }
@@ -101,7 +101,7 @@ class _ReadQRIOSState extends State<ReadQRIOS> {
                       ? const Text('Enfoque hacia código QR o código de barras')
                       : SelectableText(
                           _qrInfo.toString(),
-                          style: TextStyle(fontSize: 16),
+                          style: const TextStyle(fontSize: 16),
                         ),
                 ],
               ),

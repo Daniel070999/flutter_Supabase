@@ -47,37 +47,7 @@ class _AcercaAppState extends State<AcercaApp> {
                   height: 10.0,
                 ),
                 const Text(
-                  '- Creación, modificación  y eliminación de notas almacenadas en la nube con el propósito de no ocupar espacio en el dispositivo.' +
-                      '\n' +
-                      '\n' +
-                      '- Lector de códigos QR y códigos de barras ya sea por medio de la cámara del teléfono o por imagen de galería.' +
-                      '\n' +
-                      '\n' +
-                      '- Creación de códigos QR con la opción de almacenar en galería.' +
-                      '\n' +
-                      '\n' +
-                      '- Traductor de texto disponible para varios idiomas.' +
-                      '\n' +
-                      '\n' +
-                      '- Reconocimiento de texto ya sea por medio de la cámara del teléfono o por imagen de galería.' +
-                      '\n' +
-                      '\n' +
-                      '- Reconocimiento de voz a texto con opción de guardar como nota o traducir a otro idioma.' +
-                      '\n' +
-                      '\n' +
-                      '- Convertir texto a voz con opción de elegir varios acentos de idiomas.' +
-                      '\n' +
-                      '\n' +
-                      '- Reconocimiento de texto en archivos PDF con opción de traducir o escuchar.' +
-                      '\n' +
-                      '\n' +
-                      '- Activar o desactivar las animaciones integradas en la aplicación.' +
-                      '\n' +
-                      '\n' +
-                      '- Activar o desactivar el modo oscuro de la aplicación.' +
-                      '\n' +
-                      '\n' +
-                      '- Actualizar datos de inicio de sesión.',
+                  '- Creación, modificación  y eliminación de notas almacenadas en la nube con el propósito de no ocupar espacio en el dispositivo.\n\n- Lector de códigos QR y códigos de barras ya sea por medio de la cámara del teléfono o por imagen de galería.\n\n- Creación de códigos QR con la opción de almacenar en galería.\n\n- Traductor de texto disponible para varios idiomas.\n\n- Reconocimiento de texto ya sea por medio de la cámara del teléfono o por imagen de galería.\n\n- Reconocimiento de voz a texto con opción de guardar como nota o traducir a otro idioma.\n\n- Convertir texto a voz con opción de elegir varios acentos de idiomas.\n\n- Reconocimiento de texto en archivos PDF con opción de traducir o escuchar.\n\n- Activar o desactivar las animaciones integradas en la aplicación.\n\n- Activar o desactivar el modo oscuro de la aplicación.\n\n- Actualizar datos de inicio de sesión.',
                   style: TextStyle(fontSize: 14.0),
                   textAlign: TextAlign.justify,
                 ),

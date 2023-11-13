@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/acerca.dart';
-import 'package:fluttersupabase/pages_auth/login_page.dart';
 import 'package:fluttersupabase/pages_auth/splash_page.dart';
 import 'package:fluttersupabase/pages_user_main/user_read_pdf.dart';
 import 'package:fluttersupabase/pages_user_main/user_speech_to_text.dart';
@@ -36,7 +35,7 @@ speechToText(BuildContext context) async {
   Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => SpeechToTextPage(),
+        builder: (context) => const SpeechToTextPage(),
       ));
 }
 
@@ -44,7 +43,7 @@ textToSpeech(BuildContext context) async {
   Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => TextToSpeechPage(),
+        builder: (context) => const TextToSpeechPage(),
       ));
 }
 
@@ -163,7 +162,7 @@ ThemeData themeSelect() {
 signOut(BuildContext context) {
   try {
     supabase.auth.signOut();
-  } on AuthException catch (error) {
+  } on AuthException {
     Fluttertoast.showToast(msg: 'Algo salió mal');
   } catch (error) {
     Fluttertoast.showToast(msg: 'Algo salió mal');

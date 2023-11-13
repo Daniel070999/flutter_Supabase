@@ -43,7 +43,7 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
           .single() as Map;
       _usernameController.text = (data['username'] ?? '') as String;
       _lastnameController.text = (data['lastname'] ?? '') as String;
-    } on PostgrestException catch (error) {
+    } on PostgrestException {
       Fluttertoast.showToast(msg: 'No se pudo cargar sus datos');
     } catch (error) {
       Fluttertoast.showToast(msg: 'No se pudo cargar sus datos');
@@ -73,7 +73,7 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
         Fluttertoast.showToast(msg: 'Datos actualizados');
         signOut(context);
       }
-    } on PostgrestException catch (error) {
+    } on PostgrestException {
       Fluttertoast.showToast(msg: 'Algo salió mal');
     } catch (error) {
       Fluttertoast.showToast(msg: 'Algo salió mal');
@@ -98,7 +98,7 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
         Fluttertoast.showToast(msg: 'Contraseña actualizada');
         signOut(context);
       }
-    } on PostgrestException catch (error) {
+    } on PostgrestException {
       Fluttertoast.showToast(msg: 'Algo salió mal');
     } catch (error) {
       Fluttertoast.showToast(msg: 'Algo salió mal');
@@ -153,6 +153,7 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                       } else if (value.toString().length < 3) {
                         return 'No puede haber menos de 3 caracteres';
                       }
+                      return null;
                     },
                     style: const TextStyle(color: Colors.lightBlue),
                     controller: _usernameController,
@@ -185,6 +186,7 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                       } else if (value.toString().length < 3) {
                         return 'No puede haber menos de 3 caracteres';
                       }
+                      return null;
                     },
                     style: const TextStyle(color: Colors.lightBlue),
                     controller: _lastnameController,
@@ -249,6 +251,7 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                         } else if (value.toString().length < 6) {
                           return 'No puede haber menos de 6 caracteres';
                         }
+                        return null;
                       },
                       obscureText: true,
                       style: const TextStyle(color: Colors.lightBlue),
@@ -283,6 +286,7 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                             value.toString()) {
                           return 'Las contraseñas no coinciden';
                         }
+                        return null;
                       },
                       obscureText: true,
                       style: const TextStyle(color: Colors.lightBlue),

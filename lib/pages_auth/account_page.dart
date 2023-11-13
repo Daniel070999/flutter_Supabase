@@ -85,9 +85,9 @@ class _AccountPageState extends State<AccountPage> {
       actionsAlignment: MainAxisAlignment.center,
       shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(32.0))),
-      content: SingleChildScrollView(
+      content: const SingleChildScrollView(
         child: ListBody(
-          children: const <Widget>[
+          children: <Widget>[
             Center(
               child: Text(
                 'Al salir, deberá seleccionar la opción de "Olvidé mi contraseña" para ingresar correctamente a la aplicación',
@@ -178,6 +178,7 @@ void _onBackPress() {
                       } else if (value.toString().length < 3) {
                         return 'No puede haber menos de 3 caracteres';
                       }
+                      return null;
                     },
                     style: const TextStyle(color: Colors.lightBlue),
                     controller: _usernameController,
@@ -210,6 +211,7 @@ void _onBackPress() {
                       } else if (value.toString().length < 3) {
                         return 'No puede haber menos de 3 caracteres';
                       }
+                      return null;
                     },
                     style: const TextStyle(color: Colors.lightBlue),
                     controller: _lastnameController,
@@ -242,6 +244,7 @@ void _onBackPress() {
                       } else if (value.toString().length < 6) {
                         return 'No puede haber menos de 6 caracteres';
                       }
+                      return null;
                     },
                     obscureText: true,
                     style: const TextStyle(color: Colors.lightBlue),
@@ -275,6 +278,7 @@ void _onBackPress() {
                       } else if (_passwordController.text != value.toString()) {
                         return 'Las contraseñas no coinciden';
                       }
+                      return null;
                     },
                     obscureText: true,
                     style: const TextStyle(color: Colors.lightBlue),
