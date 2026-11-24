@@ -10,16 +10,30 @@
 .svn/
 migrate_working_dir/
 
-# IntelliJ related
+# IDE and editor files
 *.iml
 *.ipr
 *.iws
 .idea/
+.vscode/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# Environment variables, certificates, and platform secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.jks
+*.keystore
+google-services.json
+GoogleService-Info.plist
+
+# Build outputs and auxiliary tool dependencies
+node_modules/
+dist/
+target/
+.next/
+.venv/
 
 # Flutter/Dart/Pub related
 **/doc/api/

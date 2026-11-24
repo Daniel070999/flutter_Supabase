@@ -47,8 +47,11 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <!-- Accepts URIs that begin with YOUR_SCHEME://YOUR_HOST -->
                 <data
-                android:scheme="io.supabase.flutterquickstart"
+                android:scheme="com.herramientasdetexto.app"
                 android:host="login-callback" />
+                <data
+                android:scheme="com.herramientasdetexto.app"
+                android:host="reset-callback" />
             </intent-filter>
 
         </activity>

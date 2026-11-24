@@ -1,9 +1,9 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:pdf_text/pdf_text.dart';
 import 'package:fluttersupabase/constants.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:read_pdf_text/read_pdf_text.dart';
 
 class ReadPDF extends StatefulWidget {
   const ReadPDF({super.key});
@@ -14,28 +14,38 @@ class ReadPDF extends StatefulWidget {
 
 class _ReadPDFState extends State<ReadPDF> {
   final _textInput = TextEditingController();
-  PDFDoc? _pdfDoc;
 
-  Future _pickPDFText(BuildContext context) async {
+  @override
+  void dispose() {
+    _textInput.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pickPDFText(BuildContext context) async {
     try {
-      var filePickerResult = await FilePicker.platform
-          .pickFiles(type: FileType.custom, allowedExtensions: ['pdf']);
+      final filePickerResult = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['pdf'],
+      );
 
-      if (filePickerResult != null) {
-        _textInput.text = 'Cargando PDF...';
-        _pdfDoc = await PDFDoc.fromPath(filePickerResult.files.single.path!);
-
-        setState(() {});
-      }
-      if (_pdfDoc == null) {
+      final String? path = filePickerResult?.files.single.path;
+      if (path == null) {
         return;
       }
-      String text = await _pdfDoc!.text;
 
-      setState(() {
-        _textInput.text = text;
-      });
-    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _textInput.text = 'Cargando PDF...';
+        });
+      }
+
+      final String text = await ReadPdfText.getPDFtext(path);
+      if (mounted) {
+        setState(() {
+          _textInput.text = text;
+        });
+      }
+    } catch (_) {
       Fluttertoast.showToast(msg: 'Intenta con otro documento');
     }
   }
@@ -55,7 +65,8 @@ class _ReadPDFState extends State<ReadPDF> {
               child: Card(
                 elevation: 5,
                 shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                  borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                ),
                 child: Column(
                   children: <Widget>[
                     Expanded(
@@ -67,7 +78,7 @@ class _ReadPDFState extends State<ReadPDF> {
                     ),
                     const Expanded(
                       flex: 1,
-                      child: Text("Seleccionar PDF"),
+                      child: Text('Seleccionar PDF'),
                     ),
                   ],
                 ),
@@ -79,234 +90,177 @@ class _ReadPDFState extends State<ReadPDF> {
     );
   }
 
+  Widget _actionButton({
+    required String label,
+    required double width,
+    required VoidCallback onPressed,
+  }) {
+    return OutlinedButton(
+      style: ButtonStyle(
+        fixedSize: WidgetStateProperty.all(Size.fromWidth(width)),
+        backgroundColor: WidgetStateProperty.all(Colors.transparent),
+        foregroundColor: WidgetStateProperty.all(Colors.lightBlue),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+        ),
+        side: WidgetStateProperty.all(
+          const BorderSide(color: Colors.lightBlue),
+        ),
+      ),
+      onPressed: onPressed,
+      child: Center(
+        child: Text(
+          label,
+          style: const TextStyle(color: Colors.lightBlue),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: themeSelect(),
-      home: Scaffold(
-          appBar: AppBar(
-            title: const Text(
-              'Abrir PDF',
-            ),
-            flexibleSpace: Container(
-              decoration: BoxDecoration(gradient: barColor()),
-            ),
+    return Theme(
+      data: themeSelect(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Abrir PDF'),
+          flexibleSpace: Container(
+            decoration: BoxDecoration(gradient: barColor()),
           ),
-          body: Container(
-              color: Colors.grey.withOpacity(0.2),
-              child: Center(
-                child: ListView(
+        ),
+        body: Container(
+          color: Colors.grey.withValues(alpha: 0.2),
+          child: Center(
+            child: ListView(
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              right: 80.0, left: 80.0, top: 10.0),
-                          child: _buttonPickPDF(),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 80.0,
+                        left: 80.0,
+                        top: 10.0,
+                      ),
+                      child: _buttonPickPDF(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(25.0),
+                          color: colorContainer(),
                         ),
-                        Padding(
+                        child: Padding(
                           padding: const EdgeInsets.all(10.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(25.0),
-                              color: colorContainer(),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(10.0),
-                              child: Column(
-                                children: [
-                                  TextFormField(
-                                    maxLines: 25,
-                                    cursorColor: Colors.blue,
-                                    keyboardType: TextInputType.multiline,
-                                    style: const TextStyle(color: Colors.black),
-                                    controller: _textInput,
-                                    decoration: InputDecoration(
-                                      labelText: "Texto de PDF",
-                                      labelStyle:
-                                          const TextStyle(color: Colors.blue),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(25.0),
-                                        borderSide: const BorderSide(
-                                          color: Colors.blue,
-                                          width: 1.5,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: const BorderSide(
-                                            color: Colors.blue, width: 2.0),
-                                        borderRadius:
-                                            BorderRadius.circular(25.0),
-                                      ),
+                          child: Column(
+                            children: [
+                              TextFormField(
+                                maxLines: 25,
+                                cursorColor: Colors.blue,
+                                keyboardType: TextInputType.multiline,
+                                style: const TextStyle(color: Colors.black),
+                                controller: _textInput,
+                                decoration: InputDecoration(
+                                  labelText: 'Texto de PDF',
+                                  labelStyle: const TextStyle(
+                                    color: Colors.blue,
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(25.0),
+                                    borderSide: const BorderSide(
+                                      color: Colors.blue,
+                                      width: 1.5,
                                     ),
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      OutlinedButton(
-                                        style: ButtonStyle(
-                                          fixedSize: MaterialStateProperty.all(
-                                              const Size.fromWidth(150)),
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.transparent),
-                                          foregroundColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.lightBlue),
-                                          shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(25)),
-                                          ),
-                                          side: MaterialStateProperty.all(
-                                              const BorderSide(
-                                                  color: Colors.lightBlue)),
-                                        ),
-                                        onPressed: () {
-                                          if (_textInput.text.isNotEmpty) {
-                                            Navigator.pushNamed(
-                                                context, '/textToSpeech',
-                                                arguments: _textInput.text);
-                                          }
-                                        },
-                                        child: const Center(
-                                          child: Text(
-                                            'Escuchar',
-                                            style: TextStyle(
-                                                color: Colors.lightBlue),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      OutlinedButton(
-                                        style: ButtonStyle(
-                                          fixedSize: MaterialStateProperty.all(
-                                              const Size.fromWidth(150)),
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.transparent),
-                                          foregroundColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.lightBlue),
-                                          shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(25)),
-                                          ),
-                                          side: MaterialStateProperty.all(
-                                              const BorderSide(
-                                                  color: Colors.lightBlue)),
-                                        ),
-                                        onPressed: () {
-                                          if (_textInput.text.isNotEmpty) {
-                                            Navigator.pushNamed(
-                                                context, '/translate',
-                                                arguments: _textInput.text);
-                                          }
-                                        },
-                                        child: const Center(
-                                          child: Text(
-                                            'Traducir',
-                                            style: TextStyle(
-                                                color: Colors.lightBlue),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: const BorderSide(
+                                      color: Colors.blue,
+                                      width: 2.0,
+                                    ),
+                                    borderRadius: BorderRadius.circular(25.0),
                                   ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      OutlinedButton(
-                                        style: ButtonStyle(
-                                          fixedSize: MaterialStateProperty.all(
-                                              const Size.fromWidth(100)),
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.transparent),
-                                          foregroundColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.lightBlue),
-                                          shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(25)),
-                                          ),
-                                          side: MaterialStateProperty.all(
-                                              const BorderSide(
-                                                  color: Colors.lightBlue)),
-                                        ),
-                                        onPressed: () {
-                                          if (_textInput.text.isEmpty) {
-                                            Fluttertoast.showToast(
-                                                msg: 'No hay nada para copiar');
-                                          } else {
-                                            Clipboard.setData(ClipboardData(
-                                                text: _textInput.text));
-                                            Fluttertoast.showToast(
-                                                msg:
-                                                    'Se copió al portapapeles');
-                                          }
-                                        },
-                                        child: const Center(
-                                          child: Text(
-                                            'Copiar',
-                                            style: TextStyle(
-                                                color: Colors.lightBlue),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      OutlinedButton(
-                                        style: ButtonStyle(
-                                          fixedSize: MaterialStateProperty.all(
-                                              const Size.fromWidth(100)),
-                                          backgroundColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.transparent),
-                                          foregroundColor:
-                                              MaterialStateProperty.all(
-                                                  Colors.lightBlue),
-                                          shape: MaterialStateProperty.all(
-                                            RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(25)),
-                                          ),
-                                          side: MaterialStateProperty.all(
-                                              const BorderSide(
-                                                  color: Colors.lightBlue)),
-                                        ),
-                                        onPressed: () {
-                                          setState(() {
-                                            _textInput.clear();
-                                          });
-                                        },
-                                        child: const Center(
-                                            child: Text(
-                                          'Limpiar',
-                                          style: TextStyle(
-                                              color: Colors.lightBlue),
-                                        )),
-                                      ),
-                                    ],
+                                ),
+                              ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  _actionButton(
+                                    label: 'Escuchar',
+                                    width: 150,
+                                    onPressed: () {
+                                      if (_textInput.text.isNotEmpty) {
+                                        Navigator.pushNamed(
+                                          context,
+                                          '/textToSpeech',
+                                          arguments: _textInput.text,
+                                        );
+                                      }
+                                    },
+                                  ),
+                                  const SizedBox(width: 10),
+                                  _actionButton(
+                                    label: 'Traducir',
+                                    width: 150,
+                                    onPressed: () {
+                                      if (_textInput.text.isNotEmpty) {
+                                        Navigator.pushNamed(
+                                          context,
+                                          '/translate',
+                                          arguments: _textInput.text,
+                                        );
+                                      }
+                                    },
                                   ),
                                 ],
                               ),
-                            ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  _actionButton(
+                                    label: 'Copiar',
+                                    width: 100,
+                                    onPressed: () {
+                                      if (_textInput.text.isEmpty) {
+                                        Fluttertoast.showToast(
+                                          msg: 'No hay nada para copiar',
+                                        );
+                                      } else {
+                                        Clipboard.setData(
+                                          ClipboardData(text: _textInput.text),
+                                        );
+                                        Fluttertoast.showToast(
+                                          msg: 'Se copió al portapapeles',
+                                        );
+                                      }
+                                    },
+                                  ),
+                                  const SizedBox(width: 10),
+                                  _actionButton(
+                                    label: 'Limpiar',
+                                    width: 100,
+                                    onPressed: () {
+                                      setState(() {
+                                        _textInput.clear();
+                                      });
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
-              ))),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1,11 +1,11 @@
 {
-    "name": "fluttersupabase",
-    "short_name": "fluttersupabase",
+    "name": "Herramientas de texto",
+    "short_name": "Herramientas de texto",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
     "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "description": "Herramientas de texto con autenticacion y notas en la nube.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [

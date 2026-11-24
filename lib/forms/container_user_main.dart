@@ -12,74 +12,69 @@ class ContainerUserMain extends StatefulWidget {
 }
 
 class _ContainerUserMainState extends State<ContainerUserMain> {
-  Widget _buttonGroupUp() {
-    return Row(
-      children: <Widget>[
-        Expanded(
-          flex: 1,
-          child: SizedBox(
-            height: 250,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(25.0),
-              onTap: () {
-                newNote(context);
-              },
-              child: Card(
-                elevation: 5,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 3,
-                      child: Lottie.asset(
-                        'images/lottie/notes.zip',
-                        repeat: animationState,
-                      ),
+  Widget _toolCard({
+    required String title,
+    required String lottieAsset,
+    required VoidCallback onTap,
+    BoxFit? fit,
+    EdgeInsetsGeometry assetPadding = EdgeInsets.zero,
+  }) {
+    return Expanded(
+      flex: 1,
+      child: SizedBox(
+        height: 250,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(25.0),
+          onTap: onTap,
+          child: Card(
+            elevation: 5,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(25.0)),
+            ),
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  flex: 3,
+                  child: Padding(
+                    padding: assetPadding,
+                    child: Lottie.asset(
+                      lottieAsset,
+                      repeat: animationState,
+                      fit: fit,
                     ),
-                    const Expanded(flex: 1, child: Text("LISTA DE NOTAS")),
-                  ],
+                  ),
                 ),
-              ),
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    title,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
             ),
           ),
         ),
-        Expanded(
-          flex: 1,
-          child: SizedBox(
-            height: 250,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(25.0),
-              onTap: () {
-                Platform.isAndroid
-                    ? scannerQRANDROID(context)
-                    : scannerQRIOS(context);
-              },
-              child: Card(
-                elevation: 5,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 3,
-                      child: Lottie.asset(
-                        'images/lottie/qr.zip',
-                        repeat: animationState,
-                      ),
-                    ),
-                    const Expanded(
-                      flex: 1,
-                      child: Text(
-                        "LECTOR DE CÓDIGO QR Y CÓDIGO DE BARRAS",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+      ),
+    );
+  }
+
+  Widget _buttonGroupUp() {
+    return Row(
+      children: <Widget>[
+        _toolCard(
+          title: 'LISTA DE NOTAS',
+          lottieAsset: 'images/lottie/notes.zip',
+          onTap: () => newNote(context),
+        ),
+        _toolCard(
+          title: 'LECTOR DE CÓDIGO QR Y CÓDIGO DE BARRAS',
+          lottieAsset: 'images/lottie/qr.zip',
+          onTap: () {
+            Platform.isAndroid
+                ? scannerQRANDROID(context)
+                : scannerQRIOS(context);
+          },
         ),
       ],
     );
@@ -88,69 +83,15 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
   Widget _buttonGroupDown() {
     return Row(
       children: <Widget>[
-        Expanded(
-          flex: 1,
-          child: SizedBox(
-            height: 250,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(25.0),
-              onTap: () {
-                translate(context);
-              },
-              child: Card(
-                elevation: 5,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 3,
-                      child: Lottie.asset(
-                        'images/lottie/translate.zip',
-                        repeat: animationState,
-                      ),
-                    ),
-                    const Expanded(flex: 1, child: Text("TRADUCTOR DE TEXTO")),
-                  ],
-                ),
-              ),
-            ),
-          ),
+        _toolCard(
+          title: 'TRADUCTOR DE TEXTO',
+          lottieAsset: 'images/lottie/translate.zip',
+          onTap: () => translate(context),
         ),
-        Expanded(
-          flex: 1,
-          child: SizedBox(
-            height: 250,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(25.0),
-              onTap: () {
-                textImage(context);
-              },
-              child: Card(
-                elevation: 5,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 3,
-                      child: Lottie.asset(
-                        'images/lottie/imagetext.zip',
-                        repeat: animationState,
-                      ),
-                    ),
-                    const Expanded(
-                      flex: 1,
-                      child: Text(
-                        "TEXTO EN IMAGEN",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+        _toolCard(
+          title: 'TEXTO EN IMAGEN',
+          lottieAsset: 'images/lottie/imagetext.zip',
+          onTap: () => textImage(context),
         ),
       ],
     );
@@ -159,61 +100,16 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
   Widget _buttonGroupDown2() {
     return Row(
       children: <Widget>[
-        Expanded(
-          flex: 1,
-          child: SizedBox(
-            height: 250,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(25.0),
-              onTap: () {
-                speechToText(context);
-              },
-              child: Card(
-                elevation: 5,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 3,
-                      child: Lottie.asset(
-                        'images/lottie/microphone.zip',
-                        repeat: animationState,
-                      ),
-                    ),
-                    const Expanded(flex: 1, child: Text("VOZ A TEXTO")),
-                  ],
-                ),
-              ),
-            ),
-          ),
+        _toolCard(
+          title: 'VOZ A TEXTO',
+          lottieAsset: 'images/lottie/microphone.zip',
+          onTap: () => speechToText(context),
         ),
-        Expanded(
-          flex: 1,
-          child: SizedBox(
-            height: 250,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(25.0),
-              onTap: () {
-                textToSpeech(context);
-              },
-              child: Card(
-                elevation: 5,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 3,
-                      child: Lottie.asset('images/lottie/speaker.zip',
-                          repeat: animationState, fit: BoxFit.contain),
-                    ),
-                    const Expanded(flex: 1, child: Text("TEXTO A VOZ")),
-                  ],
-                ),
-              ),
-            ),
-          ),
+        _toolCard(
+          title: 'TEXTO A VOZ',
+          lottieAsset: 'images/lottie/speaker.zip',
+          fit: BoxFit.contain,
+          onTap: () => textToSpeech(context),
         ),
       ],
     );
@@ -222,41 +118,12 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
   Widget _buttonGroupDown3() {
     return Row(
       children: <Widget>[
-        Expanded(
-          flex: 1,
-          child: SizedBox(
-            height: 250,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(25.0),
-              onTap: () {
-                readPDF(context);
-              },
-              child: Card(
-                elevation: 5,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 3,
-                      child: Padding(
-                        padding: const EdgeInsets.all(10.0),
-                        child: Lottie.asset('images/lottie/pdf.zip',
-                            repeat: animationState, fit: BoxFit.cover),
-                      ),
-                    ),
-                    const Expanded(
-                      flex: 1,
-                      child: Text(
-                        "ABRIR PDF",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+        _toolCard(
+          title: 'ABRIR PDF',
+          lottieAsset: 'images/lottie/pdf.zip',
+          fit: BoxFit.cover,
+          assetPadding: const EdgeInsets.all(10.0),
+          onTap: () => readPDF(context),
         ),
       ],
     );
@@ -264,22 +131,22 @@ class _ContainerUserMainState extends State<ContainerUserMain> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: themeSelect(),
-      home: Container(
-            color: Colors.grey.withOpacity(0.2),
-            child: Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: ListView(
-                children: [
-                  _buttonGroupUp(),
-                  _buttonGroupDown(),
-                  _buttonGroupDown2(),
-                  _buttonGroupDown3(),
-                ],
-              ),
-            )),
-      );
+    return Theme(
+      data: themeSelect(),
+      child: Container(
+        color: Colors.grey.withValues(alpha: 0.2),
+        child: Padding(
+          padding: const EdgeInsets.all(10.0),
+          child: ListView(
+            children: [
+              _buttonGroupUp(),
+              _buttonGroupDown(),
+              _buttonGroupDown2(),
+              _buttonGroupDown3(),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

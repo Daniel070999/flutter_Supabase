@@ -1,7 +1,9 @@
+// ignore_for_file: file_names
+
 import 'dart:io';
-import 'dart:math' as math;
-import 'package:flutter/material.dart';
+
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -10,24 +12,14 @@ class ResetPassword extends StatefulWidget {
   const ResetPassword({super.key});
 
   @override
-  _ResetPasswordState createState() => _ResetPasswordState();
+  State<ResetPassword> createState() => _ResetPasswordState();
 }
 
 class _ResetPasswordState extends State<ResetPassword> {
   final _newPasswordController = TextEditingController();
   final _confirmNewPasswordController = TextEditingController();
   final _validatedPass = GlobalKey<FormState>();
-  var _loading = false;
-
-  /// Called once a user id is received within `onAuthenticated()`
-
-  /// Called when user taps `Update` button
-
-
-  @override
-  void initState() {
-    super.initState();
-  }
+  bool _loading = false;
 
   @override
   void dispose() {
@@ -41,20 +33,20 @@ class _ResetPasswordState extends State<ResetPassword> {
       _loading = true;
     });
     try {
-      final UserResponse res = await supabase.auth.updateUser(
-        UserAttributes(
-          password: _confirmNewPasswordController.text,
-        ),
+      await supabase.auth.updateUser(
+        UserAttributes(password: _confirmNewPasswordController.text),
       );
-      final User? updatedUser = res.user;
-      _passwordUpdate();
-    } catch (e) {
-      print(e);
+      if (mounted) {
+        _passwordUpdate();
+      }
+    } catch (_) {
       Fluttertoast.showToast(msg: 'Algo salió mal');
     }
-    setState(() {
-      _loading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
   Widget _showAnimateOnBackPress(BuildContext context) {
@@ -66,25 +58,22 @@ class _ResetPasswordState extends State<ResetPassword> {
       iconColor: Colors.red,
       actionsAlignment: MainAxisAlignment.center,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(32.0))),
-      content: SingleChildScrollView(
+        borderRadius: BorderRadius.all(Radius.circular(32.0)),
+      ),
+      content: const SingleChildScrollView(
         child: ListBody(
-          children: const <Widget>[
+          children: <Widget>[
             Center(
-              child: Text(
-                '¿Salir sin actualizar su contraseña?',
-              ),
+              child: Text('¿Salir sin actualizar su contraseña?'),
             ),
-            SizedBox(
-              height: 10.0,
-            ),
+            SizedBox(height: 10.0),
           ],
         ),
       ),
       actions: <Widget>[
         ElevatedButton(
           style: const ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(Colors.red),
+            backgroundColor: WidgetStatePropertyAll(Colors.red),
           ),
           child: const Text(
             'Salir',
@@ -94,12 +83,10 @@ class _ResetPasswordState extends State<ResetPassword> {
             signOut(context);
           },
         ),
-        const SizedBox(
-          height: 20.0,
-        ),
+        const SizedBox(height: 20.0),
         ElevatedButton(
           style: const ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(Colors.grey),
+            backgroundColor: WidgetStatePropertyAll(Colors.grey),
           ),
           child: const Text(
             'Cancelar',
@@ -122,25 +109,22 @@ class _ResetPasswordState extends State<ResetPassword> {
       iconColor: Colors.lightGreen,
       actionsAlignment: MainAxisAlignment.center,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(32.0))),
-      content: SingleChildScrollView(
+        borderRadius: BorderRadius.all(Radius.circular(32.0)),
+      ),
+      content: const SingleChildScrollView(
         child: ListBody(
-          children: const <Widget>[
+          children: <Widget>[
             Center(
-              child: Text(
-                'Su contraseña ha sido actualizada correctamente.',
-              ),
+              child: Text('Su contraseña ha sido actualizada correctamente.'),
             ),
-            SizedBox(
-              height: 10.0,
-            ),
+            SizedBox(height: 10.0),
           ],
         ),
       ),
       actions: <Widget>[
         ElevatedButton(
           style: const ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(Colors.lightGreen),
+            backgroundColor: WidgetStatePropertyAll(Colors.lightGreen),
           ),
           child: const Text(
             'Aceptar',
@@ -150,21 +134,17 @@ class _ResetPasswordState extends State<ResetPassword> {
             signOut(context);
           },
         ),
-        const SizedBox(
-          height: 20.0,
-        ),
+        const SizedBox(height: 20.0),
       ],
     );
   }
 
   void _onBackPress() {
-    showGeneralDialog(
+    showGeneralDialog<void>(
       context: context,
-      pageBuilder: (ctx, a1, a2) {
-        return Container();
-      },
+      pageBuilder: (ctx, a1, a2) => const SizedBox.shrink(),
       transitionBuilder: (ctx, a1, a2, child) {
-        var curve = Curves.fastOutSlowIn.transform(a1.value);
+        final curve = Curves.fastOutSlowIn.transform(a1.value);
         return Transform.scale(
           scale: curve,
           child: _showAnimateOnBackPress(ctx),
@@ -175,13 +155,11 @@ class _ResetPasswordState extends State<ResetPassword> {
   }
 
   void _passwordUpdate() {
-    showGeneralDialog(
+    showGeneralDialog<void>(
       context: context,
-      pageBuilder: (ctx, a1, a2) {
-        return Container();
-      },
+      pageBuilder: (ctx, a1, a2) => const SizedBox.shrink(),
       transitionBuilder: (ctx, a1, a2, child) {
-        var curve = Curves.fastOutSlowIn.transform(a1.value);
+        final curve = Curves.fastOutSlowIn.transform(a1.value);
         return Transform.scale(
           scale: curve,
           child: _showAnimatepasswordUpdate(ctx),
@@ -193,16 +171,16 @@ class _ResetPasswordState extends State<ResetPassword> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        _onBackPress();
-
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          _onBackPress();
+        }
       },
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: themeSelect(),
-        home: Scaffold(
+      child: Theme(
+        data: themeSelect(),
+        child: Scaffold(
           appBar: AppBar(
             title: const Text('Restauración de contraseña'),
             flexibleSpace: Container(
@@ -214,23 +192,27 @@ class _ResetPasswordState extends State<ResetPassword> {
             child: Form(
               key: _validatedPass,
               child: ListView(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 18,
+                  horizontal: 12,
+                ),
                 children: [
                   const SizedBox(height: 18.0),
                   TextFormField(
                     validator: (value) {
-                      if (value.toString().isEmpty) {
+                      final text = value ?? '';
+                      if (text.isEmpty) {
                         return 'Este campo no puede estar vacio';
-                      } else if (value.toString().length < 6) {
+                      } else if (text.length < 6) {
                         return 'No puede haber menos de 6 caracteres';
                       }
+                      return null;
                     },
                     obscureText: true,
                     style: const TextStyle(color: Colors.lightBlue),
                     controller: _newPasswordController,
                     decoration: InputDecoration(
-                      labelText: "Cree una nueva contraseña",
+                      labelText: 'Cree una nueva contraseña',
                       labelStyle: const TextStyle(color: Colors.lightBlue),
                       prefixIcon: const Icon(
                         Icons.lock,
@@ -245,7 +227,9 @@ class _ResetPasswordState extends State<ResetPassword> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: const BorderSide(
-                            color: Colors.lightBlue, width: 2.0),
+                          color: Colors.lightBlue,
+                          width: 2.0,
+                        ),
                         borderRadius: BorderRadius.circular(25.0),
                       ),
                     ),
@@ -253,18 +237,19 @@ class _ResetPasswordState extends State<ResetPassword> {
                   const SizedBox(height: 18.0),
                   TextFormField(
                     validator: (value) {
-                      if (value.toString().isEmpty) {
+                      final text = value ?? '';
+                      if (text.isEmpty) {
                         return 'Este campo no puede estar vacio';
-                      } else if (_newPasswordController.text !=
-                          value.toString()) {
+                      } else if (_newPasswordController.text != text) {
                         return 'Las contraseñas no coinciden';
                       }
+                      return null;
                     },
                     obscureText: true,
                     style: const TextStyle(color: Colors.lightBlue),
                     controller: _confirmNewPasswordController,
                     decoration: InputDecoration(
-                      labelText: "Confirmar contraseña",
+                      labelText: 'Confirmar contraseña',
                       labelStyle: const TextStyle(color: Colors.lightBlue),
                       prefixIcon: const Icon(
                         Icons.lock,
@@ -279,33 +264,43 @@ class _ResetPasswordState extends State<ResetPassword> {
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderSide: const BorderSide(
-                            color: Colors.lightBlue, width: 2.0),
+                          color: Colors.lightBlue,
+                          width: 2.0,
+                        ),
                         borderRadius: BorderRadius.circular(25.0),
                       ),
                     ),
                   ),
                   const SizedBox(height: 18),
-                  (_loading == false)
+                  (!_loading)
                       ? OutlinedButton(
                           style: ButtonStyle(
-                            fixedSize: MaterialStateProperty.all(
-                                const Size.fromWidth(200)),
-                            overlayColor:
-                                MaterialStateProperty.all(Colors.lightBlue),
-                            foregroundColor:
-                                MaterialStateProperty.all(Colors.white),
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.lightGreen),
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25)),
+                            fixedSize: WidgetStateProperty.all(
+                              const Size.fromWidth(200),
                             ),
-                            side: MaterialStateProperty.all(
-                                const BorderSide(color: Colors.lightGreen)),
+                            overlayColor: WidgetStateProperty.all(
+                              Colors.lightBlue,
+                            ),
+                            foregroundColor: WidgetStateProperty.all(
+                              Colors.white,
+                            ),
+                            backgroundColor: WidgetStateProperty.all(
+                              Colors.lightGreen,
+                            ),
+                            shape: WidgetStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                            ),
+                            side: WidgetStateProperty.all(
+                              const BorderSide(color: Colors.lightGreen),
+                            ),
                           ),
                           onPressed: () {
-                            _newPasswordController.text.trimRight();
-                            _confirmNewPasswordController.text.trimRight();
+                            _newPasswordController.text =
+                                _newPasswordController.text.trimRight();
+                            _confirmNewPasswordController.text =
+                                _confirmNewPasswordController.text.trimRight();
                             if (_validatedPass.currentState!.validate()) {
                               _updateAuth();
                             }

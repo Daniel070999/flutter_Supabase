@@ -10,7 +10,7 @@
 		<string>Editor</string>
 		<key>CFBundleURLSchemes</key>
 		<array>
-			<string>io.supabase.flutterquickstart</string>
+			<string>com.herramientasdetexto.app</string>
 		</array>
 		</dict>
 	</array>
@@ -24,7 +24,7 @@
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
-	<string>Fluttersupabase</string>
+	<string>Herramientas de texto</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

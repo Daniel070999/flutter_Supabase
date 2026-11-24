@@ -16,7 +16,7 @@ class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
   @override
-  _LoginPageState createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
@@ -31,13 +31,11 @@ class _LoginPageState extends State<LoginPage> {
   final _validatedFormSheet = GlobalKey<FormState>();
 
   Future<void> _noAuth() async {
-    showGeneralDialog(
+    await showGeneralDialog<void>(
       context: context,
-      pageBuilder: (ctx, a1, a2) {
-        return Container();
-      },
+      pageBuilder: (ctx, a1, a2) => const SizedBox.shrink(),
       transitionBuilder: (ctx, a1, a2, child) {
-        var curve = Curves.fastOutSlowIn.transform(a1.value);
+        final curve = Curves.fastOutSlowIn.transform(a1.value);
         return Transform.scale(
           scale: curve,
           child: _showAnimateNoAuth(ctx),
@@ -53,26 +51,25 @@ class _LoginPageState extends State<LoginPage> {
       icon: Lottie.asset('images/lottie/question.zip'),
       actionsAlignment: MainAxisAlignment.center,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(32.0))),
-      content: SingleChildScrollView(
+        borderRadius: BorderRadius.all(Radius.circular(32.0)),
+      ),
+      content: const SingleChildScrollView(
         child: ListBody(
-          children: const <Widget>[
+          children: <Widget>[
             Center(
               child: Text(
                 'Al usar la aplicación sin registrarse se limitarán herramientas y funciones',
                 textAlign: TextAlign.justify,
               ),
             ),
-            SizedBox(
-              height: 10.0,
-            ),
+            SizedBox(height: 10.0),
           ],
         ),
       ),
       actions: <Widget>[
         ElevatedButton(
           style: const ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(Colors.lightBlue),
+            backgroundColor: WidgetStatePropertyAll(Colors.lightBlue),
           ),
           child: const Text(
             'Ingresar sin registro',
@@ -81,18 +78,17 @@ class _LoginPageState extends State<LoginPage> {
           onPressed: () {
             Navigator.pop(context);
             Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const UserNoAuth(),
-                ));
+              context,
+              MaterialPageRoute(
+                builder: (context) => const UserNoAuth(),
+              ),
+            );
           },
         ),
-        const SizedBox(
-          height: 20.0,
-        ),
+        const SizedBox(height: 20.0),
         ElevatedButton(
           style: const ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(Colors.lightGreen),
+            backgroundColor: WidgetStatePropertyAll(Colors.lightGreen),
           ),
           child: const Text(
             'Registrarme',
@@ -108,139 +104,128 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Future<void> _signInEmail() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if ((connectivityResult == ConnectivityResult.wifi) ||
-        (connectivityResult == ConnectivityResult.ethernet)) {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (hasInternetConnection(connectivityResult)) {
+      if (!mounted) return;
       setState(() {
         _isLoading = true;
       });
       try {
         await supabase.auth.signInWithOtp(
           email: _emailController.text,
-          emailRedirectTo:
-              kIsWeb ? null : 'io.supabase.flutterquickstart://login-callback/',
+          emailRedirectTo: kIsWeb ? null : loginRedirectUrl,
         );
         if (mounted) {
           Fluttertoast.showToast(msg: 'Revise su correo');
-
           _emailController.clear();
           Navigator.of(context).pop();
         }
       } on AuthException catch (error) {
         if (mounted) {
-          var text_input = error.toString();
-          if (text_input.endsWith("422)")) {
+          final textInput = error.toString();
+          if (textInput.endsWith('422)')) {
             Fluttertoast.showToast(msg: 'Correo no válido');
-
             Navigator.of(context).pop();
-          } else if (text_input.endsWith("429)")) {
+          } else if (textInput.endsWith('429)')) {
             Fluttertoast.showToast(msg: 'Intente de nuevo en 60 segundos');
-
             Navigator.of(context).pop();
-          } else if (text_input.endsWith("400)")) {
+          } else if (textInput.endsWith('400)')) {
             Fluttertoast.showToast(msg: 'Ingrese un correo electrónico');
           } else {
             Fluttertoast.showToast(msg: 'Algo salió mal, vuelva a intentar');
-
             Navigator.of(context).pop();
           }
-          print(error.toString());
         }
       }
-      setState(() {
-        _isLoading = false;
-      });
-    } else {
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/noInternet');
+        setState(() {
+          _isLoading = false;
+        });
       }
+    } else if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/noInternet');
     }
   }
 
   Future<void> _resetPassword() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if ((connectivityResult == ConnectivityResult.wifi) ||
-        (connectivityResult == ConnectivityResult.ethernet)) {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (hasInternetConnection(connectivityResult)) {
+      if (!mounted) return;
       setState(() {
         _isLoading = true;
       });
       try {
         await supabase.auth.resetPasswordForEmail(
           _emailController.text,
-          redirectTo: kIsWeb ? null : 'io.supabase.flutter://reset-callback/',
+          redirectTo: kIsWeb ? null : resetRedirectUrl,
         );
         if (mounted) {
           Fluttertoast.showToast(msg: 'Revise su correo electrónico');
-
           _emailController.clear();
           Navigator.of(context).pop();
         }
-      } on AuthException catch (error) {
+      } on AuthException {
         if (mounted) {
           Fluttertoast.showToast(msg: 'Intente luego de 60 segundos');
-
           Navigator.of(context).pop();
         }
       }
-      setState(() {
-        _isLoading = false;
-      });
-    } else {
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/noInternet');
+        setState(() {
+          _isLoading = false;
+        });
       }
+    } else if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/noInternet');
     }
   }
 
   Future<void> _signInAgain() async {
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if ((connectivityResult == ConnectivityResult.wifi) ||
-        (connectivityResult == ConnectivityResult.ethernet)) {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (hasInternetConnection(connectivityResult)) {
+      if (!mounted) return;
       setState(() {
         _isLoadingLogin = true;
       });
 
-      if (_emailController.text == "" || _passwordController.text == "") {
+      if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
         if (mounted) {
           Fluttertoast.showToast(msg: 'Ingrese los datos');
         }
       } else {
         try {
-          final AuthResponse res = await supabase.auth.signInWithPassword(
+          await supabase.auth.signInWithPassword(
             email: _emailController.text,
             password: _passwordController.text,
           );
-
-          final Session? session = res.session;
-          final User? user = res.user;
         } catch (e) {
-          if (e.toString().contains('YOUR_PROJECT_REF.supabase.co')) {
-            if (mounted) {
+          if (mounted) {
+            if (isNetworkError(e)) {
               Fluttertoast.showToast(
-                  msg: 'Revise su conexión a internet',
-                  backgroundColor: Colors.red);
-            }
-          } else {
-            if (mounted) {
+                msg: 'Revise su conexión a internet',
+                backgroundColor: Colors.red,
+              );
+            } else {
               Fluttertoast.showToast(
-                  msg: 'Los datos ingresados son incorrectos');
+                msg: 'Los datos ingresados son incorrectos',
+              );
             }
           }
         }
       }
 
-      setState(() {
-        _isLoadingLogin = false;
-      });
-    } else {
       if (mounted) {
-        Navigator.of(context).pushReplacementNamed('/noInternet');
+        setState(() {
+          _isLoadingLogin = false;
+        });
       }
+    } else if (mounted) {
+      Navigator.of(context).pushReplacementNamed('/noInternet');
     }
   }
 
-  Future showMore() {
-    return showModalBottomSheet(
+  Future<void> showMore() {
+    return showModalBottomSheet<void>(
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       context: context,
@@ -248,18 +233,20 @@ class _LoginPageState extends State<LoginPage> {
         return Container(
           padding: const EdgeInsets.all(40.0),
           decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    Colors.indigo,
-                    Colors.teal,
-                    Colors.white,
-                  ]),
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30.0),
-                topRight: Radius.circular(30.0),
-              )),
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [
+                Colors.indigo,
+                Colors.teal,
+                Colors.white,
+              ],
+            ),
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30.0),
+              topRight: Radius.circular(30.0),
+            ),
+          ),
           height: 600,
           child: Form(
             key: _validatedFormSheet,
@@ -274,17 +261,15 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     textAlign: TextAlign.justify,
                   ),
-                  const SizedBox(
-                    height: 10.0,
-                  ),
+                  const SizedBox(height: 10.0),
                   TextFormField(
                     cursorColor: Colors.white,
                     keyboardType: TextInputType.emailAddress,
                     validator: (value) {
-                      if (value.toString().isEmpty) {
+                      final text = value ?? '';
+                      if (text.isEmpty) {
                         return 'Ingrese un correo electrónico';
-                      } else if (!value.toString().contains('@') ||
-                          !value.toString().contains('.')) {
+                      } else if (!text.contains('@') || !text.contains('.')) {
                         return 'Ingrese un correo válido';
                       }
                       return null;
@@ -292,7 +277,7 @@ class _LoginPageState extends State<LoginPage> {
                     style: const TextStyle(color: Colors.white),
                     controller: _emailController,
                     decoration: InputDecoration(
-                      labelText: "Correo electrónico",
+                      labelText: 'Correo electrónico',
                       labelStyle: const TextStyle(color: Colors.white),
                       prefixIcon: const Icon(
                         Icons.email_outlined,
@@ -306,8 +291,10 @@ class _LoginPageState extends State<LoginPage> {
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.white, width: 2.0),
+                        borderSide: const BorderSide(
+                          color: Colors.white,
+                          width: 2.0,
+                        ),
                         borderRadius: BorderRadius.circular(25.0),
                       ),
                     ),
@@ -315,18 +302,22 @@ class _LoginPageState extends State<LoginPage> {
                   const SizedBox(height: 10.0),
                   OutlinedButton(
                     style: ButtonStyle(
-                      fixedSize:
-                          MaterialStateProperty.all(const Size.fromWidth(300)),
-                      overlayColor: MaterialStateProperty.all(Colors.lightBlue),
-                      foregroundColor: MaterialStateProperty.all(Colors.white),
-                      backgroundColor:
-                          MaterialStateProperty.all(Colors.lightGreen),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25)),
+                      fixedSize: WidgetStateProperty.all(
+                        const Size.fromWidth(300),
                       ),
-                      side: MaterialStateProperty.all(
-                          const BorderSide(color: Colors.lightGreen)),
+                      overlayColor: WidgetStateProperty.all(Colors.lightBlue),
+                      foregroundColor: WidgetStateProperty.all(Colors.white),
+                      backgroundColor: WidgetStateProperty.all(
+                        Colors.lightGreen,
+                      ),
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      side: WidgetStateProperty.all(
+                        const BorderSide(color: Colors.lightGreen),
+                      ),
                     ),
                     onPressed: () {
                       if (_validatedFormSheet.currentState!.validate()) {
@@ -335,49 +326,57 @@ class _LoginPageState extends State<LoginPage> {
                       }
                     },
                     child: Text(
-                        _isLoading ? 'enviando' : 'Obtener enlace de registro'),
+                      _isLoading ? 'enviando' : 'Obtener enlace de registro',
+                    ),
                   ),
                   OutlinedButton(
                     style: ButtonStyle(
-                      fixedSize:
-                          MaterialStateProperty.all(const Size.fromWidth(300)),
-                      overlayColor: MaterialStateProperty.all(Colors.lightBlue),
-                      foregroundColor: MaterialStateProperty.all(Colors.white),
-                      backgroundColor: MaterialStateProperty.all(Colors.orange),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25)),
+                      fixedSize: WidgetStateProperty.all(
+                        const Size.fromWidth(300),
                       ),
-                      side: MaterialStateProperty.all(
-                          const BorderSide(color: Colors.orange)),
+                      overlayColor: WidgetStateProperty.all(Colors.lightBlue),
+                      foregroundColor: WidgetStateProperty.all(Colors.white),
+                      backgroundColor: WidgetStateProperty.all(Colors.orange),
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      side: WidgetStateProperty.all(
+                        const BorderSide(color: Colors.orange),
+                      ),
                     ),
                     onPressed: () {
                       if (_validatedFormSheet.currentState!.validate()) {
                         _resetPassword();
                       }
                     },
-                    child:
-                        Text(_isLoading ? 'enviando' : 'Olvide mi contraseña'),
+                    child: Text(
+                      _isLoading ? 'enviando' : 'Olvide mi contraseña',
+                    ),
                   ),
                   OutlinedButton(
                     style: ButtonStyle(
-                      fixedSize:
-                          MaterialStateProperty.all(const Size.fromWidth(300)),
-                      overlayColor: MaterialStateProperty.all(Colors.lightBlue),
-                      foregroundColor: MaterialStateProperty.all(Colors.white),
-                      backgroundColor: MaterialStateProperty.all(Colors.grey),
-                      shape: MaterialStateProperty.all(
-                        RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(25)),
+                      fixedSize: WidgetStateProperty.all(
+                        const Size.fromWidth(300),
                       ),
-                      side: MaterialStateProperty.all(
-                          const BorderSide(color: Colors.grey)),
+                      overlayColor: WidgetStateProperty.all(Colors.lightBlue),
+                      foregroundColor: WidgetStateProperty.all(Colors.white),
+                      backgroundColor: WidgetStateProperty.all(Colors.grey),
+                      shape: WidgetStateProperty.all(
+                        RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                        ),
+                      ),
+                      side: WidgetStateProperty.all(
+                        const BorderSide(color: Colors.grey),
+                      ),
                     ),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
                     child: const Text('Cancelar'),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -389,8 +388,9 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _deletePreferences() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.remove('animationState');
-    prefs.remove('theme');
+    await prefs.remove('animationState');
+    await prefs.remove('theme');
+    if (!mounted) return;
     setState(() {
       animationState = true;
       theme = false;
@@ -399,33 +399,33 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
+    super.initState();
     _deletePreferences();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
     _authStateSubscription = supabase.auth.onAuthStateChange.listen((data) {
-      if (_redirecting) return;
+      if (_redirecting || !mounted) return;
       final session = data.session;
       if (session != null) {
         _redirecting = true;
         Navigator.of(context).pushReplacementNamed('/');
       }
     });
-    super.initState();
   }
 
   @override
   void dispose() {
     _emailController.dispose();
+    _passwordController.dispose();
     _authStateSubscription.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: themeSelect(),
-      home: Scaffold(
+    return Theme(
+      data: themeSelect(),
+      child: Scaffold(
         body: SingleChildScrollView(
           child: Form(
             key: _validatedForm,
@@ -448,17 +448,19 @@ class _LoginPageState extends State<LoginPage> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
+                  const Expanded(
                     flex: 2,
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 30.0, horizontal: 24.0),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 30.0,
+                        horizontal: 24.0,
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text(
-                            "Inicio de Sesión",
+                            'Inicio de Sesión',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 42,
@@ -478,9 +480,10 @@ class _LoginPageState extends State<LoginPage> {
                           Container(
                             width: double.infinity,
                             decoration: BoxDecoration(
-                              color: Colors.white.withOpacity(0.8),
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(25)),
+                              color: Colors.white.withValues(alpha: 0.8),
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(25),
+                              ),
                             ),
                             child: Padding(
                               padding: const EdgeInsets.only(
@@ -499,8 +502,9 @@ class _LoginPageState extends State<LoginPage> {
                                       Text(
                                         '¿No tiene cuenta?/¿Olvidó su contraseña?',
                                         style: TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.deepPurple.shade800),
+                                          fontSize: 12,
+                                          color: Colors.deepPurple.shade800,
+                                        ),
                                       ),
                                       TextButton(
                                         onPressed: () {
@@ -508,13 +512,14 @@ class _LoginPageState extends State<LoginPage> {
                                           showMore();
                                         },
                                         child: Text(
-                                          "CLIC AQUÍ",
+                                          'CLIC AQUÍ',
                                           style: TextStyle(
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              color: Colors.blue.shade700,
-                                              fontSize: 12,
-                                              fontStyle: FontStyle.italic),
+                                            decoration:
+                                                TextDecoration.underline,
+                                            color: Colors.blue.shade700,
+                                            fontSize: 12,
+                                            fontStyle: FontStyle.italic,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -522,30 +527,32 @@ class _LoginPageState extends State<LoginPage> {
                                   TextFormField(
                                     keyboardType: TextInputType.emailAddress,
                                     validator: (value) {
-                                      if (value.toString().isEmpty) {
+                                      final text = value ?? '';
+                                      if (text.isEmpty) {
                                         return 'Ingrese un correo electrónico';
-                                      } else if (!value
-                                              .toString()
-                                              .contains('@') ||
-                                          !value.toString().contains('.')) {
+                                      } else if (!text.contains('@') ||
+                                          !text.contains('.')) {
                                         return 'Ingrese un correo válido';
                                       }
                                       return null;
                                     },
                                     style: const TextStyle(
-                                        color: Colors.lightBlue),
+                                      color: Colors.lightBlue,
+                                    ),
                                     controller: _emailController,
                                     decoration: InputDecoration(
-                                      labelText: "Correo electrónico",
+                                      labelText: 'Correo electrónico',
                                       labelStyle: const TextStyle(
-                                          color: Colors.lightBlue),
+                                        color: Colors.lightBlue,
+                                      ),
                                       prefixIcon: const Icon(
                                         Icons.email_outlined,
                                         color: Colors.lightBlue,
                                       ),
                                       enabledBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(25.0),
+                                        borderRadius: BorderRadius.circular(
+                                          25.0,
+                                        ),
                                         borderSide: const BorderSide(
                                           color: Colors.lightBlue,
                                           width: 1.5,
@@ -553,48 +560,53 @@ class _LoginPageState extends State<LoginPage> {
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: const BorderSide(
-                                            color: Colors.lightBlue,
-                                            width: 2.0),
-                                        borderRadius:
-                                            BorderRadius.circular(25.0),
+                                          color: Colors.lightBlue,
+                                          width: 2.0,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          25.0,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 10.0,
-                                  ),
+                                  const SizedBox(height: 10.0),
                                   TextFormField(
                                     validator: (value) {
-                                      if (value.toString().isEmpty) {
+                                      if ((value ?? '').isEmpty) {
                                         return 'Ingrese la contraseña';
                                       }
                                       return null;
                                     },
                                     obscureText: _obscureText,
                                     style: const TextStyle(
-                                        color: Colors.lightBlue),
+                                      color: Colors.lightBlue,
+                                    ),
                                     controller: _passwordController,
                                     decoration: InputDecoration(
                                       suffixIcon: GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              _obscureText = !_obscureText;
-                                            });
-                                          },
-                                          child: _obscureText
-                                              ? const Icon(Icons.remove_red_eye)
-                                              : const Icon(Icons
-                                                  .remove_red_eye_outlined)),
-                                      labelText: "Clave",
+                                        onTap: () {
+                                          setState(() {
+                                            _obscureText = !_obscureText;
+                                          });
+                                        },
+                                        child: _obscureText
+                                            ? const Icon(Icons.remove_red_eye)
+                                            : const Icon(
+                                                Icons.remove_red_eye_outlined,
+                                              ),
+                                      ),
+                                      labelText: 'Clave',
                                       labelStyle: const TextStyle(
-                                          color: Colors.lightBlue),
+                                        color: Colors.lightBlue,
+                                      ),
                                       prefixIcon: const Icon(
                                         Icons.lock,
                                         color: Colors.lightBlue,
                                       ),
                                       enabledBorder: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(25.0),
+                                        borderRadius: BorderRadius.circular(
+                                          25.0,
+                                        ),
                                         borderSide: const BorderSide(
                                           color: Colors.lightBlue,
                                           width: 1.5,
@@ -602,40 +614,45 @@ class _LoginPageState extends State<LoginPage> {
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderSide: const BorderSide(
-                                            color: Colors.lightBlue,
-                                            width: 2.0),
-                                        borderRadius:
-                                            BorderRadius.circular(25.0),
+                                          color: Colors.lightBlue,
+                                          width: 2.0,
+                                        ),
+                                        borderRadius: BorderRadius.circular(
+                                          25.0,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(
-                                    height: 10.0,
-                                  ),
-                                  (_isLoadingLogin == false)
+                                  const SizedBox(height: 10.0),
+                                  (!_isLoadingLogin)
                                       ? OutlinedButton(
                                           style: ButtonStyle(
-                                            fixedSize:
-                                                MaterialStateProperty.all(
-                                                    const Size.fromWidth(200)),
-                                            overlayColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.lightBlue),
-                                            foregroundColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.white),
-                                            backgroundColor:
-                                                MaterialStateProperty.all(
-                                                    Colors.lightGreen),
-                                            shape: MaterialStateProperty.all(
-                                              RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          25)),
+                                            fixedSize: WidgetStateProperty.all(
+                                              const Size.fromWidth(200),
                                             ),
-                                            side: MaterialStateProperty.all(
-                                                const BorderSide(
-                                                    color: Colors.lightGreen)),
+                                            overlayColor:
+                                                WidgetStateProperty.all(
+                                              Colors.lightBlue,
+                                            ),
+                                            foregroundColor:
+                                                WidgetStateProperty.all(
+                                              Colors.white,
+                                            ),
+                                            backgroundColor:
+                                                WidgetStateProperty.all(
+                                              Colors.lightGreen,
+                                            ),
+                                            shape: WidgetStateProperty.all(
+                                              RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(25),
+                                              ),
+                                            ),
+                                            side: WidgetStateProperty.all(
+                                              const BorderSide(
+                                                color: Colors.lightGreen,
+                                              ),
+                                            ),
                                           ),
                                           onPressed: () {
                                             if (_validatedForm.currentState!
@@ -653,25 +670,26 @@ class _LoginPageState extends State<LoginPage> {
                                       : Platform.isAndroid
                                           ? const Center(
                                               child:
-                                                  CircularProgressIndicator())
+                                                  CircularProgressIndicator(),
+                                            )
                                           : const Center(
                                               child:
-                                                  CupertinoActivityIndicator()),
+                                                  CupertinoActivityIndicator(),
+                                            ),
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: [
                                       TextButton(
-                                        onPressed: () {
-                                          _noAuth();
-                                        },
+                                        onPressed: _noAuth,
                                         child: Text(
-                                          "Usar aplicación sin registro",
+                                          'Usar aplicación sin registro',
                                           style: TextStyle(
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              color: Colors.blue.shade700,
-                                              fontSize: 12,
-                                              fontStyle: FontStyle.italic),
+                                            decoration:
+                                                TextDecoration.underline,
+                                            color: Colors.blue.shade700,
+                                            fontSize: 12,
+                                            fontStyle: FontStyle.italic,
+                                          ),
                                         ),
                                       ),
                                     ],

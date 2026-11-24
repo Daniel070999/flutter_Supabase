@@ -1,7 +1,6 @@
-import 'dart:io';
+import 'dart:async';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -12,26 +11,35 @@ class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
 
   @override
-  _SplashPageState createState() => _SplashPageState();
+  State<SplashPage> createState() => _SplashPageState();
 }
 
 String _stateAuth = 'defect';
 
 class _SplashPageState extends State<SplashPage> {
-  bool _redicrectCalled = false;
-
+  bool _redirectCalled = false;
+  StreamSubscription<AuthState>? _authSubscription;
   final _usernameProfile = TextEditingController();
 
   @override
   void initState() {
-    _preferencesAnimationLoad();
     super.initState();
+    _preferencesAnimationLoad();
+    _updateStateAuth();
+  }
+
+  @override
+  void dispose() {
+    _authSubscription?.cancel();
+    _usernameProfile.dispose();
+    super.dispose();
   }
 
   Future<void> _preferencesAnimationLoad() async {
     final prefs = await SharedPreferences.getInstance();
     final bool? repeat = prefs.getBool('animationState');
     final bool? themeSave = prefs.getBool('theme');
+    if (!mounted) return;
     if (repeat != null) {
       setState(() {
         animationState = repeat;
@@ -47,15 +55,13 @@ class _SplashPageState extends State<SplashPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _updateStateAuth();
     _redirect();
   }
 
-  Future<void> _updateStateAuth() async {
-    final authSubscription = supabase.auth.onAuthStateChange.listen((data) {
+  void _updateStateAuth() {
+    _authSubscription = supabase.auth.onAuthStateChange.listen((data) {
       final AuthChangeEvent event = data.event;
       if (event == AuthChangeEvent.passwordRecovery) {
-        // handle signIn
         _stateAuth = 'resetPass';
       } else {
         _stateAuth = 'SingIn';
@@ -67,65 +73,67 @@ class _SplashPageState extends State<SplashPage> {
     const userName = 'empty';
     const lastname = 'empty';
     final user = supabase.auth.currentUser;
+    if (user == null) return;
     final updates = {
-      'id': user!.id,
+      'id': user.id,
       'username': userName,
       'lastname': lastname,
       'updated_at': DateTime.now().toIso8601String(),
     };
     try {
       await supabase.from('profiles').upsert(updates);
-    } catch (error) {
+    } catch (_) {
       Fluttertoast.showToast(msg: 'Algo salió mal');
     }
   }
 
   Future<void> _redirect() async {
-    if (_redicrectCalled || !mounted) {
+    if (_redirectCalled || !mounted) {
       return;
     }
 
-    var connectivityResult = await (Connectivity().checkConnectivity());
-    if ((connectivityResult == ConnectivityResult.wifi) ||
-        (connectivityResult == ConnectivityResult.ethernet)) {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (!mounted) return;
+
+    if (hasInternetConnection(connectivityResult)) {
       await Future.delayed(Duration.zero);
+      if (!mounted) return;
 
-      _redicrectCalled = true;
+      _redirectCalled = true;
       final session = supabase.auth.currentSession;
-      print(session);
-      if (session != null) {
-        try {
-          final getIdUserAuth = supabase.auth.currentUser?.id;
+      final getIdUserAuth = supabase.auth.currentUser?.id;
 
+      if (session != null && getIdUserAuth != null) {
+        try {
           final getName = await supabase
               .from('profiles')
               .select('username')
               .eq('id', getIdUserAuth)
-              .single() as Map;
+              .single();
 
-          _usernameProfile.text = getName['username'];
+          _usernameProfile.text = (getName['username'] ?? '').toString();
 
+          if (!mounted) return;
           if (_usernameProfile.text.contains('empty')) {
-            if (mounted) {
-              Navigator.of(context).pushReplacementNamed('/account');
-            }
+            Navigator.of(context).pushReplacementNamed('/account');
           } else {
-            if (mounted) {
-              Navigator.pushReplacementNamed(context, '/drawer',
-                  arguments: _stateAuth);
-            }
+            Navigator.pushReplacementNamed(
+              context,
+              '/drawer',
+              arguments: _stateAuth,
+            );
           }
         } catch (e) {
           if (e.toString().endsWith('null)')) {
-            _createUserName();
+            await _createUserName();
             if (mounted) {
               Navigator.of(context).pushReplacementNamed('/account');
             }
-          } else {
-            if (mounted) {
-              Navigator.of(context)
-                  .pushReplacementNamed('/drawer', arguments: _stateAuth);
-            }
+          } else if (mounted) {
+            Navigator.of(context).pushReplacementNamed(
+              '/drawer',
+              arguments: _stateAuth,
+            );
           }
         }
       } else {

@@ -10,7 +10,7 @@ class AccountPage extends StatefulWidget {
   const AccountPage({super.key});
 
   @override
-  _AccountPageState createState() => _AccountPageState();
+  State<AccountPage> createState() => _AccountPageState();
 }
 
 class _AccountPageState extends State<AccountPage> {
@@ -19,11 +19,8 @@ class _AccountPageState extends State<AccountPage> {
   final _passwordController = TextEditingController();
   final _passwordConfirmController = TextEditingController();
   final _validatedForm = GlobalKey<FormState>();
-  var _loading = false;
+  bool _loading = false;
 
-  /// Called once a user id is received within `onAuthenticated()`
-
-  /// Called when user taps `Update` button
   Future<void> _updateProfileAndAuth() async {
     setState(() {
       _loading = true;
@@ -32,39 +29,36 @@ class _AccountPageState extends State<AccountPage> {
     final lastname = _lastnameController.text;
     final password = _passwordConfirmController.text;
     final user = supabase.auth.currentUser;
-    final id = user!.id;
+    if (user == null) {
+      setState(() {
+        _loading = false;
+      });
+      return;
+    }
     final updates = {
       'username': userName,
       'lastname': lastname,
       'updated_at': DateTime.now().toIso8601String(),
     };
     try {
-      await supabase.from('profiles').update(updates).eq('id', id);
+      await supabase.from('profiles').update(updates).eq('id', user.id);
       await supabase.auth.updateUser(
-        UserAttributes(
-          password: password,
-        ),
+        UserAttributes(password: password),
       );
       if (mounted) {
         Fluttertoast.showToast(msg: 'Cuenta creada correctamente');
-
-        signOut(context);
+        await signOut(context);
       }
-    } on PostgrestException catch (error) {
-      print(error);
+    } on PostgrestException {
       Fluttertoast.showToast(msg: 'Algo salió mal');
-    } catch (error) {
+    } catch (_) {
       Fluttertoast.showToast(msg: 'Algo salió mal');
     }
-    setState(() {
-      _loading = false;
-    });
-  }
-
-
-  @override
-  void initState() {
-    super.initState();
+    if (mounted) {
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
   @override
@@ -75,6 +69,7 @@ class _AccountPageState extends State<AccountPage> {
     _passwordConfirmController.dispose();
     super.dispose();
   }
+
   Widget _showAnimateOnBackPress(BuildContext context) {
     return AlertDialog(
       icon: const Icon(
@@ -84,25 +79,24 @@ class _AccountPageState extends State<AccountPage> {
       iconColor: Colors.red,
       actionsAlignment: MainAxisAlignment.center,
       shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(32.0))),
-      content: SingleChildScrollView(
+        borderRadius: BorderRadius.all(Radius.circular(32.0)),
+      ),
+      content: const SingleChildScrollView(
         child: ListBody(
-          children: const <Widget>[
+          children: <Widget>[
             Center(
               child: Text(
                 'Al salir, deberá seleccionar la opción de "Olvidé mi contraseña" para ingresar correctamente a la aplicación',
               ),
             ),
-            SizedBox(
-              height: 10.0,
-            ),
+            SizedBox(height: 10.0),
           ],
         ),
       ),
       actions: <Widget>[
         ElevatedButton(
           style: const ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(Colors.red),
+            backgroundColor: WidgetStatePropertyAll(Colors.red),
           ),
           child: const Text(
             'Salir',
@@ -112,12 +106,10 @@ class _AccountPageState extends State<AccountPage> {
             signOut(context);
           },
         ),
-        const SizedBox(
-          height: 20.0,
-        ),
+        const SizedBox(height: 20.0),
         ElevatedButton(
           style: const ButtonStyle(
-            backgroundColor: MaterialStatePropertyAll(Colors.grey),
+            backgroundColor: WidgetStatePropertyAll(Colors.grey),
           ),
           child: const Text(
             'Cancelar',
@@ -130,14 +122,13 @@ class _AccountPageState extends State<AccountPage> {
       ],
     );
   }
-void _onBackPress() {
-    showGeneralDialog(
+
+  void _onBackPress() {
+    showGeneralDialog<void>(
       context: context,
-      pageBuilder: (ctx, a1, a2) {
-        return Container();
-      },
+      pageBuilder: (ctx, a1, a2) => const SizedBox.shrink(),
       transitionBuilder: (ctx, a1, a2, child) {
-        var curve = Curves.fastOutSlowIn.transform(a1.value);
+        final curve = Curves.fastOutSlowIn.transform(a1.value);
         return Transform.scale(
           scale: curve,
           child: _showAnimateOnBackPress(ctx),
@@ -146,18 +137,19 @@ void _onBackPress() {
       transitionDuration: const Duration(milliseconds: 400),
     );
   }
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        _onBackPress();
-
-        return false;
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          _onBackPress();
+        }
       },
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: themeSelect(),
-        home: Scaffold(
+      child: Theme(
+        data: themeSelect(),
+        child: Scaffold(
           appBar: AppBar(
             title: const Text('Registro de datos'),
             flexibleSpace: Container(
@@ -169,20 +161,25 @@ void _onBackPress() {
             child: Form(
               key: _validatedForm,
               child: ListView(
-                padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 18,
+                  horizontal: 12,
+                ),
                 children: [
                   TextFormField(
                     validator: (value) {
-                      if (value.toString().isEmpty) {
+                      final text = value ?? '';
+                      if (text.isEmpty) {
                         return 'Este campo no puede estar vacio';
-                      } else if (value.toString().length < 3) {
+                      } else if (text.length < 3) {
                         return 'No puede haber menos de 3 caracteres';
                       }
+                      return null;
                     },
                     style: const TextStyle(color: Colors.lightBlue),
                     controller: _usernameController,
                     decoration: InputDecoration(
-                      labelText: "Nombre",
+                      labelText: 'Nombre',
                       labelStyle: const TextStyle(color: Colors.lightBlue),
                       prefixIcon: const Icon(
                         Icons.text_snippet_sharp,
@@ -196,8 +193,10 @@ void _onBackPress() {
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.lightBlue, width: 2.0),
+                        borderSide: const BorderSide(
+                          color: Colors.lightBlue,
+                          width: 2.0,
+                        ),
                         borderRadius: BorderRadius.circular(25.0),
                       ),
                     ),
@@ -205,16 +204,18 @@ void _onBackPress() {
                   const SizedBox(height: 18.0),
                   TextFormField(
                     validator: (value) {
-                      if (value.toString().isEmpty) {
+                      final text = value ?? '';
+                      if (text.isEmpty) {
                         return 'Este campo no puede estar vacio';
-                      } else if (value.toString().length < 3) {
+                      } else if (text.length < 3) {
                         return 'No puede haber menos de 3 caracteres';
                       }
+                      return null;
                     },
                     style: const TextStyle(color: Colors.lightBlue),
                     controller: _lastnameController,
                     decoration: InputDecoration(
-                      labelText: "Apellido",
+                      labelText: 'Apellido',
                       labelStyle: const TextStyle(color: Colors.lightBlue),
                       prefixIcon: const Icon(
                         Icons.text_snippet_sharp,
@@ -228,8 +229,10 @@ void _onBackPress() {
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.lightBlue, width: 2.0),
+                        borderSide: const BorderSide(
+                          color: Colors.lightBlue,
+                          width: 2.0,
+                        ),
                         borderRadius: BorderRadius.circular(25.0),
                       ),
                     ),
@@ -237,17 +240,19 @@ void _onBackPress() {
                   const SizedBox(height: 18.0),
                   TextFormField(
                     validator: (value) {
-                      if (value.toString().isEmpty) {
+                      final text = value ?? '';
+                      if (text.isEmpty) {
                         return 'Este campo no puede estar vacio';
-                      } else if (value.toString().length < 6) {
+                      } else if (text.length < 6) {
                         return 'No puede haber menos de 6 caracteres';
                       }
+                      return null;
                     },
                     obscureText: true,
                     style: const TextStyle(color: Colors.lightBlue),
                     controller: _passwordController,
                     decoration: InputDecoration(
-                      labelText: "Cree una nueva contraseña",
+                      labelText: 'Cree una nueva contraseña',
                       labelStyle: const TextStyle(color: Colors.lightBlue),
                       prefixIcon: const Icon(
                         Icons.lock,
@@ -261,8 +266,10 @@ void _onBackPress() {
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.lightBlue, width: 2.0),
+                        borderSide: const BorderSide(
+                          color: Colors.lightBlue,
+                          width: 2.0,
+                        ),
                         borderRadius: BorderRadius.circular(25.0),
                       ),
                     ),
@@ -270,17 +277,19 @@ void _onBackPress() {
                   const SizedBox(height: 18.0),
                   TextFormField(
                     validator: (value) {
-                      if (value.toString().isEmpty) {
+                      final text = value ?? '';
+                      if (text.isEmpty) {
                         return 'Este campo no puede estar vacio';
-                      } else if (_passwordController.text != value.toString()) {
+                      } else if (_passwordController.text != text) {
                         return 'Las contraseñas no coinciden';
                       }
+                      return null;
                     },
                     obscureText: true,
                     style: const TextStyle(color: Colors.lightBlue),
                     controller: _passwordConfirmController,
                     decoration: InputDecoration(
-                      labelText: "Confirmar contraseña",
+                      labelText: 'Confirmar contraseña',
                       labelStyle: const TextStyle(color: Colors.lightBlue),
                       prefixIcon: const Icon(
                         Icons.lock,
@@ -294,30 +303,38 @@ void _onBackPress() {
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide:
-                            const BorderSide(color: Colors.lightBlue, width: 2.0),
+                        borderSide: const BorderSide(
+                          color: Colors.lightBlue,
+                          width: 2.0,
+                        ),
                         borderRadius: BorderRadius.circular(25.0),
                       ),
                     ),
                   ),
                   const SizedBox(height: 18),
-                  (_loading == false)
+                  (!_loading)
                       ? OutlinedButton(
                           style: ButtonStyle(
-                            fixedSize: MaterialStateProperty.all(
-                                const Size.fromWidth(200)),
-                            overlayColor:
-                                MaterialStateProperty.all(Colors.lightBlue),
-                            foregroundColor:
-                                MaterialStateProperty.all(Colors.white),
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.lightGreen),
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25)),
+                            fixedSize: WidgetStateProperty.all(
+                              const Size.fromWidth(200),
                             ),
-                            side: MaterialStateProperty.all(
-                                const BorderSide(color: Colors.lightGreen)),
+                            overlayColor: WidgetStateProperty.all(
+                              Colors.lightBlue,
+                            ),
+                            foregroundColor: WidgetStateProperty.all(
+                              Colors.white,
+                            ),
+                            backgroundColor: WidgetStateProperty.all(
+                              Colors.lightGreen,
+                            ),
+                            shape: WidgetStateProperty.all(
+                              RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                            ),
+                            side: WidgetStateProperty.all(
+                              const BorderSide(color: Colors.lightGreen),
+                            ),
                           ),
                           onPressed: () {
                             if (_validatedForm.currentState!.validate()) {

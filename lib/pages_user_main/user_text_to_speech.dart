@@ -3,29 +3,28 @@ import 'dart:async';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:fluttersupabase/constants.dart';
-import 'package:text_to_speech/text_to_speech.dart';
 
 class TextToSpeechPage extends StatefulWidget {
+  const TextToSpeechPage({super.key});
+
   @override
-  _TextToSpeechPageState createState() => _TextToSpeechPageState();
+  State<TextToSpeechPage> createState() => _TextToSpeechPageState();
 }
 
 class _TextToSpeechPageState extends State<TextToSpeechPage> {
   final String defaultLanguage = 'en-US';
-
-  TextToSpeech tts = TextToSpeech();
+  final FlutterTts tts = FlutterTts();
 
   String text = '';
-  double volume = 1; // Range: 0-1
-  double rate = 1.0; // Range: 0-2
-  double pitch = 1.0; // Range: 0-2
+  double volume = 1.0;
+  double rate = 0.5;
+  double pitch = 1.0;
 
-  String? language;
   String? languageCode;
-  List<String> languages = <String>[];
   List<String> languageCodes = <String>[];
-  String? voice;
+  bool _loadedRouteArgs = false;
 
   final textEditingControllerTS = TextEditingController();
   final listDownController = TextEditingController();
@@ -39,43 +38,47 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
     });
   }
 
-  Future<void> initLanguages() async {
-    /// populate lang code (i.e. en-US)
-    languageCodes = await tts.getLanguages();
-
-    /// populate displayed language (i.e. English)
-    final List<String>? displayLanguages = await tts.getDisplayLanguages();
-    if (displayLanguages == null) {
-      return;
-    }
-
-    languages.clear();
-    for (final dynamic lang in displayLanguages) {
-      languages.add(lang as String);
-    }
-
-    final String? defaultLangCode = await tts.getDefaultLanguage();
-    if (defaultLangCode != null && languageCodes.contains(defaultLangCode)) {
-      languageCode = defaultLangCode;
-    } else {
-      languageCode = defaultLanguage;
-    }
-    language = await tts.getDisplayLanguageByCode(languageCode!);
-
-    /// get voice
-    voice = await getVoiceByLang(languageCode!);
-
-    if (mounted) {
-      setState(() {});
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_loadedRouteArgs) return;
+    _loadedRouteArgs = true;
+    final Object? parametros = ModalRoute.of(context)?.settings.arguments;
+    if (parametros != null) {
+      text = parametros.toString();
+      textEditingControllerTS.text = text;
     }
   }
 
-  Future<String?> getVoiceByLang(String lang) async {
-    final List<String>? voices = await tts.getVoiceByLang(languageCode!);
-    if (voices != null && voices.isNotEmpty) {
-      return voices.first;
+  @override
+  void dispose() {
+    tts.stop();
+    textEditingControllerTS.dispose();
+    listDownController.dispose();
+    super.dispose();
+  }
+
+  Future<void> initLanguages() async {
+    try {
+      final dynamic rawLanguages = await tts.getLanguages;
+      if (rawLanguages is List) {
+        languageCodes = rawLanguages
+            .map((e) => e.toString())
+            .toSet()
+            .toList()
+          ..sort();
+      }
+      if (languageCodes.contains(defaultLanguage)) {
+        languageCode = defaultLanguage;
+      } else if (languageCodes.isNotEmpty) {
+        languageCode = languageCodes.first;
+      }
+      if (mounted) {
+        setState(() {});
+      }
+    } catch (_) {
+      // Ignorado si el motor TTS no está disponible en el entorno actual.
     }
-    return null;
   }
 
   Widget _buttonGroupOptions() {
@@ -87,13 +90,12 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
             height: 150,
             child: InkWell(
               borderRadius: BorderRadius.circular(25.0),
-              onTap: () {
-                speak();
-              },
+              onTap: speak,
               child: Card(
                 elevation: 5,
                 shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                  borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                ),
                 child: Column(
                   children: <Widget>[
                     Expanded(
@@ -105,7 +107,7 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
                     ),
                     const Expanded(
                       flex: 1,
-                      child: Text("Escuchar"),
+                      child: Text('Escuchar'),
                     ),
                   ],
                 ),
@@ -113,9 +115,7 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
             ),
           ),
         ),
-        const SizedBox(
-          width: 10.0,
-        ),
+        const SizedBox(width: 10.0),
         Expanded(
           flex: 1,
           child: SizedBox(
@@ -128,7 +128,8 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
               child: Card(
                 elevation: 5,
                 shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                  borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                ),
                 child: Column(
                   children: <Widget>[
                     Expanded(
@@ -141,7 +142,7 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
                     const Expanded(
                       flex: 1,
                       child: Text(
-                        "Detener",
+                        'Detener',
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -151,9 +152,7 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
             ),
           ),
         ),
-        const SizedBox(
-          width: 10.0,
-        ),
+        const SizedBox(width: 10.0),
         Expanded(
           flex: 1,
           child: SizedBox(
@@ -162,19 +161,15 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
               borderRadius: BorderRadius.circular(25.0),
               onTap: () {
                 setState(() {
+                  text = '';
                   textEditingControllerTS.clear();
-                  //se revarga toda la página para evitar problemas con los parámetros
-                  //que son traidos desde la ventana TRANSLATE
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (BuildContext context) => super.widget));
                 });
               },
               child: Card(
                 elevation: 5,
                 shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
+                  borderRadius: BorderRadius.all(Radius.circular(25.0)),
+                ),
                 child: Column(
                   children: <Widget>[
                     Expanded(
@@ -184,7 +179,7 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
                     const Expanded(
                       flex: 1,
                       child: Text(
-                        "Limpiar",
+                        'Limpiar',
                         textAlign: TextAlign.center,
                       ),
                     ),
@@ -207,13 +202,24 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: DropdownButtonHideUnderline(
-          child: DropdownButton2(
-            icon: const Icon(
-              Icons.keyboard_double_arrow_down_rounded,
-              color: Colors.lightBlue,
+          child: DropdownButton2<String>(
+            iconStyleData: const IconStyleData(
+              icon: Icon(
+                Icons.keyboard_double_arrow_down_rounded,
+                color: Colors.lightBlue,
+              ),
             ),
-            barrierColor: Colors.grey.withOpacity(0.7),
-            buttonPadding: const EdgeInsets.all(10.0),
+            barrierColor: Colors.grey.withValues(alpha: 0.7),
+            buttonStyleData: const ButtonStyleData(
+              height: 40,
+              padding: EdgeInsets.all(10.0),
+            ),
+            menuItemStyleData: const MenuItemStyleData(
+              height: 40,
+            ),
+            dropdownStyleData: const DropdownStyleData(
+              maxHeight: 250,
+            ),
             hint: const Text(
               'Seleccione un acento',
               style: TextStyle(
@@ -221,7 +227,7 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
                 color: Colors.black,
               ),
             ),
-            items: languages.map<DropdownMenuItem<String>>((String value) {
+            items: languageCodes.map<DropdownMenuItem<String>>((String value) {
               return DropdownMenuItem<String>(
                 value: value,
                 child: Text(
@@ -230,39 +236,40 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
                 ),
               );
             }).toList(),
-            value: language,
-            onChanged: (String? newValue) async {
-              languageCode = await tts.getLanguageCodeByName(newValue!);
-              voice = await getVoiceByLang(languageCode!);
+            value: languageCode,
+            onChanged: (String? newValue) {
               setState(() {
-                language = newValue;
+                languageCode = newValue;
               });
             },
-            buttonHeight: 40,
-            itemHeight: 40,
-            dropdownMaxHeight: 250,
-            searchController: listDownController,
-            searchInnerWidget: Padding(
-              padding: const EdgeInsets.all(8),
-              child: TextFormField(
-                controller: listDownController,
-                decoration: InputDecoration(
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
-                  ),
-                  hintText: 'Buscar un idioma',
-                  hintStyle: const TextStyle(fontSize: 12),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25),
+            dropdownSearchData: DropdownSearchData<String>(
+              searchController: listDownController,
+              searchInnerWidgetHeight: 56,
+              searchInnerWidget: Padding(
+                padding: const EdgeInsets.all(8),
+                child: TextFormField(
+                  controller: listDownController,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    hintText: 'Buscar un idioma',
+                    hintStyle: const TextStyle(fontSize: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
                   ),
                 ),
               ),
+              searchMatchFn: (item, searchValue) {
+                return item.value
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchValue.toLowerCase());
+              },
             ),
-            searchMatchFn: (item, searchValue) {
-              return (item.value.toString().contains(searchValue));
-            },
             onMenuStateChange: (isOpen) {
               if (!isOpen) {
                 listDownController.clear();
@@ -276,21 +283,11 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
 
   @override
   Widget build(BuildContext context) {
-    Object? parametros = ModalRoute.of(context)!.settings.arguments;
-    if (parametros != null) {
-      setState(() {
-        text = parametros.toString();
-        textEditingControllerTS.text = parametros.toString();
-      });
-    }
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: themeSelect(),
-      home: Scaffold(
+    return Theme(
+      data: themeSelect(),
+      child: Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'Texto a voz',
-          ),
+          title: const Text('Texto a voz'),
           flexibleSpace: Container(
             decoration: BoxDecoration(
               gradient: barColor(),
@@ -298,7 +295,7 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
           ),
         ),
         body: Container(
-          color: Colors.grey.withOpacity(0.2),
+          color: Colors.grey.withValues(alpha: 0.2),
           child: Center(
             child: ListView(
               shrinkWrap: true,
@@ -310,8 +307,9 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
                       children: <Widget>[
                         Container(
                           decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(25.0),
-                              color: colorContainer()),
+                            borderRadius: BorderRadius.circular(25.0),
+                            color: colorContainer(),
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(10.0),
                             child: TextFormField(
@@ -326,7 +324,7 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
                               style: const TextStyle(color: Colors.black),
                               controller: textEditingControllerTS,
                               decoration: InputDecoration(
-                                labelText: "Ingrese un texto",
+                                labelText: 'Ingrese un texto',
                                 labelStyle: const TextStyle(color: Colors.blue),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(25.0),
@@ -337,25 +335,23 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
                                 ),
                                 focusedBorder: OutlineInputBorder(
                                   borderSide: const BorderSide(
-                                      color: Colors.blue, width: 2.0),
+                                    color: Colors.blue,
+                                    width: 2.0,
+                                  ),
                                   borderRadius: BorderRadius.circular(25.0),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(
-                          height: 10.0,
-                        ),
+                        const SizedBox(height: 10.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
                             _listDown(context),
                           ],
                         ),
-                        const SizedBox(
-                          height: 20,
-                        ),
+                        const SizedBox(height: 20),
                         _buttonGroupOptions(),
                       ],
                     ),
@@ -373,13 +369,13 @@ class _TextToSpeechPageState extends State<TextToSpeechPage> {
 
   bool get supportResume => defaultTargetPlatform != TargetPlatform.android;
 
-  void speak() {
-    tts.setVolume(volume);
-    tts.setRate(rate);
+  Future<void> speak() async {
+    await tts.setVolume(volume);
+    await tts.setSpeechRate(rate);
     if (languageCode != null) {
-      tts.setLanguage(languageCode!);
+      await tts.setLanguage(languageCode!);
     }
-    tts.setPitch(pitch);
-    tts.speak(text);
+    await tts.setPitch(pitch);
+    await tts.speak(text);
   }
 }

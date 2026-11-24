@@ -1,4 +1,3 @@
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/constants.dart';
 import 'package:fluttersupabase/forms/drawer_screen.dart';
@@ -7,19 +6,24 @@ import 'package:fluttersupabase/pages_auth/login_page.dart';
 import 'package:fluttersupabase/pages_auth/no_internet.dart';
 import 'package:fluttersupabase/pages_auth/resetPassword_page.dart';
 import 'package:fluttersupabase/pages_auth/splash_page.dart';
-import 'package:fluttersupabase/pages_no_auth/home_no_auth.dart';
 import 'package:fluttersupabase/pages_user_main/user_main.dart';
 import 'package:fluttersupabase/pages_user_main/user_profile.dart';
 import 'package:fluttersupabase/pages_user_main/user_text_to_speech.dart';
 import 'package:fluttersupabase/pages_user_main/user_translate.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty) {
+    throw StateError(
+      'Faltan credenciales de Supabase. Ejecuta con '
+      '--dart-define-from-file=.env o pasa '
+      '--dart-define=SUPABASE_URL=... --dart-define=SUPABASE_ANON_KEY=...',
+    );
+  }
   await Supabase.initialize(
-    url: 'https://YOUR_PROJECT_REF.supabase.co',
-    anonKey:
-        'YOUR_SUPABASE_ANON_KEY',
+    url: supabaseUrl,
+    publishableKey: supabaseAnonKey,
   );
   runApp(const MyApp());
 }
@@ -40,10 +44,10 @@ class MyApp extends StatelessWidget {
         '/login': (_) => const LoginPage(),
         '/account': (_) => const AccountPage(),
         '/reset': (_) => const ResetPassword(),
-        '/userMain': (_) => UserMain(),
+        '/userMain': (_) => const UserMain(),
         '/noInternet': (_) => const NoInternet(),
         '/translate': (_) => const Translate(),
-        '/textToSpeech': (_) => TextToSpeechPage(),
+        '/textToSpeech': (_) => const TextToSpeechPage(),
         '/drawer': (_) => const DrawerScreen(),
         '/userProfile': (_) => const UserProfileUpdate(),
       },

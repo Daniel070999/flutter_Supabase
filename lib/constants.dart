@@ -1,13 +1,15 @@
+import 'dart:io';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttersupabase/acerca.dart';
-import 'package:fluttersupabase/pages_auth/login_page.dart';
 import 'package:fluttersupabase/pages_auth/splash_page.dart';
-import 'package:fluttersupabase/pages_user_main/user_read_pdf.dart';
-import 'package:fluttersupabase/pages_user_main/user_speech_to_text.dart';
 import 'package:fluttersupabase/pages_user_main/user_image_text.dart';
 import 'package:fluttersupabase/pages_user_main/user_new_note.dart';
+import 'package:fluttersupabase/pages_user_main/user_read_pdf.dart';
 import 'package:fluttersupabase/pages_user_main/user_read_qr_android.dart';
 import 'package:fluttersupabase/pages_user_main/user_read_qr_ios.dart';
+import 'package:fluttersupabase/pages_user_main/user_speech_to_text.dart';
 import 'package:fluttersupabase/pages_user_main/user_text_to_speech.dart';
 import 'package:fluttersupabase/pages_user_main/user_translate.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -15,81 +17,143 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-final supabase = Supabase.instance.client;
-acerca(BuildContext context) async {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const AcercaApp(),
-      ));
+const String supabaseUrl = String.fromEnvironment(
+  'SUPABASE_URL',
+  defaultValue: '',
+);
+
+const String supabaseAnonKey = String.fromEnvironment(
+  'SUPABASE_ANON_KEY',
+  defaultValue: '',
+);
+
+const String supportEmail = String.fromEnvironment(
+  'SUPPORT_EMAIL',
+  defaultValue: 'soporte@ejemplo.com',
+);
+
+const String storeUrl = String.fromEnvironment(
+  'STORE_URL',
+  defaultValue: '',
+);
+
+const String loginRedirectUrl = String.fromEnvironment(
+  'LOGIN_REDIRECT_URL',
+  defaultValue: 'com.herramientasdetexto.app://login-callback/',
+);
+
+const String resetRedirectUrl = String.fromEnvironment(
+  'RESET_REDIRECT_URL',
+  defaultValue: 'com.herramientasdetexto.app://reset-callback/',
+);
+
+SupabaseClient get supabase => Supabase.instance.client;
+
+bool hasInternetConnection(List<ConnectivityResult> results) {
+  return results.any(
+    (result) =>
+        result == ConnectivityResult.wifi ||
+        result == ConnectivityResult.ethernet ||
+        result == ConnectivityResult.mobile,
+  );
 }
 
-readPDF(BuildContext context) async {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ReadPDF(),
-      ));
+bool isNetworkError(Object error) {
+  if (error is SocketException) {
+    return true;
+  }
+  final msg = error.toString().toLowerCase();
+  return msg.contains('socketexception') ||
+      msg.contains('failed host lookup') ||
+      msg.contains('clientexception') ||
+      msg.contains('connection refused') ||
+      msg.contains('connection reset');
 }
 
-speechToText(BuildContext context) async {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => SpeechToTextPage(),
-      ));
+Future<void> acerca(BuildContext context) async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const AcercaApp(),
+    ),
+  );
 }
 
-textToSpeech(BuildContext context) async {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TextToSpeechPage(),
-      ));
+Future<void> readPDF(BuildContext context) async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const ReadPDF(),
+    ),
+  );
 }
 
-newNote(BuildContext context) async {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const NewNote(),
-      ));
+Future<void> speechToText(BuildContext context) async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const SpeechToTextPage(),
+    ),
+  );
 }
 
-scannerQRIOS(BuildContext context) async {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ReadQRIOS(),
-      ));
+Future<void> textToSpeech(BuildContext context) async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const TextToSpeechPage(),
+    ),
+  );
 }
 
-translate(BuildContext context) async {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const Translate(),
-      ));
+Future<void> newNote(BuildContext context) async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const NewNote(),
+    ),
+  );
 }
 
-scannerQRANDROID(BuildContext context) async {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const ReadQRANDROID(),
-      ));
+Future<void> scannerQRIOS(BuildContext context) async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const ReadQRIOS(),
+    ),
+  );
 }
 
-textImage(BuildContext context) async {
-  Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const TextImage(),
-      ));
+Future<void> translate(BuildContext context) async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const Translate(),
+    ),
+  );
+}
+
+Future<void> scannerQRANDROID(BuildContext context) async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const ReadQRANDROID(),
+    ),
+  );
+}
+
+Future<void> textImage(BuildContext context) async {
+  await Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (context) => const TextImage(),
+    ),
+  );
 }
 
 bool animationState = true;
 bool theme = false;
+
 Color menuBackgroundColor() {
   return theme ? Colors.grey.shade900 : Colors.green;
 }
@@ -100,26 +164,38 @@ Color colorContainer() {
 
 Gradient barColorScreen() {
   return theme
-      ? LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
-          Colors.grey.shade500,
-          Colors.grey.shade900,
-        ])
-      : LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
-          Colors.blue.shade300,
-          Colors.green,
-        ]);
+      ? LinearGradient(
+          begin: Alignment.centerLeft,
+          colors: <Color>[
+            Colors.grey.shade500,
+            Colors.grey.shade900,
+          ],
+        )
+      : LinearGradient(
+          begin: Alignment.centerLeft,
+          colors: <Color>[
+            Colors.blue.shade300,
+            Colors.green,
+          ],
+        );
 }
 
 Gradient barColor() {
   return theme
-      ? LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
-          Colors.black12,
-          Colors.grey.shade300,
-        ])
-      : LinearGradient(begin: Alignment.centerLeft, colors: <Color>[
-          Colors.green,
-          Colors.blue.shade300,
-        ]);
+      ? LinearGradient(
+          begin: Alignment.centerLeft,
+          colors: <Color>[
+            Colors.black12,
+            Colors.grey.shade300,
+          ],
+        )
+      : LinearGradient(
+          begin: Alignment.centerLeft,
+          colors: <Color>[
+            Colors.green,
+            Colors.blue.shade300,
+          ],
+        );
 }
 
 ThemeData themeSelect() {
@@ -160,24 +236,30 @@ ThemeData themeSelect() {
         );
 }
 
-signOut(BuildContext context) {
+Future<void> signOut(BuildContext context) async {
   try {
-    supabase.auth.signOut();
-  } on AuthException catch (error) {
+    await supabase.auth.signOut();
+  } on AuthException {
     Fluttertoast.showToast(msg: 'Algo salió mal');
-  } catch (error) {
+  } catch (_) {
     Fluttertoast.showToast(msg: 'Algo salió mal');
   }
+  if (!context.mounted) return;
   Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const SplashPage(),
-      ),
-      (route) => false);
+    MaterialPageRoute(
+      builder: (context) => const SplashPage(),
+    ),
+    (route) => false,
+  );
 }
 
-//dialogo que ocupa toda la ventana
-showLoaderDialog(BuildContext context, String message, String ruteLottie) {
-  AlertDialog alert = AlertDialog(
+// Diálogo modal de carga reutilizable
+void showLoaderDialog(
+  BuildContext context,
+  String message,
+  String ruteLottie,
+) {
+  final alert = AlertDialog(
     backgroundColor: Colors.transparent,
     content: Center(
       child: Column(
@@ -186,28 +268,30 @@ showLoaderDialog(BuildContext context, String message, String ruteLottie) {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(25.0),
-              color: Colors.grey.withOpacity(0.5),
+              color: Colors.grey.withValues(alpha: 0.5),
             ),
             child: Padding(
               padding: const EdgeInsets.all(10.0),
               child: Container(
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(25.0),
-                  color: Colors.grey.withOpacity(0.8),
+                  color: Colors.grey.withValues(alpha: 0.8),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
-                  child: Column(children: [
-                    Lottie.asset(
-                      ruteLottie,
-                      width: 100,
-                      height: 100,
-                    ),
-                    Text(
-                      message,
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ]),
+                  child: Column(
+                    children: [
+                      Lottie.asset(
+                        ruteLottie,
+                        width: 100,
+                        height: 100,
+                      ),
+                      Text(
+                        message,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -216,11 +300,9 @@ showLoaderDialog(BuildContext context, String message, String ruteLottie) {
       ),
     ),
   );
-  showDialog(
+  showDialog<void>(
     barrierDismissible: false,
     context: context,
-    builder: (BuildContext context) {
-      return alert;
-    },
+    builder: (BuildContext context) => alert,
   );
 }

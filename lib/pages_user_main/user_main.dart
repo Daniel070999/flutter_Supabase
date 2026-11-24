@@ -4,42 +4,45 @@ import 'package:fluttersupabase/constants.dart';
 import 'package:fluttersupabase/forms/container_user_main.dart';
 
 class UserMain extends StatefulWidget {
-  UserMain({super.key});
+  const UserMain({super.key});
 
   @override
   State<UserMain> createState() => _UserMainState();
 }
 
 class _UserMainState extends State<UserMain> {
-  int statePage = 0;
+  bool _checkedReset = false;
 
-  Future<void> _resetPass(BuildContext context) async {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Navigator.of(context).pushReplacementNamed('/reset');
-    });
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_checkedReset) return;
+    _checkedReset = true;
+    final Object? parametros = ModalRoute.of(context)?.settings.arguments;
+    if (parametros == 'resetPass') {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          Navigator.of(context).pushReplacementNamed('/reset');
+        }
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    Object? parametros = ModalRoute.of(context)!.settings.arguments;
-    if (parametros == 'resetPass') {
-      _resetPass(context);
-    }
-
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: themeSelect(),
-      home: Scaffold(
+    return Theme(
+      data: themeSelect(),
+      child: Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'Menu principal',
-          ),
+          title: const Text('Menu principal'),
           leading: IconButton(
             onPressed: () {
-              if (ZoomDrawer.of(context)!.isOpen()) {
-                ZoomDrawer.of(context)!.close();
+              final drawer = ZoomDrawer.of(context);
+              if (drawer == null) return;
+              if (drawer.isOpen()) {
+                drawer.close();
               } else {
-                ZoomDrawer.of(context)!.open();
+                drawer.open();
               }
             },
             icon: const Icon(

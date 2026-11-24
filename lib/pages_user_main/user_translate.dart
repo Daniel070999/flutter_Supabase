@@ -1,11 +1,10 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttersupabase/constants.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:pdf_text/pdf_text.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:translator/translator.dart';
-import 'package:fluttersupabase/constants.dart';
 
 class Translate extends StatefulWidget {
   const Translate({super.key});
@@ -14,47 +13,67 @@ class Translate extends StatefulWidget {
   State<Translate> createState() => _TranslateState();
 }
 
-const List<String> items = [
-  'español',
-  'ingles',
-  'portugués',
-  'francés',
-  'italiano',
-  'chino',
-  'coreano',
-  'japonés',
-  'alemán',
-  'ruso',
-  'húngaro',
-  'tailandés',
-  'noruego',
-  'turco',
-  'estonio',
-  'vietnamita',
-  'sueco',
-  'árabe',
-  'griego',
-  'hindi (o hindú)',
-  'finlandés',
-  'camboyano',
-  'ucraniano',
-  'letón',
-  'honlandés',
-  'checo',
-  'polaco',
-  'eslovaco',
-  'búlgaro',
-  'indonesio'
-];
-String? selectedValue;
-final TextEditingController textEditingController = TextEditingController();
+const Map<String, String> _languageCodeMap = {
+  'español': 'es',
+  'ingles': 'en',
+  'portugués': 'pt',
+  'francés': 'fr',
+  'italiano': 'it',
+  'chino': 'zh-cn',
+  'coreano': 'ko',
+  'japonés': 'ja',
+  'alemán': 'de',
+  'ruso': 'ru',
+  'húngaro': 'hu',
+  'tailandés': 'th',
+  'noruego': 'no',
+  'turco': 'tr',
+  'estonio': 'et',
+  'vietnamita': 'vi',
+  'sueco': 'sv',
+  'árabe': 'ar',
+  'griego': 'el',
+  'hindi (o hindú)': 'hi',
+  'finlandés': 'fi',
+  'camboyano': 'km',
+  'ucraniano': 'uk',
+  'letón': 'lv',
+  'honlandés': 'nl',
+  'checo': 'cs',
+  'polaco': 'pl',
+  'eslovaco': 'sk',
+  'búlgaro': 'bg',
+  'indonesio': 'id',
+};
 
 class _TranslateState extends State<Translate> {
   final _textInput = TextEditingController();
   final _textOutput = TextEditingController();
-  String languajeSelected = 'español';
-  PDFDoc? _pdfDoc;
-  Widget _listItemsLanguaje(BuildContext context) {
+  final _searchController = TextEditingController();
+  String? _selectedValue;
+  String _languageSelected = 'español';
+  bool _loadedRouteArgs = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_loadedRouteArgs) return;
+    _loadedRouteArgs = true;
+    final Object? parametros = ModalRoute.of(context)?.settings.arguments;
+    if (parametros != null) {
+      _textInput.text = parametros.toString();
+    }
+  }
+
+  @override
+  void dispose() {
+    _textInput.dispose();
+    _textOutput.dispose();
+    _searchController.dispose();
+    super.dispose();
+  }
+
+  Widget _listItemsLanguage(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25.0),
@@ -63,13 +82,24 @@ class _TranslateState extends State<Translate> {
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: DropdownButtonHideUnderline(
-          child: DropdownButton2(
-            icon: const Icon(
-              Icons.keyboard_double_arrow_down_rounded,
-              color: Colors.lightBlue,
+          child: DropdownButton2<String>(
+            iconStyleData: const IconStyleData(
+              icon: Icon(
+                Icons.keyboard_double_arrow_down_rounded,
+                color: Colors.lightBlue,
+              ),
             ),
-            barrierColor: Colors.grey.withOpacity(0.7),
-            buttonPadding: const EdgeInsets.all(10.0),
+            barrierColor: Colors.grey.withValues(alpha: 0.7),
+            buttonStyleData: const ButtonStyleData(
+              height: 40,
+              padding: EdgeInsets.all(10.0),
+            ),
+            menuItemStyleData: const MenuItemStyleData(
+              height: 40,
+            ),
+            dropdownStyleData: const DropdownStyleData(
+              maxHeight: 250,
+            ),
             hint: const Text(
               'Seleccione un idioma',
               style: TextStyle(
@@ -77,55 +107,61 @@ class _TranslateState extends State<Translate> {
                 color: Colors.black,
               ),
             ),
-            items: items
-                .map((item) => DropdownMenuItem<String>(
-                      value: item,
-                      child: Text(
-                        item,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey,
-                        ),
+            items: _languageCodeMap.keys
+                .map(
+                  (item) => DropdownMenuItem<String>(
+                    value: item,
+                    child: Text(
+                      item,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey,
                       ),
-                    ))
-                .toList(),
-            value: selectedValue,
-            onChanged: (value) {
-              setState(() {
-                selectedValue = value as String;
-                languajeSelected = value;
-                _textOutput.text = 'Traduciendo...';
-                _translate(_textInput.text);
-              });
-            },
-            buttonHeight: 40,
-            itemHeight: 40,
-            dropdownMaxHeight: 250,
-            searchController: textEditingController,
-            searchInnerWidget: Padding(
-              padding: const EdgeInsets.all(8),
-              child: TextFormField(
-                controller: textEditingController,
-                decoration: InputDecoration(
-                  isDense: true,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 12,
-                    vertical: 10,
+                    ),
                   ),
-                  hintText: 'Buscar un idioma',
-                  hintStyle: const TextStyle(fontSize: 12),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(25),
+                )
+                .toList(),
+            value: _selectedValue,
+            onChanged: (value) {
+              if (value == null) return;
+              setState(() {
+                _selectedValue = value;
+                _languageSelected = value;
+                _textOutput.text = 'Traduciendo...';
+              });
+              _translate(_textInput.text);
+            },
+            dropdownSearchData: DropdownSearchData<String>(
+              searchController: _searchController,
+              searchInnerWidgetHeight: 56,
+              searchInnerWidget: Padding(
+                padding: const EdgeInsets.all(8),
+                child: TextFormField(
+                  controller: _searchController,
+                  decoration: InputDecoration(
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 10,
+                    ),
+                    hintText: 'Buscar un idioma',
+                    hintStyle: const TextStyle(fontSize: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(25),
+                    ),
                   ),
                 ),
               ),
+              searchMatchFn: (item, searchValue) {
+                return item.value
+                    .toString()
+                    .toLowerCase()
+                    .contains(searchValue.toLowerCase());
+              },
             ),
-            searchMatchFn: (item, searchValue) {
-              return (item.value.toString().contains(searchValue));
-            },
             onMenuStateChange: (isOpen) {
               if (!isOpen) {
-                textEditingController.clear();
+                _searchController.clear();
               }
             },
           ),
@@ -136,77 +172,18 @@ class _TranslateState extends State<Translate> {
 
   Future<void> _translate(String valueIn) async {
     final translator = GoogleTranslator();
-    String toValue = '';
+    final String toValue = _languageCodeMap[_languageSelected] ?? 'es';
     try {
-      if (languajeSelected.contains('español')) {
-        toValue = 'es';
-      } else if (languajeSelected.contains('ingles')) {
-        toValue = 'en';
-      } else if (languajeSelected.contains('portugués')) {
-        toValue = 'pt';
-      } else if (languajeSelected.contains('francés')) {
-        toValue = 'fr';
-      } else if (languajeSelected.contains('italiano')) {
-        toValue = 'it';
-      } else if (languajeSelected.contains('chino')) {
-        toValue = 'zh-cn';
-      } else if (languajeSelected.contains('coreano')) {
-        toValue = 'ko';
-      } else if (languajeSelected.contains('japonés')) {
-        toValue = 'ja';
-      } else if (languajeSelected.contains('alemán')) {
-        toValue = 'de';
-      } else if (languajeSelected.contains('ruso')) {
-        toValue = 'ru';
-      } else if (languajeSelected.contains('húngaro')) {
-        toValue = 'hu';
-      } else if (languajeSelected.contains('tailandés')) {
-        toValue = 'th';
-      } else if (languajeSelected.contains('noruego')) {
-        toValue = 'no';
-      } else if (languajeSelected.contains('turco')) {
-        toValue = 'tr';
-      } else if (languajeSelected.contains('estonio')) {
-        toValue = 'et';
-      } else if (languajeSelected.contains('vietnamita')) {
-        toValue = 'vi';
-      } else if (languajeSelected.contains('sueco')) {
-        toValue = 'sv';
-      } else if (languajeSelected.contains('árabe')) {
-        toValue = 'ar';
-      } else if (languajeSelected.contains('griego')) {
-        toValue = 'el';
-      } else if (languajeSelected.contains('hindi (o hindú)')) {
-        toValue = 'hi';
-      } else if (languajeSelected.contains('finlandés')) {
-        toValue = 'fi';
-      } else if (languajeSelected.contains('camboyano')) {
-        toValue = 'km';
-      } else if (languajeSelected.contains('ucraniano')) {
-        toValue = 'uk';
-      } else if (languajeSelected.contains('letón')) {
-        toValue = 'lv';
-      } else if (languajeSelected.contains('honlandés')) {
-        toValue = 'nl';
-      } else if (languajeSelected.contains('checo')) {
-        toValue = 'cs';
-      } else if (languajeSelected.contains('polaco')) {
-        toValue = 'pl';
-      } else if (languajeSelected.contains('eslovaco')) {
-        toValue = 'sk';
-      } else if (languajeSelected.contains('búlgaro')) {
-        toValue = 'bg';
-      } else if (languajeSelected.contains('indonesio')) {
-        toValue = 'id';
-      }
-      await translator.translate(valueIn, to: toValue).then((valueOut) {
+      final valueOut = await translator.translate(valueIn, to: toValue);
+      if (mounted) {
         _textOutput.text = valueOut.text;
-      });
+      }
     } catch (e) {
-      print(e);
-      if (e.toString().contains('Broken')) {
+      if (!mounted) return;
+      final msg = e.toString();
+      if (msg.contains('Broken')) {
         _textOutput.text = 'Intenta con un texto mas corto';
-      } else if (e.toString().contains('Failed')) {
+      } else if (msg.contains('Failed') || isNetworkError(e)) {
         _textOutput.text = 'No hay conexión a internet';
       } else {
         _textOutput.clear();
@@ -214,28 +191,48 @@ class _TranslateState extends State<Translate> {
     }
   }
 
+  Widget _actionButton({
+    required String label,
+    required double width,
+    required VoidCallback onPressed,
+  }) {
+    return OutlinedButton(
+      style: ButtonStyle(
+        fixedSize: WidgetStateProperty.all(Size.fromWidth(width)),
+        backgroundColor: WidgetStateProperty.all(Colors.transparent),
+        foregroundColor: WidgetStateProperty.all(Colors.lightBlue),
+        shape: WidgetStateProperty.all(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(25),
+          ),
+        ),
+        side: WidgetStateProperty.all(
+          const BorderSide(color: Colors.lightBlue),
+        ),
+      ),
+      onPressed: onPressed,
+      child: Center(
+        child: Text(
+          label,
+          style: const TextStyle(color: Colors.lightBlue),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    Object? parametros = ModalRoute.of(context)!.settings.arguments;
-    if (parametros != null) {
-      setState(() {
-        _textInput.text = parametros.toString();
-      });
-    }
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: themeSelect(),
-      home: Scaffold(
+    return Theme(
+      data: themeSelect(),
+      child: Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'Traductor',
-          ),
+          title: const Text('Traductor'),
           flexibleSpace: Container(
             decoration: BoxDecoration(gradient: barColor()),
           ),
         ),
         body: Container(
-          color: Colors.grey.withOpacity(0.2),
+          color: Colors.grey.withValues(alpha: 0.2),
           child: Center(
             child: ListView(
               shrinkWrap: true,
@@ -266,9 +263,10 @@ class _TranslateState extends State<Translate> {
                                 style: const TextStyle(color: Colors.black),
                                 controller: _textInput,
                                 decoration: InputDecoration(
-                                  labelText: "Ingrese el texto a traducir",
-                                  labelStyle:
-                                      const TextStyle(color: Colors.blue),
+                                  labelText: 'Ingrese el texto a traducir',
+                                  labelStyle: const TextStyle(
+                                    color: Colors.blue,
+                                  ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(25.0),
                                     borderSide: const BorderSide(
@@ -278,7 +276,9 @@ class _TranslateState extends State<Translate> {
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
-                                        color: Colors.blue, width: 2.0),
+                                      color: Colors.blue,
+                                      width: 2.0,
+                                    ),
                                     borderRadius: BorderRadius.circular(25.0),
                                   ),
                                 ),
@@ -288,7 +288,7 @@ class _TranslateState extends State<Translate> {
                         ),
                       ),
                     ),
-                    _listItemsLanguaje(context),
+                    _listItemsLanguage(context),
                     Padding(
                       padding: const EdgeInsets.all(10.0),
                       child: Container(
@@ -301,12 +301,6 @@ class _TranslateState extends State<Translate> {
                           child: Column(
                             children: [
                               TextFormField(
-                                onChanged: (value) {
-                                  setState(() {
-                                    _textOutput.text = 'Traduciendo...';
-                                  });
-                                  _translate(value);
-                                },
                                 maxLines: 10,
                                 cursorColor: Colors.blue,
                                 keyboardType: TextInputType.multiline,
@@ -314,9 +308,10 @@ class _TranslateState extends State<Translate> {
                                 readOnly: true,
                                 controller: _textOutput,
                                 decoration: InputDecoration(
-                                  labelText: "Texto traducido",
-                                  labelStyle:
-                                      const TextStyle(color: Colors.blue),
+                                  labelText: 'Texto traducido',
+                                  labelStyle: const TextStyle(
+                                    color: Colors.blue,
+                                  ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(25.0),
                                     borderSide: const BorderSide(
@@ -326,7 +321,9 @@ class _TranslateState extends State<Translate> {
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
-                                        color: Colors.blue, width: 2.0),
+                                      color: Colors.blue,
+                                      width: 2.0,
+                                    ),
                                     borderRadius: BorderRadius.circular(25.0),
                                   ),
                                 ),
@@ -334,161 +331,67 @@ class _TranslateState extends State<Translate> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  OutlinedButton(
-                                    style: ButtonStyle(
-                                      fixedSize: MaterialStateProperty.all(
-                                          const Size.fromWidth(150)),
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.transparent),
-                                      foregroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.lightBlue),
-                                      shape: MaterialStateProperty.all(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(25)),
-                                      ),
-                                      side: MaterialStateProperty.all(
-                                          const BorderSide(
-                                              color: Colors.lightBlue)),
-                                    ),
+                                  _actionButton(
+                                    label: 'Escuchar',
+                                    width: 150,
                                     onPressed: () {
                                       if (_textOutput.text.isNotEmpty) {
                                         Navigator.pushNamed(
-                                            context, '/textToSpeech',
-                                            arguments: _textOutput.text);
+                                          context,
+                                          '/textToSpeech',
+                                          arguments: _textOutput.text,
+                                        );
                                       }
                                     },
-                                    child: const Center(
-                                      child: Text(
-                                        'Escuchar',
-                                        style:
-                                            TextStyle(color: Colors.lightBlue),
-                                      ),
-                                    ),
                                   ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  OutlinedButton(
-                                    style: ButtonStyle(
-                                      fixedSize: MaterialStateProperty.all(
-                                          const Size.fromWidth(150)),
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.transparent),
-                                      foregroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.lightBlue),
-                                      shape: MaterialStateProperty.all(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(25)),
-                                      ),
-                                      side: MaterialStateProperty.all(
-                                          const BorderSide(
-                                              color: Colors.lightBlue)),
-                                    ),
+                                  const SizedBox(width: 10),
+                                  _actionButton(
+                                    label: 'Compartir',
+                                    width: 150,
                                     onPressed: () {
                                       if (_textOutput.text.isEmpty) {
                                         Fluttertoast.showToast(
-                                            msg: 'No hay nada para copiar');
+                                          msg: 'No hay nada para copiar',
+                                        );
                                       } else {
                                         Share.share(_textOutput.text);
                                       }
                                     },
-                                    child: const Center(
-                                      child: Text(
-                                        'Compartir',
-                                        style:
-                                            TextStyle(color: Colors.lightBlue),
-                                      ),
-                                    ),
                                   ),
                                 ],
                               ),
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  OutlinedButton(
-                                    style: ButtonStyle(
-                                      fixedSize: MaterialStateProperty.all(
-                                          const Size.fromWidth(100)),
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.transparent),
-                                      foregroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.lightBlue),
-                                      shape: MaterialStateProperty.all(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(25)),
-                                      ),
-                                      side: MaterialStateProperty.all(
-                                          const BorderSide(
-                                              color: Colors.lightBlue)),
-                                    ),
+                                  _actionButton(
+                                    label: 'Copiar',
+                                    width: 100,
                                     onPressed: () {
                                       if (_textOutput.text.isEmpty) {
                                         Fluttertoast.showToast(
-                                            msg: 'No hay nada para copiar');
+                                          msg: 'No hay nada para copiar',
+                                        );
                                       } else {
-                                        Clipboard.setData(ClipboardData(
-                                            text: _textOutput.text));
+                                        Clipboard.setData(
+                                          ClipboardData(text: _textOutput.text),
+                                        );
                                         Fluttertoast.showToast(
-                                            msg: 'Se copió al portapepeles',
-                                            toastLength: Toast.LENGTH_SHORT);
+                                          msg: 'Se copió al portapapeles',
+                                          toastLength: Toast.LENGTH_SHORT,
+                                        );
                                       }
                                     },
-                                    child: const Center(
-                                        child: Text(
-                                      'Copiar',
-                                      style: TextStyle(color: Colors.lightBlue),
-                                    )),
                                   ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  OutlinedButton(
-                                    style: ButtonStyle(
-                                      fixedSize: MaterialStateProperty.all(
-                                          const Size.fromWidth(100)),
-                                      backgroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.transparent),
-                                      foregroundColor:
-                                          MaterialStateProperty.all(
-                                              Colors.lightBlue),
-                                      shape: MaterialStateProperty.all(
-                                        RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(25)),
-                                      ),
-                                      side: MaterialStateProperty.all(
-                                          const BorderSide(
-                                              color: Colors.lightBlue)),
-                                    ),
+                                  const SizedBox(width: 10),
+                                  _actionButton(
+                                    label: 'Limpiar',
+                                    width: 100,
                                     onPressed: () {
                                       setState(() {
                                         _textInput.clear();
                                         _textOutput.clear();
-                                        //se revarga toda la página para evitar problemas con los parámetros
-                                        //que son traidos desde la ventana TRANSLATE
-                                        Navigator.pushReplacement(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder:
-                                                    (BuildContext context) =>
-                                                        super.widget));
                                       });
                                     },
-                                    child: const Center(
-                                        child: Text(
-                                      'Limpiar',
-                                      style: TextStyle(color: Colors.lightBlue),
-                                    )),
                                   ),
                                 ],
                               ),

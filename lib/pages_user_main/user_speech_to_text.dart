@@ -3,21 +3,20 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:fluttersupabase/constants.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:lottie/lottie.dart';
 import 'package:speech_to_text/speech_recognition_error.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
-import 'package:fluttersupabase/constants.dart';
 
 class SpeechToTextPage extends StatefulWidget {
+  const SpeechToTextPage({super.key});
+
   @override
-  _SpeechToTextPageState createState() => _SpeechToTextPageState();
+  State<SpeechToTextPage> createState() => _SpeechToTextPageState();
 }
 
-/// An example that demonstrates the basic functionality of the
-/// SpeechToText plugin for using the speech recognition capability
-/// of the underlying platform.
 class _SpeechToTextPageState extends State<SpeechToTextPage> {
   bool isListening = false;
   double level = 0.0;
@@ -28,7 +27,7 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
   String lastStatus = '';
   String _currentLocaleId = '';
   final SpeechToText speech = SpeechToText();
-  Codec<String, String> stringToBase64 = utf8.fuse(base64);
+  final Codec<String, String> _stringToBase64 = utf8.fuse(base64);
 
   @override
   void initState() {
@@ -36,169 +35,149 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
     initSpeechState();
   }
 
+  @override
+  void dispose() {
+    speech.cancel();
+    lastWords.dispose();
+    super.dispose();
+  }
+
   Future<void> initSpeechState() async {
     try {
-      var hasSpeech = await speech.initialize(
+      final hasSpeech = await speech.initialize(
         onError: errorListener,
         onStatus: statusListener,
-        debugLogging: true,
       );
       if (hasSpeech) {
-        var systemLocale = await speech.systemLocale();
+        final systemLocale = await speech.systemLocale();
         _currentLocaleId = systemLocale?.localeId ?? '';
       }
       if (!mounted) return;
-
       setState(() {});
     } catch (e) {
+      if (!mounted) return;
       setState(() {
-        lastError = 'Reconocimiento fallido : ${e.toString()}';
+        lastError = 'Reconocimiento fallido : $e';
       });
     }
   }
 
   Future<void> _saveNote(BuildContext context) async {
     Fluttertoast.showToast(
-        msg: 'Guardando nota...', gravity: ToastGravity.CENTER);
+      msg: 'Guardando nota...',
+      gravity: ToastGravity.CENTER,
+    );
     try {
-      final title = stringToBase64.encode('Voz a Texto');
-      final description = stringToBase64.encode(lastWords.text);
+      final title = _stringToBase64.encode('Voz a Texto');
+      final description = _stringToBase64.encode(lastWords.text);
       final createAt = DateTime.now().toIso8601String();
-      final userId = supabase.auth.currentUser!.id;
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) return;
 
       final data = {
         'id_notes_user': userId,
         'create_at': createAt,
         'title': title,
-        'description': description
+        'description': description,
       };
       await supabase.from('notes').insert(data);
       if (mounted) {
         Fluttertoast.showToast(msg: 'Nota guardada');
       }
     } catch (e) {
-      if (e.toString().contains('YOUR_PROJECT_REF.supabase.co')) {
+      if (isNetworkError(e)) {
         Fluttertoast.showToast(
-            msg: 'Revise su conexión a Internet', backgroundColor: Colors.red);
+          msg: 'Revise su conexión a Internet',
+          backgroundColor: Colors.red,
+        );
+      } else {
+        Fluttertoast.showToast(msg: 'Algo salió mal');
       }
     }
-    setState(() {
-      lastWords.clear();
-    });
+    if (mounted) {
+      setState(() {
+        lastWords.clear();
+      });
+    }
+  }
+
+  Widget _optionCard({
+    required String imageAsset,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Expanded(
+      flex: 1,
+      child: SizedBox(
+        height: 150,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(25.0),
+          onTap: onTap,
+          child: Card(
+            elevation: 5,
+            shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(25.0)),
+            ),
+            child: Column(
+              children: <Widget>[
+                Expanded(
+                  flex: 3,
+                  child: Image.asset(imageAsset),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    label,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   Widget _buttonGroupOptions() {
     return Row(
       children: <Widget>[
-        Expanded(
-          flex: 1,
-          child: SizedBox(
-            height: 150,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(25.0),
-              onTap: () {
-                if (lastWords.text.isEmpty) {
-                  Fluttertoast.showToast(msg: 'No hay nada para guardar');
-                } else {
-                  _saveNote(context);
-                }
-              },
-              child: Card(
-                elevation: 5,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 3,
-                      child: Image.asset('images/notes.png'),
-                    ),
-                    const Expanded(
-                      flex: 1,
-                      child: Text(
-                        "Guardar como nota",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+        _optionCard(
+          imageAsset: 'images/notes.png',
+          label: 'Guardar como nota',
+          onTap: () {
+            if (lastWords.text.isEmpty) {
+              Fluttertoast.showToast(msg: 'No hay nada para guardar');
+            } else {
+              _saveNote(context);
+            }
+          },
         ),
-        const SizedBox(
-          width: 10.0,
+        const SizedBox(width: 10.0),
+        _optionCard(
+          imageAsset: 'images/translate.png',
+          label: 'Traducir',
+          onTap: () {
+            if (lastWords.text.isEmpty) {
+              Fluttertoast.showToast(msg: 'No hay nada para traducir');
+            } else {
+              Navigator.pushNamed(
+                context,
+                '/translate',
+                arguments: lastWords.text,
+              );
+            }
+          },
         ),
-        Expanded(
-          flex: 1,
-          child: SizedBox(
-            height: 150,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(25.0),
-              onTap: () {
-                if (lastWords.text.isEmpty) {
-                  Fluttertoast.showToast(msg: 'No hay nada para traducir');
-                } else {
-                  Navigator.pushNamed(context, '/translate',
-                      arguments: lastWords.text);
-                }
-              },
-              child: Card(
-                elevation: 5,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 3,
-                      child: Image.asset('images/translate.png'),
-                    ),
-                    const Expanded(
-                      flex: 1,
-                      child: Text("Traducir"),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(
-          width: 10.0,
-        ),
-        Expanded(
-          flex: 1,
-          child: SizedBox(
-            height: 150,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(25.0),
-              onTap: () {
-                setState(() {
-                  lastWords.clear();
-                });
-              },
-              child: Card(
-                elevation: 5,
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(25.0))),
-                child: Column(
-                  children: <Widget>[
-                    Expanded(
-                      flex: 3,
-                      child: Image.asset('images/sweep.png'),
-                    ),
-                    const Expanded(
-                      flex: 1,
-                      child: Text(
-                        "Limpiar",
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
+        const SizedBox(width: 10.0),
+        _optionCard(
+          imageAsset: 'images/sweep.png',
+          label: 'Limpiar',
+          onTap: () {
+            setState(() {
+              lastWords.clear();
+            });
+          },
         ),
       ],
     );
@@ -206,20 +185,17 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: themeSelect(),
-      home: Scaffold(
+    return Theme(
+      data: themeSelect(),
+      child: Scaffold(
         appBar: AppBar(
-          title: const Text(
-            'Voz a texto',
-          ),
+          title: const Text('Voz a texto'),
           flexibleSpace: Container(
             decoration: BoxDecoration(gradient: barColor()),
           ),
         ),
         body: Container(
-          color: Colors.grey.withOpacity(0.2),
+          color: Colors.grey.withValues(alpha: 0.2),
           child: Center(
             child: ListView(
               shrinkWrap: true,
@@ -244,9 +220,10 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
                                 style: const TextStyle(color: Colors.black),
                                 controller: lastWords,
                                 decoration: InputDecoration(
-                                  labelText: "Texto Reconocido",
-                                  labelStyle:
-                                      const TextStyle(color: Colors.blue),
+                                  labelText: 'Texto Reconocido',
+                                  labelStyle: const TextStyle(
+                                    color: Colors.blue,
+                                  ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(25.0),
                                     borderSide: const BorderSide(
@@ -256,7 +233,9 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: const BorderSide(
-                                        color: Colors.blue, width: 2.0),
+                                      color: Colors.blue,
+                                      width: 2.0,
+                                    ),
                                     borderRadius: BorderRadius.circular(25.0),
                                   ),
                                 ),
@@ -271,13 +250,22 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
                       child: _buttonGroupOptions(),
                     ),
                     GestureDetector(
-                      onTap: (isListening) ? null : startListening,
+                      onTap: isListening ? null : startListening,
                       child: Center(
-                          child: speech.isListening
-                              ? Lottie.asset('images/lottie/recording.zip',
-                                  animate: true, width: 300, height: 200)
-                              : Lottie.asset('images/lottie/recording.zip',
-                                  animate: false, width: 300, height: 200)),
+                        child: speech.isListening
+                            ? Lottie.asset(
+                                'images/lottie/recording.zip',
+                                animate: true,
+                                width: 300,
+                                height: 200,
+                              )
+                            : Lottie.asset(
+                                'images/lottie/recording.zip',
+                                animate: false,
+                                width: 300,
+                                height: 200,
+                              ),
+                      ),
                     ),
                   ],
                 ),
@@ -289,26 +277,22 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
     );
   }
 
-  // This is called each time the users wants to start a new speech
-  // recognition session
   void startListening() {
     setState(() {
       isListening = true;
     });
     lastWords.clear();
     lastError = '';
-    // Note that `listenFor` is the maximum, not the minimun, on some
-    // systems recognition will be stopped before this value is reached.
-    // Similarly `pauseFor` is a maximum not a minimum and may be ignored
-    // on some devices.
     speech.listen(
-        onResult: resultListener,
+      onResult: resultListener,
+      onSoundLevelChange: soundLevelListener,
+      listenOptions: SpeechListenOptions(
         listenFor: const Duration(seconds: 30),
         pauseFor: const Duration(seconds: 5),
-        localeId: _currentLocaleId,
-        onSoundLevelChange: soundLevelListener,
-        listenMode: ListenMode.confirmation);
-    setState(() {});
+        localeId: _currentLocaleId.isEmpty ? null : _currentLocaleId,
+        listenMode: ListenMode.confirmation,
+      ),
+    );
   }
 
   void stopListening() {
@@ -325,13 +309,10 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
     });
   }
 
-  /// This callback is invoked each time new recognition results are
-  /// available after `listen` is called.
   void resultListener(SpeechRecognitionResult result) {
+    if (!mounted) return;
     setState(() {
       lastWords.text = result.recognizedWords;
-    });
-    setState(() {
       isListening = false;
     });
   }
@@ -339,75 +320,24 @@ class _SpeechToTextPageState extends State<SpeechToTextPage> {
   void soundLevelListener(double level) {
     minSoundLevel = min(minSoundLevel, level);
     maxSoundLevel = max(maxSoundLevel, level);
-    // _logEvent('sound level $level: $minSoundLevel - $maxSoundLevel ');
+    if (!mounted) return;
     setState(() {
       this.level = level;
     });
   }
 
   void errorListener(SpeechRecognitionError error) {
+    if (!mounted) return;
     setState(() {
       lastError = '${error.errorMsg} - ${error.permanent}';
+      isListening = false;
     });
   }
 
   void statusListener(String status) {
+    if (!mounted) return;
     setState(() {
-      lastStatus = '$status';
+      lastStatus = status;
     });
-  }
-}
-
-/// Displays the most recently recognized words and the sound level.
-class RecognitionResultsWidget extends StatelessWidget {
-  const RecognitionResultsWidget({
-    Key? key,
-    required this.lastWords,
-    required this.level,
-  }) : super(key: key);
-
-  final String lastWords;
-  final double level;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Expanded(
-          child: Stack(
-            children: <Widget>[
-              Center(
-                child: Text(
-                  lastWords,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// Controls to start and stop speech recognition
-class SpeechControlWidget extends StatelessWidget {
-  const SpeechControlWidget(this.isListening, this.startListening, {Key? key})
-      : super(key: key);
-
-  final bool isListening;
-  final void Function() startListening;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: <Widget>[
-        TextButton(
-          onPressed: isListening ? null : startListening,
-          child: const Text('Grabar'),
-        ),
-      ],
-    );
   }
 }

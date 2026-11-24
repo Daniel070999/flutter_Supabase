@@ -10,7 +10,7 @@ class UserProfileUpdate extends StatefulWidget {
   const UserProfileUpdate({super.key});
 
   @override
-  _UserProfileUpdateState createState() => _UserProfileUpdateState();
+  State<UserProfileUpdate> createState() => _UserProfileUpdateState();
 }
 
 class _UserProfileUpdateState extends State<UserProfileUpdate> {
@@ -20,8 +20,8 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
   final _passwordConfirmController = TextEditingController();
   final _validatedFormData = GlobalKey<FormState>();
   final _validatedFormPassword = GlobalKey<FormState>();
-  var _loading = false;
-  var _loadingPass = false;
+  bool _loading = false;
+  bool _loadingPass = false;
 
   @override
   void initState() {
@@ -35,52 +35,63 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
     });
 
     try {
-      final userId = supabase.auth.currentUser!.id;
-      final data = await supabase
-          .from('profiles')
-          .select()
-          .eq('id', userId)
-          .single() as Map;
-      _usernameController.text = (data['username'] ?? '') as String;
-      _lastnameController.text = (data['lastname'] ?? '') as String;
-    } on PostgrestException catch (error) {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId != null) {
+        final data = await supabase
+            .from('profiles')
+            .select()
+            .eq('id', userId)
+            .single();
+        _usernameController.text = (data['username'] ?? '') as String;
+        _lastnameController.text = (data['lastname'] ?? '') as String;
+      }
+    } on PostgrestException {
       Fluttertoast.showToast(msg: 'No se pudo cargar sus datos');
-    } catch (error) {
+    } catch (_) {
       Fluttertoast.showToast(msg: 'No se pudo cargar sus datos');
     }
 
-    setState(() {
-      _loading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
-  Future<void> _updateProfile(BuildContext context) async {
+  Future<void> _updateProfile() async {
     setState(() {
       _loading = true;
     });
     final userName = _usernameController.text;
     final lastname = _lastnameController.text;
     final user = supabase.auth.currentUser;
-    final id = user!.id;
+    if (user == null) {
+      setState(() {
+        _loading = false;
+      });
+      return;
+    }
     final updates = {
       'username': userName,
       'lastname': lastname,
       'updated_at': DateTime.now().toIso8601String(),
     };
     try {
-      await supabase.from('profiles').update(updates).eq('id', id);
+      await supabase.from('profiles').update(updates).eq('id', user.id);
       if (mounted) {
         Fluttertoast.showToast(msg: 'Datos actualizados');
-        signOut(context);
+        await signOut(context);
       }
-    } on PostgrestException catch (error) {
+    } on PostgrestException {
       Fluttertoast.showToast(msg: 'Algo salió mal');
-    } catch (error) {
+    } catch (_) {
       Fluttertoast.showToast(msg: 'Algo salió mal');
     }
-    setState(() {
-      _loading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = false;
+      });
+    }
   }
 
   Future<void> _updateAuth() async {
@@ -90,24 +101,24 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
     final password = _passwordConfirmController.text;
     try {
       await supabase.auth.updateUser(
-        UserAttributes(
-          password: password,
-        ),
+        UserAttributes(password: password),
       );
       if (mounted) {
         Fluttertoast.showToast(msg: 'Contraseña actualizada');
-        signOut(context);
+        await signOut(context);
       }
-    } on PostgrestException catch (error) {
+    } on PostgrestException {
       Fluttertoast.showToast(msg: 'Algo salió mal');
-    } catch (error) {
+    } catch (_) {
       Fluttertoast.showToast(msg: 'Algo salió mal');
     }
-    setState(() {
-      _loadingPass = false;
-      _passwordController.clear();
-      _passwordConfirmController.clear();
-    });
+    if (mounted) {
+      setState(() {
+        _loadingPass = false;
+        _passwordController.clear();
+        _passwordConfirmController.clear();
+      });
+    }
   }
 
   @override
@@ -121,10 +132,9 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: themeSelect(),
-      home: Scaffold(
+    return Theme(
+      data: themeSelect(),
+      child: Scaffold(
         appBar: AppBar(
           title: const Text('Actualización de datos'),
           flexibleSpace: Container(
@@ -145,98 +155,113 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
               const SizedBox(height: 18),
               Form(
                 key: _validatedFormData,
-                child: Column(children: [
-                  TextFormField(
-                    validator: (value) {
-                      if (value.toString().isEmpty) {
-                        return 'Este campo no puede estar vacio';
-                      } else if (value.toString().length < 3) {
-                        return 'No puede haber menos de 3 caracteres';
-                      }
-                    },
-                    style: const TextStyle(color: Colors.lightBlue),
-                    controller: _usernameController,
-                    decoration: InputDecoration(
-                      labelText: "Nombre",
-                      labelStyle: const TextStyle(color: Colors.lightBlue),
-                      prefixIcon: const Icon(
-                        Icons.text_snippet_sharp,
-                        color: Colors.lightBlue,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.0),
-                        borderSide: const BorderSide(
+                child: Column(
+                  children: [
+                    TextFormField(
+                      validator: (value) {
+                        final text = value ?? '';
+                        if (text.isEmpty) {
+                          return 'Este campo no puede estar vacio';
+                        } else if (text.length < 3) {
+                          return 'No puede haber menos de 3 caracteres';
+                        }
+                        return null;
+                      },
+                      style: const TextStyle(color: Colors.lightBlue),
+                      controller: _usernameController,
+                      decoration: InputDecoration(
+                        labelText: 'Nombre',
+                        labelStyle: const TextStyle(color: Colors.lightBlue),
+                        prefixIcon: const Icon(
+                          Icons.text_snippet_sharp,
                           color: Colors.lightBlue,
-                          width: 1.5,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: const BorderSide(
+                            color: Colors.lightBlue,
+                            width: 1.5,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            color: Colors.lightBlue,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(25.0),
                         ),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Colors.lightBlue, width: 2.0),
-                        borderRadius: BorderRadius.circular(25.0),
-                      ),
                     ),
-                  ),
-                  const SizedBox(height: 18.0),
-                  TextFormField(
-                    validator: (value) {
-                      if (value.toString().isEmpty) {
-                        return 'Este campo no puede estar vacio';
-                      } else if (value.toString().length < 3) {
-                        return 'No puede haber menos de 3 caracteres';
-                      }
-                    },
-                    style: const TextStyle(color: Colors.lightBlue),
-                    controller: _lastnameController,
-                    decoration: InputDecoration(
-                      labelText: "Apellido",
-                      labelStyle: const TextStyle(color: Colors.lightBlue),
-                      prefixIcon: const Icon(
-                        Icons.text_snippet_sharp,
-                        color: Colors.lightBlue,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(25.0),
-                        borderSide: const BorderSide(
+                    const SizedBox(height: 18.0),
+                    TextFormField(
+                      validator: (value) {
+                        final text = value ?? '';
+                        if (text.isEmpty) {
+                          return 'Este campo no puede estar vacio';
+                        } else if (text.length < 3) {
+                          return 'No puede haber menos de 3 caracteres';
+                        }
+                        return null;
+                      },
+                      style: const TextStyle(color: Colors.lightBlue),
+                      controller: _lastnameController,
+                      decoration: InputDecoration(
+                        labelText: 'Apellido',
+                        labelStyle: const TextStyle(color: Colors.lightBlue),
+                        prefixIcon: const Icon(
+                          Icons.text_snippet_sharp,
                           color: Colors.lightBlue,
-                          width: 1.5,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(25.0),
+                          borderSide: const BorderSide(
+                            color: Colors.lightBlue,
+                            width: 1.5,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderSide: const BorderSide(
+                            color: Colors.lightBlue,
+                            width: 2.0,
+                          ),
+                          borderRadius: BorderRadius.circular(25.0),
                         ),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                            color: Colors.lightBlue, width: 2.0),
-                        borderRadius: BorderRadius.circular(25.0),
-                      ),
                     ),
-                  ),
-                  const SizedBox(height: 18),
-                  (_loading == false)
-                      ? OutlinedButton(
-                          style: ButtonStyle(
-                            fixedSize: MaterialStateProperty.all(
-                                const Size.fromWidth(200)),
-                            shape: MaterialStateProperty.all(
-                              RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25)),
+                    const SizedBox(height: 18),
+                    (!_loading)
+                        ? OutlinedButton(
+                            style: ButtonStyle(
+                              fixedSize: WidgetStateProperty.all(
+                                const Size.fromWidth(200),
+                              ),
+                              shape: WidgetStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                              ),
+                              side: WidgetStateProperty.all(
+                                const BorderSide(color: Colors.lightGreen),
+                              ),
                             ),
-                            side: MaterialStateProperty.all(
-                                const BorderSide(color: Colors.lightGreen)),
-                          ),
-                          onPressed: () {
-                            if (_validatedFormData.currentState!.validate()) {
-                              _updateProfile(context);
-                            }
-                          },
-                          child: const Text(
-                            'Actualizar datos',
-                            style: TextStyle(color: Colors.lightGreen),
-                          ),
-                        )
-                      : Platform.isAndroid
-                          ? const Center(child: CircularProgressIndicator())
-                          : const Center(child: CupertinoActivityIndicator()),
-                  const SizedBox(height: 18.0),
-                ]),
+                            onPressed: () {
+                              if (_validatedFormData.currentState!.validate()) {
+                                _updateProfile();
+                              }
+                            },
+                            child: const Text(
+                              'Actualizar datos',
+                              style: TextStyle(color: Colors.lightGreen),
+                            ),
+                          )
+                        : Platform.isAndroid
+                            ? const Center(child: CircularProgressIndicator())
+                            : const Center(
+                                child: CupertinoActivityIndicator(),
+                              ),
+                    const SizedBox(height: 18.0),
+                  ],
+                ),
               ),
               Form(
                 key: _validatedFormPassword,
@@ -244,17 +269,19 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                   children: [
                     TextFormField(
                       validator: (value) {
-                        if (value.toString().isEmpty) {
+                        final text = value ?? '';
+                        if (text.isEmpty) {
                           return 'Este campo no puede estar vacio';
-                        } else if (value.toString().length < 6) {
+                        } else if (text.length < 6) {
                           return 'No puede haber menos de 6 caracteres';
                         }
+                        return null;
                       },
                       obscureText: true,
                       style: const TextStyle(color: Colors.lightBlue),
                       controller: _passwordController,
                       decoration: InputDecoration(
-                        labelText: "Cree una nueva contraseña",
+                        labelText: 'Cree una nueva contraseña',
                         labelStyle: const TextStyle(color: Colors.lightBlue),
                         prefixIcon: const Icon(
                           Icons.lock,
@@ -269,7 +296,9 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: const BorderSide(
-                              color: Colors.lightBlue, width: 2.0),
+                            color: Colors.lightBlue,
+                            width: 2.0,
+                          ),
                           borderRadius: BorderRadius.circular(25.0),
                         ),
                       ),
@@ -277,18 +306,19 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                     const SizedBox(height: 18),
                     TextFormField(
                       validator: (value) {
-                        if (value.toString().isEmpty) {
+                        final text = value ?? '';
+                        if (text.isEmpty) {
                           return 'Este campo no puede estar vacio';
-                        } else if (_passwordController.text !=
-                            value.toString()) {
+                        } else if (_passwordController.text != text) {
                           return 'Las contraseñas no coinciden';
                         }
+                        return null;
                       },
                       obscureText: true,
                       style: const TextStyle(color: Colors.lightBlue),
                       controller: _passwordConfirmController,
                       decoration: InputDecoration(
-                        labelText: "Confirmar contraseña",
+                        labelText: 'Confirmar contraseña',
                         labelStyle: const TextStyle(color: Colors.lightBlue),
                         prefixIcon: const Icon(
                           Icons.lock,
@@ -303,23 +333,28 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: const BorderSide(
-                              color: Colors.lightBlue, width: 2.0),
+                            color: Colors.lightBlue,
+                            width: 2.0,
+                          ),
                           borderRadius: BorderRadius.circular(25.0),
                         ),
                       ),
                     ),
                     const SizedBox(height: 18),
-                    (_loadingPass == false)
+                    (!_loadingPass)
                         ? OutlinedButton(
                             style: ButtonStyle(
-                              fixedSize: MaterialStateProperty.all(
-                                  const Size.fromWidth(200)),
-                              shape: MaterialStateProperty.all(
-                                RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(25)),
+                              fixedSize: WidgetStateProperty.all(
+                                const Size.fromWidth(200),
                               ),
-                              side: MaterialStateProperty.all(
-                                  const BorderSide(color: Colors.lightGreen)),
+                              shape: WidgetStateProperty.all(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                              ),
+                              side: WidgetStateProperty.all(
+                                const BorderSide(color: Colors.lightGreen),
+                              ),
                             ),
                             onPressed: () {
                               if (_validatedFormPassword.currentState!
@@ -334,7 +369,9 @@ class _UserProfileUpdateState extends State<UserProfileUpdate> {
                           )
                         : Platform.isAndroid
                             ? const Center(child: CircularProgressIndicator())
-                            : const Center(child: CupertinoActivityIndicator()),
+                            : const Center(
+                                child: CupertinoActivityIndicator(),
+                              ),
                     const SizedBox(height: 18),
                   ],
                 ),

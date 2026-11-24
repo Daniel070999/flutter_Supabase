@@ -16,51 +16,63 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   final _usernameController = TextEditingController();
   final _lastnameController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
     _getProfile();
   }
 
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _lastnameController.dispose();
+    super.dispose();
+  }
+
   Future<void> _preferences() async {
     final prefs = await SharedPreferences.getInstance();
-    prefs.setBool('animationState', animationState);
-    prefs.setBool('theme', theme);
+    await prefs.setBool('animationState', animationState);
+    await prefs.setBool('theme', theme);
   }
 
   Future<void> _getProfile() async {
     try {
-      final userId = supabase.auth.currentUser!.id;
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) return;
       final data = await supabase
           .from('profiles')
           .select()
           .eq('id', userId)
-          .single() as Map;
+          .single();
+      if (!mounted) return;
       setState(() {
         _usernameController.text = (data['username'] ?? '') as String;
         _lastnameController.text = (data['lastname'] ?? '') as String;
       });
-    } on PostgrestException catch (error) {
-      print(error);
-    } catch (error) {
-      print(error);
+    } on PostgrestException {
+      // Ignorado silenciosamente si no hay perfil disponible aún.
+    } catch (_) {
+      // Ignorado silenciosamente.
     }
   }
 
   Future<void> _userProfile(BuildContext context) async {
     try {
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const UserProfileUpdate(),
-          ));
-    } catch (error) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const UserProfileUpdate(),
+        ),
+      );
+    } catch (_) {
       Fluttertoast.showToast(msg: 'Algo salió mal');
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentEmail = supabase.auth.currentUser?.email ?? '';
     return Scaffold(
       body: Container(
         decoration: BoxDecoration(gradient: barColorScreen()),
@@ -85,30 +97,32 @@ class _MenuScreenState extends State<MenuScreen> {
                   child: Align(
                     alignment: Alignment.center,
                     child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              _usernameController.text +
-                                  "\n" +
-                                  _lastnameController.text,
-                              style: const TextStyle(
-                                  color: Colors.white, fontSize: 18),
+                      padding: const EdgeInsets.all(12.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            '${_usernameController.text}\n${_lastnameController.text}',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 18,
                             ),
-                          ],
-                        )),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ),
                 InkWell(
                   child: Align(
                     alignment: Alignment.center,
                     child: Padding(
-                        padding: const EdgeInsets.all(12.0),
-                        child: SelectableText(
-                          supabase.auth.currentUser!.email.toString(),
-                          style: const TextStyle(color: Colors.white),
-                        )),
+                      padding: const EdgeInsets.all(12.0),
+                      child: SelectableText(
+                        currentEmail,
+                        style: const TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ),
                 ),
                 InkWell(
@@ -119,21 +133,24 @@ class _MenuScreenState extends State<MenuScreen> {
                       child: Container(
                         height: 40,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25.0),
-                            color: Colors.white.withOpacity(0.8)),
+                          borderRadius: BorderRadius.circular(25.0),
+                          color: Colors.white.withValues(alpha: 0.8),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            const Text("Tema oscuro"),
+                            const Text('Tema oscuro'),
                             Switch(
                               value: theme,
                               onChanged: (value) {
                                 setState(() {
                                   theme = value;
-                                  Navigator.pushReplacementNamed(
-                                      context, '/drawer');
-                                  _preferences();
                                 });
+                                _preferences();
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  '/drawer',
+                                );
                               },
                             ),
                           ],
@@ -150,21 +167,24 @@ class _MenuScreenState extends State<MenuScreen> {
                       child: Container(
                         height: 40,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(25.0),
-                            color: Colors.white.withOpacity(0.8)),
+                          borderRadius: BorderRadius.circular(25.0),
+                          color: Colors.white.withValues(alpha: 0.8),
+                        ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            const Text("Animaciones"),
+                            const Text('Animaciones'),
                             Switch(
                               value: animationState,
                               onChanged: (value) {
                                 setState(() {
                                   animationState = value;
-                                  Navigator.pushReplacementNamed(
-                                      context, '/drawer');
-                                  _preferences();
                                 });
+                                _preferences();
+                                Navigator.pushReplacementNamed(
+                                  context,
+                                  '/drawer',
+                                );
                               },
                             ),
                           ],
@@ -183,11 +203,13 @@ class _MenuScreenState extends State<MenuScreen> {
                         height: 40,
                         child: OutlinedButton(
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                                Colors.white.withOpacity(0.8)),
-                            shape: MaterialStateProperty.all(
+                            backgroundColor: WidgetStateProperty.all(
+                              Colors.white.withValues(alpha: 0.8),
+                            ),
+                            shape: WidgetStateProperty.all(
                               RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25)),
+                                borderRadius: BorderRadius.circular(25),
+                              ),
                             ),
                           ),
                           onPressed: () {
@@ -214,11 +236,13 @@ class _MenuScreenState extends State<MenuScreen> {
                         height: 40,
                         child: OutlinedButton(
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                                Colors.white.withOpacity(0.8)),
-                            shape: MaterialStateProperty.all(
+                            backgroundColor: WidgetStateProperty.all(
+                              Colors.white.withValues(alpha: 0.8),
+                            ),
+                            shape: WidgetStateProperty.all(
                               RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25)),
+                                borderRadius: BorderRadius.circular(25),
+                              ),
                             ),
                           ),
                           onPressed: () {
@@ -226,7 +250,7 @@ class _MenuScreenState extends State<MenuScreen> {
                           },
                           child: const Center(
                             child: Text(
-                              'Acerca de la Aplicacón',
+                              'Acerca de la Aplicación',
                               style: TextStyle(color: Colors.black),
                             ),
                           ),
@@ -245,13 +269,16 @@ class _MenuScreenState extends State<MenuScreen> {
                         height: 40.0,
                         child: OutlinedButton(
                           style: ButtonStyle(
-                            backgroundColor: MaterialStateProperty.all(
-                                Colors.white.withOpacity(0.8)),
-                            overlayColor:
-                                MaterialStateProperty.all(Colors.red.shade200),
-                            shape: MaterialStateProperty.all(
+                            backgroundColor: WidgetStateProperty.all(
+                              Colors.white.withValues(alpha: 0.8),
+                            ),
+                            overlayColor: WidgetStateProperty.all(
+                              Colors.red.shade200,
+                            ),
+                            shape: WidgetStateProperty.all(
                               RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(25)),
+                                borderRadius: BorderRadius.circular(25),
+                              ),
                             ),
                           ),
                           onPressed: () {
